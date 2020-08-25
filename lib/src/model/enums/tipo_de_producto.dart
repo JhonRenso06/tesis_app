@@ -1,0 +1,1 @@
+enum TipoDeProducto { PRODUCTO, SERVICIO }
