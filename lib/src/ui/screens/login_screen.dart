@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tesis_app/src/ui/screens/home_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   @override
@@ -26,7 +27,12 @@ class LoginScreen extends StatelessWidget {
       child: MaterialButton(
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => HomeScreen()),
+          );
+        },
         child: Text("Iniciar sesión",
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 20.0, color: Colors.white)),

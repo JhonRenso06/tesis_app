@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tesis_app/src/ui/widgets/item_widget.dart';
 
 class CarritoScreen extends StatelessWidget {
   @override
@@ -7,21 +8,11 @@ class CarritoScreen extends StatelessWidget {
         child: Container(
       color: Colors.white,
       child: Padding(
-        padding:
-            const EdgeInsets.only(top: 80, bottom: 30, left: 30, right: 30),
+        padding: const EdgeInsets.all(10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            SizedBox(
-              height: 250.0,
-              child: Image.asset(
-                "assets/logo_blanco.png",
-                fit: BoxFit.contain,
-              ),
-            ),
-            Text("Carrito")
-          ],
+          children: <Widget>[ItemWidget(), ItemWidget(), ItemWidget()],
         ),
       ),
     ));

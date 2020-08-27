@@ -6,8 +6,8 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: HomeScreen(),
-      // home: InicialScreen(),
+      // home: HomeScreen(),
+      home: InicialScreen(),
       theme: ThemeData(
           // primaryColor: Color.fromRGBO(255, 45, 0, 1),
           fontFamily: 'Quicksand',

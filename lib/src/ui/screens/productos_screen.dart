@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:tesis_app/src/model/producto.dart';
+import 'package:tesis_app/src/ui/widgets/producto_widget.dart';
 
 class ProductosScreen extends StatelessWidget {
   @override
@@ -11,6 +13,9 @@ class ProductosScreen extends StatelessWidget {
       "https://cdn.pixabay.com/photo/2016/10/20/06/00/fiat-1754723_960_720.jpg",
       "https://cdn.pixabay.com/photo/2016/09/12/18/56/ifa-1665443_960_720.jpg"
     ];
+
+    List<Producto> productos = [];
+
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
@@ -61,7 +66,13 @@ class ProductosScreen extends StatelessWidget {
                   child: Image.asset(
                     "assets/logo_blanco.png",
                     fit: BoxFit.contain,
-                  )))
+                  ))),
+          Row(
+            children: <Widget>[
+              ProductoWidget(),
+              ProductoWidget(),
+            ],
+          ),
         ],
       ),
     );
