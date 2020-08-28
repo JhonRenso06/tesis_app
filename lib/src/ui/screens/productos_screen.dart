@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:tesis_app/src/model/producto.dart';
 import 'package:tesis_app/src/ui/widgets/producto_widget.dart';
 
 class ProductosScreen extends StatelessWidget {
@@ -11,11 +10,17 @@ class ProductosScreen extends StatelessWidget {
       "https://cdn.pixabay.com/photo/2016/03/26/22/32/fast-1281628_960_720.jpg",
       "https://cdn.pixabay.com/photo/2016/11/24/14/00/christmas-tree-1856343_960_720.jpg",
       "https://cdn.pixabay.com/photo/2016/10/20/06/00/fiat-1754723_960_720.jpg",
+      "https://cdn.pixabay.com/photo/2016/09/12/18/56/ifa-1665443_960_720.jpg",
+      "https://cdn.pixabay.com/photo/2016/11/22/23/44/buildings-1851246_960_720.jpg",
+      "https://cdn.pixabay.com/photo/2016/03/26/22/32/fast-1281628_960_720.jpg",
+      "https://cdn.pixabay.com/photo/2016/11/24/14/00/christmas-tree-1856343_960_720.jpg",
+      "https://cdn.pixabay.com/photo/2016/10/20/06/00/fiat-1754723_960_720.jpg",
       "https://cdn.pixabay.com/photo/2016/09/12/18/56/ifa-1665443_960_720.jpg"
     ];
+    var size = MediaQuery.of(context).size;
 
-    List<Producto> productos = [];
-
+    final double itemHeight = (size.height - kToolbarHeight - 1) / 2;
+    final double itemWidth = size.width / 2;
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
@@ -67,12 +72,19 @@ class ProductosScreen extends StatelessWidget {
                     "assets/logo_blanco.png",
                     fit: BoxFit.contain,
                   ))),
-          Row(
-            children: <Widget>[
-              ProductoWidget(),
-              ProductoWidget(),
-            ],
-          ),
+          Container(
+              height: size.height / 2,
+              child: GridView.count(
+                crossAxisCount: 2,
+                childAspectRatio: (itemWidth / itemHeight),
+                controller: new ScrollController(keepScrollOffset: false),
+                shrinkWrap: true,
+                scrollDirection: Axis.vertical,
+                children: List.generate(10, (index) {
+                  return ProductoWidget(
+                      index, "Producto $index", index, ofertas[index]);
+                }),
+              ))
         ],
       ),
     );

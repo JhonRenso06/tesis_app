@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 
 class ProductoWidget extends StatefulWidget {
+  final int codigo;
+  final String nombre, foto;
+  final num precio;
+
+  ProductoWidget(this.codigo, this.nombre, this.precio, this.foto);
+
   @override
   State<StatefulWidget> createState() => _ProductoWidget();
 }
@@ -16,8 +22,6 @@ class _ProductoWidget extends State<ProductoWidget> {
   Widget build(BuildContext context) {
     pantalla = MediaQuery.of(context);
     var width = pantalla.size.width / 2;
-    var url =
-        'https://cdn.pixabay.com/photo/2017/06/27/18/22/isolated-2448349_960_720.png';
     return Container(
         width: width,
         child: Padding(
@@ -33,12 +37,13 @@ class _ProductoWidget extends State<ProductoWidget> {
                     height: 150,
                     decoration: BoxDecoration(
                         image: DecorationImage(
-                            fit: BoxFit.cover, image: NetworkImage(url)),
+                            fit: BoxFit.cover,
+                            image: NetworkImage(widget.foto)),
                         borderRadius: BorderRadius.all(Radius.circular(5))),
                   ),
-                  Text("Mustang 70",
+                  Text(widget.nombre,
                       style: TextStyle(fontFamily: "Quicksand", fontSize: 20)),
-                  Text("S/ 34,000",
+                  Text("S/" + widget.precio.toString(),
                       style: TextStyle(
                           fontFamily: "Quicksand",
                           fontSize: 15,
@@ -97,9 +102,11 @@ class _ProductoWidget extends State<ProductoWidget> {
                                           color: Colors.white))),
                             )),
                       ]),
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
+                  Container(
+                    height: 25,
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
                         MaterialButton(
                             // minWidth: 30,
                             // padding: EdgeInsets.fromLTRB(0),
@@ -114,14 +121,14 @@ class _ProductoWidget extends State<ProductoWidget> {
                                           color: Colors.black,
                                           fontFamily: "Quicksand",
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 18)),
+                                          fontSize: 15)),
                                   Icon(
                                     Icons.shopping_cart,
                                     color: Colors.black,
-                                    size: 18,
+                                    size: 15,
                                   ),
                                 ])),
-                      ])
+                      ])),
                 ]))));
   }
 }

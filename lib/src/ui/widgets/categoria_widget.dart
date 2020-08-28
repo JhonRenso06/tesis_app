@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
 class CategoriaWidget extends StatefulWidget {
+  final int index;
+  final String nombre, foto;
+
+  CategoriaWidget(this.index, this.nombre, this.foto);
   @override
   State<StatefulWidget> createState() => _CategoriaWidget();
 }
@@ -16,8 +20,6 @@ class _CategoriaWidget extends State<CategoriaWidget> {
   Widget build(BuildContext context) {
     pantalla = MediaQuery.of(context);
     var width = pantalla.size.width;
-    var url =
-        'https://cdn.pixabay.com/photo/2017/06/27/18/22/isolated-2448349_960_720.png';
     return Container(
         width: width,
         child: Padding(
@@ -33,7 +35,8 @@ class _CategoriaWidget extends State<CategoriaWidget> {
                     height: 150,
                     decoration: BoxDecoration(
                         image: DecorationImage(
-                            fit: BoxFit.cover, image: NetworkImage(url)),
+                            fit: BoxFit.cover,
+                            image: NetworkImage(widget.foto)),
                         borderRadius: BorderRadius.all(Radius.circular(5))),
                   ),
                   Row(
@@ -48,7 +51,10 @@ class _CategoriaWidget extends State<CategoriaWidget> {
                             child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
-                                  Text("CATEGORÍA 1",
+                                  Text(
+                                      widget.nombre +
+                                          " " +
+                                          widget.index.toString(),
                                       style: TextStyle(
                                           color: Colors.black,
                                           fontFamily: "Quicksand",
