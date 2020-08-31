@@ -18,51 +18,47 @@ class ProductosScreen extends StatelessWidget {
       "https://cdn.pixabay.com/photo/2016/09/12/18/56/ifa-1665443_960_720.jpg"
     ];
     var size = MediaQuery.of(context).size;
-
     final double itemHeight = (size.height - kToolbarHeight - 1) / 2;
     final double itemWidth = size.width / 2;
-    return SingleChildScrollView(
-      child: Column(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                CarouselSlider(
-                  options: CarouselOptions(
-                      height: 200, enableInfiniteScroll: true, autoPlay: true),
-                  items: ofertas.map((oferta) {
-                    return Builder(
-                      builder: (BuildContext context) {
-                        return Container(
-                          width: MediaQuery.of(context).size.width,
-                          margin: EdgeInsets.symmetric(horizontal: 5.0),
-                          decoration: BoxDecoration(
-                              color: Colors.black,
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              SizedBox(
-                                  height: 150,
-                                  child: Image.network(
-                                    oferta,
-                                    fit: BoxFit.contain,
-                                  )),
-                            ],
-                          ),
-                        );
-                      },
+
+    return CustomScrollView(
+      slivers: <Widget>[
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 10, bottom: 10),
+            child: CarouselSlider(
+              options: CarouselOptions(
+                  height: 200, enableInfiniteScroll: true, autoPlay: true),
+              items: ofertas.map((oferta) {
+                return Builder(
+                  builder: (BuildContext context) {
+                    return Container(
+                      width: MediaQuery.of(context).size.width,
+                      margin: EdgeInsets.symmetric(horizontal: 5.0),
+                      decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(10)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          SizedBox(
+                              height: 150,
+                              child: Image.network(
+                                oferta,
+                                fit: BoxFit.contain,
+                              )),
+                        ],
+                      ),
                     );
-                  }).toList(),
-                ),
-              ],
+                  },
+                );
+              }).toList(),
             ),
           ),
-          Padding(
+        ),
+        SliverToBoxAdapter(
+          child: Padding(
               padding: const EdgeInsets.only(top: 10, bottom: 10),
               child: Container(
                   color: Colors.black,
@@ -72,21 +68,20 @@ class ProductosScreen extends StatelessWidget {
                     "assets/logo_blanco.png",
                     fit: BoxFit.contain,
                   ))),
-          Container(
-              height: size.height / 2,
-              child: GridView.count(
-                crossAxisCount: 2,
-                childAspectRatio: (itemWidth / itemHeight),
-                controller: new ScrollController(keepScrollOffset: false),
-                shrinkWrap: true,
-                scrollDirection: Axis.vertical,
-                children: List.generate(10, (index) {
-                  return ProductoWidget(
-                      index, "Producto $index", index, ofertas[index]);
-                }),
-              ))
-        ],
-      ),
+        ),
+        SliverGrid(
+          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: itemHeight,
+            mainAxisSpacing: 4,
+            crossAxisSpacing: 4,
+            childAspectRatio: (itemWidth / itemHeight)
+          ),
+          delegate: SliverChildBuilderDelegate((context, int index) {
+            return ProductoWidget(
+                index, "Producto $index", index, ofertas[index]);
+          }, childCount: ofertas.length),
+        )
+      ],
     );
   }
 }

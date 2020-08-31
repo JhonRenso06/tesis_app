@@ -55,7 +55,6 @@ class _ProductoWidget extends State<ProductoWidget> {
                         Container(
                             width: width / 4,
                             child: ButtonTheme(
-                              // minWidth: 40,
                               buttonColor: Colors.black,
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.only(
@@ -86,13 +85,13 @@ class _ProductoWidget extends State<ProductoWidget> {
                         Container(
                             width: width / 4,
                             child: ButtonTheme(
-                              // minWidth: 40,
                               buttonColor: Colors.black,
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.only(
                                       topRight: Radius.circular(50),
                                       bottomRight: Radius.circular(50))),
                               child: RaisedButton(
+                                elevation: 0,
                                   onPressed: () {
                                     print("Add one");
                                   },

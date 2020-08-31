@@ -10,26 +10,12 @@ class CategoriasScreen extends StatelessWidget {
       "https://cdn.pixabay.com/photo/2016/09/12/18/56/ifa-1665443_960_720.jpg",
       "https://cdn.pixabay.com/photo/2018/05/02/09/29/auto-3368094_960_720.jpg"
     ];
-    var size = MediaQuery.of(context).size;
 
-    final double itemHeight = (size.height - kToolbarHeight) / 2.5;
-    final double itemWidth = size.width;
-
-    return SingleChildScrollView(
-      child: Column(
-        children: <Widget>[
-          GridView.count(
-            crossAxisCount: 1,
-            childAspectRatio: (itemWidth / itemHeight),
-            controller: new ScrollController(keepScrollOffset: false),
-            shrinkWrap: true,
-            scrollDirection: Axis.vertical,
-            children: List.generate(categorias.length, (index) {
-              return CategoriaWidget(index, "Categoría", categorias[index]);
-            }),
-          )
-        ],
-      ),
-    );
+    return ListView.builder(
+        padding: const EdgeInsets.only(left: 5, right: 5, bottom: 20, top: 7),
+        itemCount: categorias.length,
+        itemBuilder: (BuildContext context, int index) {
+          return CategoriaWidget(index, "Categoría", categorias[index]);
+        });
   }
 }

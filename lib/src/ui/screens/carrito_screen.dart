@@ -17,11 +17,9 @@ class CarritoScreen extends StatelessWidget {
       "https://cdn.pixabay.com/photo/2016/09/12/18/56/ifa-1665443_960_720.jpg"
     ];
     return Scaffold(
-      body: Stack(
-        alignment: Alignment.bottomCenter,
+      body: Column(
         children: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(bottom: 147),
+          Expanded(
             child: ListView.builder(
                 padding: const EdgeInsets.only(
                     left: 5, right: 5, bottom: 20, top: 7),
@@ -32,7 +30,7 @@ class CarritoScreen extends StatelessWidget {
           ),
           Container(
             padding:
-                const EdgeInsets.only(top: 12, bottom: 12, left: 24, right: 24),
+                const EdgeInsets.only(top: 10, bottom: 12, left: 24, right: 24),
             width: double.maxFinite,
             decoration: BoxDecoration(color: Colors.black),
             child: Column(

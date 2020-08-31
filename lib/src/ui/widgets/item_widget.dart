@@ -36,7 +36,7 @@ class _ItemWidget extends State<ItemWidget> {
                     Padding(
                         padding: const EdgeInsets.only(left: 10, top: 10),
                         child: Container(
-                          width: width / 3,
+                          width: width / 2.5,
                           height: 100,
                           decoration: BoxDecoration(
                               image: DecorationImage(

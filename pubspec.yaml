@@ -45,8 +45,10 @@ flutter:
 
   assets:
     - assets/background.jpg
+    - assets/background.png
     - assets/logo.png
     - assets/logo_blanco.png
+    - assets/default_user.png
 
   fonts:
     - family: Quicksand
