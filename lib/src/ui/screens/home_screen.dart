@@ -41,19 +41,49 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   backgroundColor: Color.fromRGBO(255, 87, 51, 1),
                   title: new Text("INVERSIONES J&R IMPORT E.I.R.L",
                       style: TextStyle(
-                          fontFamily: 'Quicksand',
+                          fontFamily: "Quicksand",
                           fontWeight: FontWeight.bold)),
                   centerTitle: true,
                   pinned: true,
                   floating: true,
                   forceElevated: innerBoxIsScrolled,
                   bottom: new TabBar(
+                    labelStyle:
+                        TextStyle(fontSize: 12, fontFamily: "Quicksand"),
                     tabs: <Tab>[
-                      new Tab(icon: Icon(Icons.directions_car)),
-                      new Tab(icon: Icon(Icons.category)),
-                      new Tab(icon: Icon(Icons.shopping_cart)),
-                      new Tab(icon: Icon(Icons.library_books)),
-                      new Tab(icon: Icon(Icons.person))
+                      new Tab(
+                          text: "Productos", icon: Icon(Icons.directions_car)),
+                      new Tab(text: "Buscar", icon: Icon(Icons.category)),
+                      new Tab(
+                        // text: "Carrito", icon: Icon(Icons.shopping_cart)
+                        child: Stack(
+                          alignment: Alignment.topCenter,
+                          children: <Widget>[
+                            Icon(
+                              Icons.shopping_cart,
+                              size: 20
+                            ),
+                            if (4 > 0)
+                              Padding(
+                                padding: const EdgeInsets.only(left: 2.0),
+                                child: CircleAvatar(
+                                  radius: 8.0,
+                                  backgroundColor: Colors.red,
+                                  foregroundColor: Colors.white,
+                                  child: Text(
+                                    "2",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12.0,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                      new Tab(text: "Pedidos", icon: Icon(Icons.library_books)),
+                      new Tab(text: "Perfil", icon: Icon(Icons.person))
                     ],
                     controller: _tabController,
                   ),
