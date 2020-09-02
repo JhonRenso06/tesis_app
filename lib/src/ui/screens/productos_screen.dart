@@ -71,14 +71,13 @@ class ProductosScreen extends StatelessWidget {
         ),
         SliverGrid(
           gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: itemHeight,
-            mainAxisSpacing: 4,
-            crossAxisSpacing: 4,
-            childAspectRatio: (itemWidth / itemHeight)
-          ),
+              maxCrossAxisExtent: itemHeight,
+              mainAxisSpacing: 0,
+              crossAxisSpacing: 0,
+              childAspectRatio: (itemWidth / (itemHeight / 1.4))),
           delegate: SliverChildBuilderDelegate((context, int index) {
             return ProductoWidget(
-                index, "Producto $index", index, ofertas[index]);
+                index, "Organizador Nevera Multifuncional Para Auto $index", index, ofertas[index]);
           }, childCount: ofertas.length),
         )
       ],

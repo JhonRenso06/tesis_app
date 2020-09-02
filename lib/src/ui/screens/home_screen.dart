@@ -51,30 +51,26 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     labelStyle:
                         TextStyle(fontSize: 12, fontFamily: "Quicksand"),
                     tabs: <Tab>[
+                      new Tab(icon: Icon(Icons.directions_car)),
+                      new Tab(icon: Icon(Icons.category)),
                       new Tab(
-                          text: "Productos", icon: Icon(Icons.directions_car)),
-                      new Tab(text: "Buscar", icon: Icon(Icons.category)),
-                      new Tab(
-                        // text: "Carrito", icon: Icon(Icons.shopping_cart)
                         child: Stack(
                           alignment: Alignment.topCenter,
                           children: <Widget>[
-                            Icon(
-                              Icons.shopping_cart,
-                              size: 20
-                            ),
-                            if (4 > 0)
+                            Icon(Icons.shopping_cart, size: 25),
+                            if (1 > 0)
                               Padding(
-                                padding: const EdgeInsets.only(left: 2.0),
+                                padding:
+                                    const EdgeInsets.only(left: 15, bottom: 10),
                                 child: CircleAvatar(
-                                  radius: 8.0,
-                                  backgroundColor: Colors.red,
+                                  radius: 8,
+                                  backgroundColor: Colors.black,
                                   foregroundColor: Colors.white,
                                   child: Text(
                                     "2",
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 12.0,
+                                      fontSize: 10,
                                     ),
                                   ),
                                 ),
@@ -82,8 +78,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           ],
                         ),
                       ),
-                      new Tab(text: "Pedidos", icon: Icon(Icons.library_books)),
-                      new Tab(text: "Perfil", icon: Icon(Icons.person))
+                      new Tab(icon: Icon(Icons.library_books)),
+                      new Tab(icon: Icon(Icons.person))
                     ],
                     controller: _tabController,
                   ),

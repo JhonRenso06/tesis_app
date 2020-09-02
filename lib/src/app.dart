@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tesis_app/src/ui/screens/home_screen.dart';
 import 'package:tesis_app/src/ui/screens/inicial_screen.dart';
 
 class App extends StatelessWidget {
