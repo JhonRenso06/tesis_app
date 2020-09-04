@@ -6,12 +6,13 @@ class ProductosScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<String> ofertas = [
-      "https://cdn.pixabay.com/photo/2016/11/22/23/44/buildings-1851246_960_720.jpg",
-      "https://cdn.pixabay.com/photo/2016/03/26/22/32/fast-1281628_960_720.jpg",
-      "https://cdn.pixabay.com/photo/2016/11/24/14/00/christmas-tree-1856343_960_720.jpg",
-      "https://cdn.pixabay.com/photo/2016/10/20/06/00/fiat-1754723_960_720.jpg",
-      "https://cdn.pixabay.com/photo/2016/09/12/18/56/ifa-1665443_960_720.jpg",
-      "https://cdn.pixabay.com/photo/2016/11/22/23/44/buildings-1851246_960_720.jpg",
+      "https://png.pngtree.com/png-vector/20190411/ourlarge/pngtree-job-vacancy-flat-design-concept-png-image_926058.jpg",
+      "https://png.pngtree.com/png-vector/20190821/ourlarge/pngtree-sale-discount-offer-banner-promotion-special-offer-price-vector-illustration-png-image_1693312.jpg",
+      "https://png.pngtree.com/element_our/md/20180302/md_5a98f93a2fafc.jpg",
+      "https://www.seekpng.com/png/detail/238-2388746_oferta-semana-de-ofertas-png.png",
+      "https://png.pngtree.com/element_our/png_detail/20181130/flash-sale-banner-template-special-offer-with-thunder-png_253955.jpg"
+    ];
+    List<String> productos = [
       "https://cdn.pixabay.com/photo/2016/03/26/22/32/fast-1281628_960_720.jpg",
       "https://cdn.pixabay.com/photo/2016/11/24/14/00/christmas-tree-1856343_960_720.jpg",
       "https://cdn.pixabay.com/photo/2016/10/20/06/00/fiat-1754723_960_720.jpg",
@@ -43,7 +44,8 @@ class ProductosScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           SizedBox(
-                              height: 150,
+                              width: 400,
+                              height: 200,
                               child: Image.network(
                                 oferta,
                                 fit: BoxFit.contain,
@@ -77,8 +79,11 @@ class ProductosScreen extends StatelessWidget {
               childAspectRatio: (itemWidth / (itemHeight / 1.4))),
           delegate: SliverChildBuilderDelegate((context, int index) {
             return ProductoWidget(
-                index, "Organizador Nevera Multifuncional Para Auto $index", index, ofertas[index]);
-          }, childCount: ofertas.length),
+                index,
+                "Organizador Nevera Multifuncional Para Auto $index",
+                index,
+                productos[index]);
+          }, childCount: productos.length),
         )
       ],
     );

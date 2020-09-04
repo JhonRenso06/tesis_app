@@ -8,7 +8,7 @@ class App extends StatelessWidget {
       // home: HomeScreen(),
       home: InicialScreen(),
       theme: ThemeData(
-          // primaryColor: Color.fromRGBO(255, 45, 0, 1),
+          primaryColor: Color.fromRGBO(255, 45, 0, 1),
           fontFamily: 'Quicksand',
           inputDecorationTheme: InputDecorationTheme(
               focusedBorder: OutlineInputBorder(

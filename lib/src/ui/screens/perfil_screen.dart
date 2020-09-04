@@ -1,12 +1,13 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:tesis_app/src/ui/screens/direccion_screen.dart';
+import 'package:tesis_app/src/ui/screens/editar_perfil_screen.dart';
 import 'package:tesis_app/src/ui/widgets/direccion_widget.dart';
 
 class PerfilScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    MediaQueryData pantalla;
-    pantalla = MediaQuery.of(context);
+    MediaQueryData pantalla = MediaQuery.of(context);
     var width = pantalla.size.width;
     List<String> direcciones = [
       "https://cdn.pixabay.com/photo/2016/11/22/23/44/buildings-1851246_960_720.jpg",
@@ -32,7 +33,11 @@ class PerfilScreen extends StatelessWidget {
                       minWidth: 30,
                       padding: EdgeInsets.all(2),
                       onPressed: () {
-                        print("Editar perfil");
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => EditarPerfilScreen()),
+                        );
                       },
                       child: Icon(
                         Icons.edit,
@@ -110,7 +115,12 @@ class PerfilScreen extends StatelessWidget {
                 // minWidth: 30,
                 padding: EdgeInsets.only(left: 40),
                 onPressed: () {
-                  print("Añadir dirección de envío");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            DireccionScreen("Agregar dirección")),
+                  );
                 },
                 child: Icon(
                   Icons.add,
@@ -136,9 +146,11 @@ class PerfilScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: DireccionWidget())],
+                      children: <Widget>[
+                        Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: DireccionWidget())
+                      ],
                     ),
                   );
                 },

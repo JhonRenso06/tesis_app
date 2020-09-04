@@ -37,6 +37,15 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                   (BuildContext context, bool innerBoxIsScrolled) {
                 return <Widget>[
                   SliverAppBar(
+                    leading: MaterialButton(
+                        minWidth: 30,
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Icon(
+                          Icons.close,
+                          color: Colors.white,
+                        )),
                     backgroundColor: Color.fromRGBO(255, 87, 51, 1),
                     expandedHeight: 200.0,
                     floating: false,
@@ -107,7 +116,6 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-
                                 Padding(
                                   padding: const EdgeInsets.all(10),
                                   child: Container(
@@ -118,7 +126,6 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                                             fontWeight: FontWeight.bold)),
                                   ),
                                 ),
-
                                 Row(children: <Widget>[
                                   Expanded(
                                     child: Padding(
@@ -134,7 +141,6 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                                                   255, 87, 51, 1))),
                                     ),
                                   ),
-
                                   Padding(
                                     padding: const EdgeInsets.all(10),
                                     child: Container(
@@ -225,14 +231,12 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                                     ),
                                   )
                                 ]),
-
                                 Padding(
                                   padding: const EdgeInsets.only(
                                       top: 5, left: 10, right: 10, bottom: 5),
                                   child: Divider(
                                       color: Color.fromRGBO(224, 224, 224, 1)),
                                 ),
-
                                 Padding(
                                   padding: const EdgeInsets.only(
                                       top: 5, left: 10, right: 10, bottom: 5),
@@ -273,14 +277,12 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                                     ),
                                   ),
                                 ),
-                                
                                 Padding(
                                   padding: const EdgeInsets.only(
                                       top: 5, left: 10, right: 10, bottom: 5),
                                   child: Divider(
                                       color: Color.fromRGBO(224, 224, 224, 1)),
                                 ),
-                                
                                 Padding(
                                     padding: const EdgeInsets.only(
                                         top: 5, left: 10, right: 10),
@@ -288,14 +290,12 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                                         style: TextStyle(
                                             fontFamily: "Quicksand",
                                             fontWeight: FontWeight.bold))),
-                                
                                 Padding(
                                   padding: const EdgeInsets.only(
                                       top: 5, left: 10, right: 10, bottom: 5),
                                   child: Divider(
                                       color: Color.fromRGBO(224, 224, 224, 1)),
                                 ),
-                                
                                 Padding(
                                   padding: const EdgeInsets.only(
                                       top: 5, left: 10, right: 10, bottom: 5),
@@ -304,7 +304,6 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                                     style: TextStyle(fontFamily: "Quicksand"),
                                   ),
                                 ),
-                                
                                 Padding(
                                     padding: const EdgeInsets.only(
                                         top: 5, left: 10, right: 10),
@@ -312,14 +311,12 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                                         style: TextStyle(
                                             fontFamily: "Quicksand",
                                             fontWeight: FontWeight.bold))),
-                                
                                 Padding(
                                   padding: const EdgeInsets.only(
                                       top: 5, left: 10, right: 10, bottom: 5),
                                   child: Divider(
                                       color: Color.fromRGBO(224, 224, 224, 1)),
                                 ),
-                                
                                 Padding(
                                   padding: const EdgeInsets.only(
                                       top: 5, left: 10, right: 10, bottom: 5),

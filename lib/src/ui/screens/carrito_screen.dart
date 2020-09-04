@@ -45,52 +45,52 @@ class CarritoScreen extends StatelessWidget {
                     Row(
                       children: <Widget>[
                         Expanded(
-                            child: Text("Subtotal:",
+                            child: Text("Subtotal",
                                 style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 15,
-                                    fontFamily: "Quicksand",
-                                    fontWeight: FontWeight.bold))),
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontFamily: "Quicksand",
+                                ))),
                         Text("S/10000",
                             style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 15,
-                                fontFamily: "Quicksand",
-                                fontWeight: FontWeight.bold)),
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontFamily: "Quicksand",
+                            )),
                       ],
                     ),
                     Row(
                       children: <Widget>[
                         Expanded(
-                            child: Text("IGV:",
+                            child: Text("IGV",
                                 style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 15,
-                                    fontFamily: "Quicksand",
-                                    fontWeight: FontWeight.bold))),
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontFamily: "Quicksand",
+                                ))),
                         Text("S/2000",
                             style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 15,
-                                fontFamily: "Quicksand",
-                                fontWeight: FontWeight.bold)),
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontFamily: "Quicksand",
+                            )),
                       ],
                     ),
                     Row(
                       children: <Widget>[
                         Expanded(
-                            child: Text("Total:",
+                            child: Text("Total",
                                 style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 15,
-                                    fontFamily: "Quicksand",
-                                    fontWeight: FontWeight.bold))),
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontFamily: "Quicksand",
+                                ))),
                         Text("S/12000",
                             style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 15,
-                                fontFamily: "Quicksand",
-                                fontWeight: FontWeight.bold)),
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontFamily: "Quicksand",
+                            )),
                       ],
                     ),
                   ],

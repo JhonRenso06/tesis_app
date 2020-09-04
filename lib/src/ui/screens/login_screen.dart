@@ -4,41 +4,6 @@ import 'package:tesis_app/src/ui/screens/home_screen.dart';
 class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var email = TextFormField(
-      obscureText: false,
-      style: new TextStyle(fontSize: 20),
-      decoration: InputDecoration(
-        hintText: "Email",
-      ),
-    );
-    var password = TextFormField(
-      obscureText: true,
-      style: new TextStyle(fontSize: 20),
-      decoration: InputDecoration(
-        hintText: "Contraseña",
-      ),
-    );
-    var loginButton = Material(
-      color: Colors.black,
-      shape: const RoundedRectangleBorder(
-        side: BorderSide(color: Colors.white),
-        borderRadius: BorderRadius.all(Radius.circular(30.0)),
-      ),
-      child: MaterialButton(
-        minWidth: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => HomeScreen()),
-          );
-        },
-        child: Text("Iniciar sesión",
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 20.0, color: Colors.white)),
-      ),
-    );
-
     return SingleChildScrollView(
         child: Container(
       color: Colors.white,
@@ -59,11 +24,23 @@ class LoginScreen extends StatelessWidget {
             SizedBox(
               height: 15.0,
             ),
-            email,
+            TextFormField(
+              obscureText: false,
+              style: new TextStyle(fontSize: 20),
+              decoration: InputDecoration(
+                hintText: "Email",
+              ),
+            ),
             SizedBox(
               height: 15.0,
             ),
-            password,
+            TextFormField(
+              obscureText: true,
+              style: new TextStyle(fontSize: 20),
+              decoration: InputDecoration(
+                hintText: "Contraseña",
+              ),
+            ),
             Container(
                 width: double.maxFinite,
                 padding: const EdgeInsets.only(top: 20, bottom: 20),
@@ -73,7 +50,26 @@ class LoginScreen extends StatelessWidget {
                   style: TextStyle(
                       color: Colors.black, fontWeight: FontWeight.bold),
                 )),
-            loginButton
+            Material(
+              color: Colors.black,
+              shape: const RoundedRectangleBorder(
+                side: BorderSide(color: Colors.white),
+                borderRadius: BorderRadius.all(Radius.circular(30.0)),
+              ),
+              child: MaterialButton(
+                minWidth: MediaQuery.of(context).size.width,
+                padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomeScreen()),
+                  );
+                },
+                child: Text("Iniciar sesión",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 20.0, color: Colors.white)),
+              ),
+            )
           ],
         ),
       ),

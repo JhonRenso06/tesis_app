@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tesis_app/src/ui/screens/direccion_screen.dart';
 
 class DireccionWidget extends StatefulWidget {
   // final int codigo;
@@ -80,7 +81,12 @@ class _DireccionWidget extends State<DireccionWidget> {
           RaisedButton(
               padding: EdgeInsets.only(left: 10, right: 10),
               onPressed: () {
-                print("Editar dirección");
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          DireccionScreen("Editar dirección")),
+                );
               },
               child: Text(
                 "Editar",
