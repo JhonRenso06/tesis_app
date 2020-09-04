@@ -73,7 +73,7 @@ class ProductosScreen extends StatelessWidget {
         ),
         SliverGrid(
           gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: itemHeight,
+              maxCrossAxisExtent: itemWidth / 2,
               mainAxisSpacing: 0,
               crossAxisSpacing: 0,
               childAspectRatio: (itemWidth / (itemHeight / 1.4))),
