@@ -61,9 +61,8 @@ class LoginScreen extends StatelessWidget {
                 padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                 onPressed: () {
                   Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (context) => HomeScreen()),
-                    (_)=>false
-                  );
+                      MaterialPageRoute(builder: (context) => HomeScreen()),
+                      (_) => false);
                 },
                 child: Text("Iniciar sesión",
                     textAlign: TextAlign.center,

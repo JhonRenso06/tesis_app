@@ -36,12 +36,26 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                   (BuildContext context, bool innerBoxIsScrolled) {
                 return <Widget>[
                   SliverAppBar(
-                    leading: MaterialButton(
-                        minWidth: 30,
+                    leading: Material(
+                      color: Colors.transparent,
+                      child: IconButton(
+                        icon: Icon(Icons.close, color: Colors.white),  
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        child: Icon(Icons.close, color: Colors.white)),
+                      ),
+                    ),
+                    actions: [
+                      Material(
+                        color: Colors.transparent,
+                        child: IconButton(
+                          icon: Icon(Icons.shopping_cart), 
+                          onPressed: (){
+
+                          }
+                        ),
+                      )
+                    ],
                     backgroundColor: Color.fromRGBO(77, 17, 48, 1),
                     expandedHeight: MediaQuery.of(context).size.width * 0.9,
                     floating: false,
@@ -100,23 +114,17 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                                   }).toList()),
                             ),
                           ),
-                          Positioned(
-                              top: MediaQuery.of(context).padding.top,
-                              child: Material(
-                                color: Colors.red,
-                                child: Container(
-                                  color: Colors.green,
-                                  height: 50,
-                                  width: double.maxFinite,
-                                  child: Text("ajsfsaklasnkasnk"),
-                                  // decoration: BoxDecoration(
-                                  //   gradient: LinearGradient(
-                                  //       colors: [Colors.green, Colors.yellow],
-                                  //       end: Alignment.bottomCenter,
-                                  //       begin: Alignment.topCenter),
-                                  // ),
+                          Container(
+                            height: kToolbarHeight + MediaQuery.of(context).padding.top,
+                                width: double.maxFinite,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [ Colors.black87, Colors.transparent],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter
+                                  )
                                 ),
-                              ))
+                              )
                         ],
                       ),
                     ),

@@ -46,12 +46,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   pinned: true,
                   floating: true,
                   actions: <Widget>[
-                    IconButton(
-                      icon: Icon(Icons.search), 
-                      onPressed: (){
-
-                      }
-                    )
+                    IconButton(icon: Icon(Icons.search), onPressed: () {})
                   ],
                   forceElevated: innerBoxIsScrolled,
                   bottom: new TabBar(
