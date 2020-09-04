@@ -27,7 +27,7 @@ class _LineaDePedidoWidget extends State<LineaDePedidoWidget> {
         child: Material(
             // color: Color.fromRGBO(169, 169, 169, 0.5),
             shape: const RoundedRectangleBorder(
-              // side: BorderSide(color: Color.fromRGBO(255, 87, 51, 1)),
+              // side: BorderSide(color: Color.fromRGBO(77, 17, 48, 1)),
               borderRadius: BorderRadius.all(Radius.circular(5)),
             ),
             child: Column(children: <Widget>[

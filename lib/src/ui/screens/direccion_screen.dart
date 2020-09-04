@@ -8,8 +8,8 @@ class DireccionScreen extends StatefulWidget {
 }
 
 class _DireccionScreenState extends State<DireccionScreen> {
-  @override
   String dropdownValue;
+  @override
   void initState() {
     dropdownValue = "Casa";
     super.initState();
@@ -50,13 +50,13 @@ class _DireccionScreenState extends State<DireccionScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 TextFormField(
-                  cursorColor: Color.fromRGBO(255, 87, 51, 1),
+                  cursorColor: Color.fromRGBO(77, 17, 48, 1),
                   obscureText: false,
                   style: new TextStyle(fontFamily: "Quicksand", fontSize: 12.5),
                   decoration: InputDecoration(
                     focusedBorder: UnderlineInputBorder(
                       borderSide:
-                          BorderSide(color: Color.fromRGBO(255, 87, 51, 1)),
+                          BorderSide(color: Color.fromRGBO(77, 17, 48, 1)),
                     ),
                     hintText: "Nombre",
                   ),
@@ -65,7 +65,7 @@ class _DireccionScreenState extends State<DireccionScreen> {
                   height: 15.0,
                 ),
                 TextFormField(
-                  cursorColor: Color.fromRGBO(255, 87, 51, 1),
+                  cursorColor: Color.fromRGBO(77, 17, 48, 1),
                   obscureText: false,
                   style: new TextStyle(fontFamily: "Quicksand", fontSize: 12.5),
                   decoration: InputDecoration(
@@ -79,7 +79,7 @@ class _DireccionScreenState extends State<DireccionScreen> {
                   height: 15.0,
                 ),
                 TextFormField(
-                  cursorColor: Color.fromRGBO(255, 87, 51, 1),
+                  cursorColor: Color.fromRGBO(77, 17, 48, 1),
                   obscureText: false,
                   style: new TextStyle(fontFamily: "Quicksand", fontSize: 12.5),
                   decoration: InputDecoration(

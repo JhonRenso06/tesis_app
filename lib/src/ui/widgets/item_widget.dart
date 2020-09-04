@@ -142,7 +142,7 @@ class _ItemWidget extends State<ItemWidget> {
                         height: 30,
                         width: 60,
                         child: ButtonTheme(
-                          buttonColor: Color.fromRGBO(255, 87, 51, 1),
+                          buttonColor: Color.fromRGBO(77, 17, 48, 1),
                           shape: RoundedRectangleBorder(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(30))),
@@ -159,7 +159,7 @@ class _ItemWidget extends State<ItemWidget> {
                   ]),
               Padding(
                 padding: const EdgeInsets.only(left: 10, right: 10),
-                child: Divider(color: Color.fromRGBO(255, 87, 51, 1)),
+                child: Divider(color: Color.fromRGBO(77, 17, 48, 1)),
               ),
             ])));
   }

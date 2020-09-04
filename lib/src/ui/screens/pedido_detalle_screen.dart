@@ -149,7 +149,7 @@ class _PedidoDetalleScreenState extends State<PedidoDetalleScreen> {
                             ))),
                     Text("S/10000",
                         style: TextStyle(
-                          color: Color.fromRGBO(255, 87, 51, 1),
+                          color: Color.fromRGBO(77, 17, 48, 1),
                           fontSize: 10,
                           fontFamily: "Quicksand",
                         )),

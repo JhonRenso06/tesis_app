@@ -92,7 +92,7 @@ class _DireccionWidget extends State<DireccionWidget> {
                 "Editar",
                 style: TextStyle(color: Colors.white, fontFamily: "Quicksand"),
               ),
-              // color: Color.fromRGBO(255, 87, 51, 1),
+              // color: Color.fromRGBO(77, 17, 48, 1),
               color: Colors.black,
               elevation: 0,
               shape: RoundedRectangleBorder(

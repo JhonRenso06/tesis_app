@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:tesis_app/src/model/producto.dart';
 import 'package:tesis_app/src/ui/screens/producto_detalle_screen.dart';
 
 class ProductoWidget extends StatefulWidget {
-  final int codigo;
-  final String nombre, foto;
-  final num precio;
+  final Producto producto;
 
-  ProductoWidget(this.codigo, this.nombre, this.precio, this.foto);
+  ProductoWidget(this.producto);
 
   @override
   State<StatefulWidget> createState() => _ProductoWidget();
@@ -32,17 +31,12 @@ class _ProductoWidget extends State<ProductoWidget> {
             ),
             child: Column(children: <Widget>[
               MaterialButton(
-                // minWidth: 30,
-                // padding: EdgeInsets.fromLTRB(0),
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => ProductoDetalleScreen(
-                            widget.codigo,
-                            widget.nombre,
-                            widget.precio,
-                            widget.foto)),
+                        builder: (context) =>
+                            ProductoDetalleScreen(widget.producto)),
                   );
                 },
                 child: Container(
@@ -50,19 +44,46 @@ class _ProductoWidget extends State<ProductoWidget> {
                   height: 150,
                   decoration: BoxDecoration(
                       image: DecorationImage(
-                          fit: BoxFit.cover, image: NetworkImage(widget.foto)),
+                          fit: BoxFit.cover,
+                          image: NetworkImage(widget.producto.fotos[0])),
                       borderRadius: BorderRadius.all(Radius.circular(5))),
                 ),
               ),
-              Text(widget.nombre.substring(0, 20) + "...",
+              Text(widget.producto.nombre.substring(0, 20) + "...",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontFamily: "Quicksand", fontSize: 15)),
-              Text("S/" + widget.precio.toString(),
-                  style: TextStyle(
-                      fontFamily: "Quicksand",
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black)),
+              widget.producto.descuento != null && widget.producto.descuento > 0
+                  ? Column(children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text("S/" + widget.producto.precioToFixed,
+                              style: TextStyle(
+                                  decoration: TextDecoration.lineThrough,
+                                  fontFamily: "Quicksand",
+                                  fontSize: 15,
+                                  color: Colors.grey)),
+                          Text(" " + widget.producto.porcentajeDescuento,
+                              style: TextStyle(
+                                  fontFamily: "Quicksand",
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black)),
+                        ],
+                      ),
+                      Text("S/" + widget.producto.precioDescuentoToFixed,
+                          style: TextStyle(
+                              fontFamily: "Quicksand",
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromRGBO(77, 17, 48, 1))),
+                    ])
+                  : Text("S/" + widget.producto.precioToFixed,
+                      style: TextStyle(
+                          fontFamily: "Quicksand",
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black))
             ])));
   }
 }

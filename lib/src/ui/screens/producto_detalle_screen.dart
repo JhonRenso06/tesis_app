@@ -1,12 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:tesis_app/src/model/producto.dart';
+import 'package:tesis_app/src/ui/widgets/caracteristicas_widget.dart';
 
 class ProductoDetalleScreen extends StatefulWidget {
-  final int codigo;
-  final String nombre, foto;
-  final num precio;
+  final Producto producto;
 
-  ProductoDetalleScreen(this.codigo, this.nombre, this.precio, this.foto);
+  ProductoDetalleScreen(this.producto);
 
   @override
   State<StatefulWidget> createState() => _ProductoDetalleScreen();
@@ -23,8 +24,6 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> fotos = [];
-    fotos.add(widget.foto);
     pantalla = MediaQuery.of(context);
     var width = pantalla.size.width;
 
@@ -42,12 +41,9 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        child: Icon(
-                          Icons.close,
-                          color: Colors.white,
-                        )),
-                    backgroundColor: Color.fromRGBO(255, 87, 51, 1),
-                    expandedHeight: 200.0,
+                        child: Icon(Icons.close, color: Colors.white)),
+                    backgroundColor: Color.fromRGBO(77, 17, 48, 1),
+                    expandedHeight: MediaQuery.of(context).size.width * 0.9,
                     floating: false,
                     pinned: true,
                     flexibleSpace: FlexibleSpaceBar(
@@ -65,14 +61,18 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                                   },
                                   enableInfiniteScroll: true,
                                   autoPlay: false),
-                              items: fotos.map((oferta) {
+                              items: widget.producto.fotos.map((foto) {
                                 return SizedBox(
-                                    width: width,
-                                    // height: 150,
-                                    child: Image.network(
-                                      oferta,
-                                      fit: BoxFit.cover,
-                                    ));
+                                  width: width,
+                                  child: CachedNetworkImage(
+                                    fit: BoxFit.cover,
+                                    imageUrl: foto,
+                                    placeholder: (context, url) =>
+                                        CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) =>
+                                        Icon(Icons.error),
+                                  ),
+                                );
                               }).toList(),
                             ),
                           ),
@@ -82,8 +82,9 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                               width: width,
                               child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
-                                  children: fotos.map((url) {
-                                    int index = fotos.indexOf(url);
+                                  children: widget.producto.fotos.map((foto) {
+                                    int index =
+                                        widget.producto.fotos.indexOf(foto);
                                     return Container(
                                       width: 8.0,
                                       height: 8.0,
@@ -92,13 +93,30 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
                                         color: _current == index
-                                            ? Color.fromRGBO(255, 87, 51, 1)
+                                            ? Color.fromRGBO(77, 17, 48, 1)
                                             : Color.fromRGBO(0, 0, 0, 0.2),
                                       ),
                                     );
                                   }).toList()),
                             ),
                           ),
+                          Positioned(
+                              top: MediaQuery.of(context).padding.top,
+                              child: Material(
+                                color: Colors.red,
+                                child: Container(
+                                  color: Colors.green,
+                                  height: 50,
+                                  width: double.maxFinite,
+                                  child: Text("ajsfsaklasnkasnk"),
+                                  // decoration: BoxDecoration(
+                                  //   gradient: LinearGradient(
+                                  //       colors: [Colors.green, Colors.yellow],
+                                  //       end: Alignment.bottomCenter,
+                                  //       begin: Alignment.topCenter),
+                                  // ),
+                                ),
+                              ))
                         ],
                       ),
                     ),
@@ -119,7 +137,7 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                                 Padding(
                                   padding: const EdgeInsets.all(10),
                                   child: Container(
-                                    child: Text(widget.nombre,
+                                    child: Text(widget.producto.nombre,
                                         style: TextStyle(
                                             fontFamily: "Quicksand",
                                             fontSize: 20,
@@ -131,14 +149,59 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                                     child: Padding(
                                       padding: const EdgeInsets.only(
                                           left: 15, right: 15),
-                                      child: Text("S/ 4300.00",
-                                          textAlign: TextAlign.start,
-                                          style: TextStyle(
-                                              fontFamily: "Quicksand",
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold,
-                                              color: Color.fromRGBO(
-                                                  255, 87, 51, 1))),
+                                      child: widget.producto.descuento !=
+                                                  null &&
+                                              widget.producto.descuento > 0
+                                          ? Column(children: <Widget>[
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: <Widget>[
+                                                  Text(
+                                                      "S/" +
+                                                          widget.producto
+                                                              .precioToFixed,
+                                                      style: TextStyle(
+                                                          decoration:
+                                                              TextDecoration
+                                                                  .lineThrough,
+                                                          fontFamily:
+                                                              "Quicksand",
+                                                          fontSize: 15,
+                                                          color: Colors.grey)),
+                                                  Text(
+                                                      " " +
+                                                          widget.producto
+                                                              .porcentajeDescuento,
+                                                      style: TextStyle(
+                                                          fontFamily:
+                                                              "Quicksand",
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.black)),
+                                                ],
+                                              ),
+                                              Text(
+                                                  "S/" +
+                                                      widget.producto
+                                                          .precioDescuentoToFixed,
+                                                  style: TextStyle(
+                                                      fontFamily: "Quicksand",
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Color.fromRGBO(
+                                                          77, 17, 48, 1))),
+                                            ])
+                                          : Text(
+                                              "S/" +
+                                                  widget.producto.precioToFixed,
+                                              style: TextStyle(
+                                                  fontFamily: "Quicksand",
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black)),
                                     ),
                                   ),
                                   Padding(
@@ -283,48 +346,70 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                                   child: Divider(
                                       color: Color.fromRGBO(224, 224, 224, 1)),
                                 ),
-                                Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 5, left: 10, right: 10),
-                                    child: Text("Descripción",
-                                        style: TextStyle(
-                                            fontFamily: "Quicksand",
-                                            fontWeight: FontWeight.bold))),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 5, left: 10, right: 10, bottom: 5),
-                                  child: Divider(
-                                      color: Color.fromRGBO(224, 224, 224, 1)),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 5, left: 10, right: 10, bottom: 5),
-                                  child: Text(
-                                    "",
-                                    style: TextStyle(fontFamily: "Quicksand"),
-                                  ),
-                                ),
-                                Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 5, left: 10, right: 10),
-                                    child: Text("Características",
-                                        style: TextStyle(
-                                            fontFamily: "Quicksand",
-                                            fontWeight: FontWeight.bold))),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 5, left: 10, right: 10, bottom: 5),
-                                  child: Divider(
-                                      color: Color.fromRGBO(224, 224, 224, 1)),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 5, left: 10, right: 10, bottom: 5),
-                                  child: Text(
-                                    "",
-                                    style: TextStyle(fontFamily: "Quicksand"),
-                                  ),
-                                ),
+                                widget.producto.descripcion != null
+                                    ? Column(children: <Widget>[
+                                        Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 5, left: 10, right: 10),
+                                            child: Text("Descripción",
+                                                style: TextStyle(
+                                                    fontFamily: "Quicksand",
+                                                    fontWeight:
+                                                        FontWeight.bold))),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 5,
+                                              left: 10,
+                                              right: 10,
+                                              bottom: 5),
+                                          child: Divider(
+                                              color: Color.fromRGBO(
+                                                  224, 224, 224, 1)),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 5,
+                                              left: 10,
+                                              right: 10,
+                                              bottom: 5),
+                                          child: Text(
+                                            widget.producto.descripcion,
+                                            style: TextStyle(
+                                                fontFamily: "Quicksand"),
+                                          ),
+                                        ),
+                                      ])
+                                    : SizedBox.shrink(),
+                                widget.producto.caracteristicas != null
+                                    ? Column(children: <Widget>[
+                                        Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 5, left: 10, right: 10),
+                                            child: Text("Características",
+                                                style: TextStyle(
+                                                    fontFamily: "Quicksand",
+                                                    fontWeight:
+                                                        FontWeight.bold))),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 5,
+                                              left: 10,
+                                              right: 10,
+                                              bottom: 5),
+                                          child: Divider(
+                                              color: Color.fromRGBO(
+                                                  224, 224, 224, 1)),
+                                        ),
+                                        Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 5,
+                                                left: 10,
+                                                right: 10,
+                                                bottom: 5),
+                                            child: CaracteristicasWidget(widget
+                                                .producto.caracteristicas)),
+                                      ])
+                                    : SizedBox.shrink()
                               ],
                             )),
                       ]);

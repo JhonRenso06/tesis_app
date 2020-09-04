@@ -57,13 +57,13 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
                   ),
                 ),
                 TextFormField(
-                  cursorColor: Color.fromRGBO(255, 87, 51, 1),
+                  cursorColor: Color.fromRGBO(77, 17, 48, 1),
                   obscureText: false,
                   style: new TextStyle(fontFamily: "Quicksand", fontSize: 12.5),
                   decoration: InputDecoration(
                     focusedBorder: UnderlineInputBorder(
                       borderSide:
-                          BorderSide(color: Color.fromRGBO(255, 87, 51, 1)),
+                          BorderSide(color: Color.fromRGBO(77, 17, 48, 1)),
                     ),
                     hintText: "Nombre",
                   ),
@@ -72,7 +72,7 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
                   height: 15.0,
                 ),
                 TextFormField(
-                  cursorColor: Color.fromRGBO(255, 87, 51, 1),
+                  cursorColor: Color.fromRGBO(77, 17, 48, 1),
                   obscureText: false,
                   style: new TextStyle(fontFamily: "Quicksand", fontSize: 12.5),
                   decoration: InputDecoration(
@@ -86,7 +86,7 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
                   height: 15.0,
                 ),
                 TextFormField(
-                  cursorColor: Color.fromRGBO(255, 87, 51, 1),
+                  cursorColor: Color.fromRGBO(77, 17, 48, 1),
                   obscureText: false,
                   style: new TextStyle(fontFamily: "Quicksand", fontSize: 12.5),
                   decoration: InputDecoration(
@@ -100,7 +100,7 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
                   height: 15.0,
                 ),
                 TextFormField(
-                  cursorColor: Color.fromRGBO(255, 87, 51, 1),
+                  cursorColor: Color.fromRGBO(77, 17, 48, 1),
                   obscureText: true,
                   style: new TextStyle(fontFamily: "Quicksand", fontSize: 12.5),
                   decoration: InputDecoration(
