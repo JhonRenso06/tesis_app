@@ -37,15 +37,22 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 (BuildContext context, bool innerBoxIsScrolled) {
               return <Widget>[
                 new SliverAppBar(
-                  // backgroundColor: Theme.of(context).primaryColor,
-                  backgroundColor: Color.fromRGBO(255, 87, 51, 1),
-                  title: new Text("INVERSIONES J&R IMPORT E.I.R.L",
+                  backgroundColor: Color.fromRGBO(77, 17, 48, 1),
+                  title: new Text("J&R Store",
                       style: TextStyle(
                           fontFamily: "Quicksand",
                           fontWeight: FontWeight.bold)),
                   centerTitle: true,
                   pinned: true,
                   floating: true,
+                  actions: <Widget>[
+                    IconButton(
+                      icon: Icon(Icons.search), 
+                      onPressed: (){
+
+                      }
+                    )
+                  ],
                   forceElevated: innerBoxIsScrolled,
                   bottom: new TabBar(
                     labelStyle:
