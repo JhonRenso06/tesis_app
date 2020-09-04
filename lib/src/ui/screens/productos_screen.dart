@@ -73,17 +73,17 @@ class ProductosScreen extends StatelessWidget {
         ),
         SliverGrid(
           gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: itemHeight,
+              maxCrossAxisExtent: MediaQuery.of(context).size.width/2,
               mainAxisSpacing: 0,
               crossAxisSpacing: 0,
-              childAspectRatio: (itemWidth / (itemHeight / 1.4))),
+          ),
           delegate: SliverChildBuilderDelegate((context, int index) {
             return ProductoWidget(
                 index,
                 "Organizador Nevera Multifuncional Para Auto $index",
                 index,
                 productos[index]);
-          }, childCount: productos.length),
+          }, childCount: productos.length,),
         )
       ],
     );
