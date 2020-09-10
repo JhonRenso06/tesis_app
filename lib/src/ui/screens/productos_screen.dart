@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:tesis_app/src/model/caracteristicas.dart';
-import 'package:tesis_app/src/model/pedido.dart';
 import 'package:tesis_app/src/model/producto.dart';
 import 'package:tesis_app/src/ui/widgets/producto_widget.dart';
 

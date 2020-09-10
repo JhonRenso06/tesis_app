@@ -1,5 +1,3 @@
-import 'dart:js';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tesis_app/src/model/linea_de_pedido.dart';
