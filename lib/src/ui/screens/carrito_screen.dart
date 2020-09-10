@@ -1,21 +1,17 @@
+import 'dart:js';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tesis_app/src/model/linea_de_pedido.dart';
+import 'package:tesis_app/src/providers/carrito_provider.dart';
 import 'package:tesis_app/src/ui/widgets/item_widget.dart';
 
 class CarritoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    List<String> items = [
-      "https://cdn.pixabay.com/photo/2016/11/22/23/44/buildings-1851246_960_720.jpg",
-      "https://cdn.pixabay.com/photo/2016/03/26/22/32/fast-1281628_960_720.jpg",
-      "https://cdn.pixabay.com/photo/2016/11/24/14/00/christmas-tree-1856343_960_720.jpg",
-      "https://cdn.pixabay.com/photo/2016/10/20/06/00/fiat-1754723_960_720.jpg",
-      "https://cdn.pixabay.com/photo/2016/09/12/18/56/ifa-1665443_960_720.jpg",
-      "https://cdn.pixabay.com/photo/2016/11/22/23/44/buildings-1851246_960_720.jpg",
-      "https://cdn.pixabay.com/photo/2016/03/26/22/32/fast-1281628_960_720.jpg",
-      "https://cdn.pixabay.com/photo/2016/11/24/14/00/christmas-tree-1856343_960_720.jpg",
-      "https://cdn.pixabay.com/photo/2016/10/20/06/00/fiat-1754723_960_720.jpg",
-      "https://cdn.pixabay.com/photo/2016/09/12/18/56/ifa-1665443_960_720.jpg"
-    ];
+    var carritoProvider = Provider.of<CarritoProvider>(context);
+    List<LineaDePedido> lineasDePedido = carritoProvider.lineasDePedido;
+
     return Scaffold(
       body: Column(
         children: <Widget>[
@@ -23,9 +19,9 @@ class CarritoScreen extends StatelessWidget {
             child: ListView.builder(
                 padding: const EdgeInsets.only(
                     left: 5, right: 5, bottom: 20, top: 7),
-                itemCount: items.length,
+                itemCount: lineasDePedido.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return ItemWidget(index, items[index]);
+                  return ItemWidget(lineasDePedido[index]);
                 }),
           ),
           Container(
@@ -51,7 +47,7 @@ class CarritoScreen extends StatelessWidget {
                                   fontSize: 15,
                                   fontFamily: "Quicksand",
                                 ))),
-                        Text("S/10000",
+                        Text(carritoProvider.pedido.subtotal.toString(),
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 15,

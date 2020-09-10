@@ -10,7 +10,7 @@ class Producto {
   List<Caracteristicas> caracteristicas;
   TipoDeProducto tipo;
   bool exonerado;
-  num id, precio, descuento, peso, medida;
+  num id, precio, descuento, peso, medida, stock;
   Moneda moneda;
 
   Producto(
@@ -26,6 +26,7 @@ class Producto {
       this.precio,
       this.descuento,
       this.peso,
+      this.stock,
       this.medida,
       this.moneda});
 
@@ -53,6 +54,7 @@ class Producto {
     this.precio = data["precio"];
     this.descuento = data["descuento"];
     this.peso = data["peso"];
+    this.stock = data["stock"];
     this.medida = data["medida"];
     switch (data["moneda"]) {
       case "SOLES":

@@ -2,6 +2,8 @@ import 'package:tesis_app/src/model/direccion.dart';
 import 'package:tesis_app/src/model/enums/metodo_de_pago.dart';
 import 'package:tesis_app/src/model/enums/moneda.dart';
 import 'package:tesis_app/src/model/enums/tipo_de_comprobante.dart';
+import 'package:tesis_app/src/model/linea_de_pedido.dart';
+import 'package:tesis_app/src/model/producto.dart';
 
 class Pedido {
   num id, subtotal, igv, total, envio;
@@ -11,9 +13,10 @@ class Pedido {
   TipoDeComprobante tipoDeComprobante;
   Moneda moneda;
   String serieDeCorrelativo, numeroDeCorrelativo;
+  List<LineaDePedido> lineasDePedido;
 
   Pedido(
-      this.id,
+      {this.id,
       this.subtotal,
       this.igv,
       this.total,
@@ -24,7 +27,12 @@ class Pedido {
       this.tipoDeComprobante,
       this.moneda,
       this.serieDeCorrelativo,
-      this.numeroDeCorrelativo);
+      this.numeroDeCorrelativo,
+      this.lineasDePedido}) {
+    if (this.lineasDePedido == null) {
+      this.lineasDePedido = new List();
+    }
+  }
 
   Pedido.fromMap(Map<String, dynamic> data) {
     this.id = data["id"];
@@ -71,5 +79,29 @@ class Pedido {
     }
     this.serieDeCorrelativo = data["serieDeCorrelativo"];
     this.numeroDeCorrelativo = data["numeroDeCorrelativo"];
+
+    this.lineasDePedido = new List();
+    if (data["lineasDePedido"] != null) {
+      List<dynamic> lineasDePedidoAux = data["lineasDePedido"];
+      lineasDePedidoAux.forEach((element) {
+        this.lineasDePedido.add(new LineaDePedido.fromMap(element));
+      });
+    }
   }
+
+  addLineaDePedido(int cantidad, Producto producto) {
+    try {
+      var lineaExistente = lineasDePedido.firstWhere(
+          (lineaDePedido) => lineaDePedido.producto.id == producto.id);
+      lineaExistente.cantidad = cantidad;
+    } catch (_) {
+      this
+          .lineasDePedido
+          .add(new LineaDePedido.conSubtotal(cantidad, producto));
+    }
+  }
+
+  get cantidad => this.lineasDePedido.length;
+
+  // get igv => this.
 }

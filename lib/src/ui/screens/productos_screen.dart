@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:tesis_app/src/model/caracteristicas.dart';
+import 'package:tesis_app/src/model/pedido.dart';
 import 'package:tesis_app/src/model/producto.dart';
 import 'package:tesis_app/src/ui/widgets/producto_widget.dart';
 
@@ -26,6 +27,7 @@ class ProductosScreen extends StatelessWidget {
             "https://i.linio.com/p/57acb9aca5afb465f41000764a265eff-zoom.webp",
             "https://i.linio.com/p/a1658766902940d3b518b98547554301-zoom.webp"
           ],
+          stock: 20,
           precio: 9.90,
           descuento: 0.1),
       new Producto(
@@ -34,6 +36,7 @@ class ProductosScreen extends StatelessWidget {
           fotos: [
             "https://i.linio.com/p/74776ea7bffcb8b549babc25bfa43538-zoom.webp"
           ],
+          stock: 10,
           precio: 34),
       new Producto(
           id: 3,
@@ -45,6 +48,7 @@ class ProductosScreen extends StatelessWidget {
             "https://i.linio.com/p/7799ee5b62c8970d107f8f5774b86689-zoom.webp",
             "https://i.linio.com/p/819092b8cae281e005459db738c7afda-zoom.webp"
           ],
+          stock: 0,
           precio: 99,
           descuento: 0.2),
       new Producto(
@@ -54,6 +58,7 @@ class ProductosScreen extends StatelessWidget {
           fotos: [
             "https://i.linio.com/p/ce8fd941442525eb0b25d1b55281805c-zoom.webp"
           ],
+          stock: 16,
           precio: 24.99,
           descuento: 0.5)
     ];

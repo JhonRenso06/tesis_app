@@ -31,24 +31,49 @@ class _ProductoWidget extends State<ProductoWidget> {
             ),
             child: Column(children: <Widget>[
               MaterialButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            ProductoDetalleScreen(widget.producto)),
-                  );
-                },
-                child: Container(
-                  width: width,
-                  height: 150,
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: NetworkImage(widget.producto.fotos[0])),
-                      borderRadius: BorderRadius.all(Radius.circular(5))),
-                ),
-              ),
+                  onPressed: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              ProductoDetalleScreen(widget.producto)),
+                    );
+                    setState(() {});
+                  },
+                  child: widget.producto.stock > 0
+                      ? Container(
+                          width: width,
+                          height: 150,
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image:
+                                      NetworkImage(widget.producto.fotos[0])),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5))),
+                        )
+                      : Container(
+                          width: width,
+                          height: 150,
+                          child: Center(
+                              child: Text(
+                            "Agotado",
+                            style: TextStyle(
+                                fontFamily: "Quicksand",
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold),
+                          )),
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  colorFilter: ColorFilter.mode(
+                                      Colors.black.withOpacity(0.2),
+                                      BlendMode.dstATop),
+                                  fit: BoxFit.cover,
+                                  image:
+                                      NetworkImage(widget.producto.fotos[0])),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5))),
+                        )),
               Text(widget.producto.nombre.substring(0, 20) + "...",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontFamily: "Quicksand", fontSize: 15)),

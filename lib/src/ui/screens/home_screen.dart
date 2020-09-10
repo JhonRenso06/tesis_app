@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tesis_app/src/providers/carrito_provider.dart';
 import 'package:tesis_app/src/ui/screens/carrito_screen.dart';
 import 'package:tesis_app/src/ui/screens/categorias_screen.dart';
 import 'package:tesis_app/src/ui/screens/pedidos_screen.dart';
 import 'package:tesis_app/src/ui/screens/perfil_screen.dart';
 import 'package:tesis_app/src/ui/screens/productos_screen.dart';
+import 'package:tesis_app/src/ui/widgets/cantidad_carrito_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -25,6 +28,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    var carritoProvider = Provider.of<CarritoProvider>(context);
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: DefaultTabController(
@@ -56,30 +61,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       new Tab(icon: Icon(Icons.directions_car)),
                       new Tab(icon: Icon(Icons.category)),
                       new Tab(
-                        child: Stack(
-                          alignment: Alignment.topCenter,
-                          children: <Widget>[
-                            Icon(Icons.shopping_cart, size: 25),
-                            if (1 > 0)
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 15, bottom: 10),
-                                child: CircleAvatar(
-                                  radius: 8,
-                                  backgroundColor: Colors.black,
-                                  foregroundColor: Colors.white,
-                                  child: Text(
-                                    "2",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 10,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
+                          child:
+                              CantidadCarritoWidget(carritoProvider.cantidad)),
                       new Tab(icon: Icon(Icons.library_books)),
                       new Tab(icon: Icon(Icons.person))
                     ],

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:tesis_app/src/model/linea_de_pedido.dart';
+import 'package:tesis_app/src/model/producto.dart';
 
 class ItemWidget extends StatefulWidget {
-  final int index;
-  final String foto;
-
-  ItemWidget(this.index, this.foto);
+  final LineaDePedido lineaDePedido;
+  ItemWidget(this.lineaDePedido);
   @override
   State<StatefulWidget> createState() => _ItemWidget();
 }
@@ -12,8 +12,10 @@ class ItemWidget extends StatefulWidget {
 class _ItemWidget extends State<ItemWidget> {
   TextEditingController cantidadController = new TextEditingController();
   MediaQueryData pantalla;
+  Producto producto;
   initState() {
     super.initState();
+    producto = widget.lineaDePedido.producto;
   }
 
   @override
@@ -36,10 +38,10 @@ class _ItemWidget extends State<ItemWidget> {
                     decoration: BoxDecoration(
                         image: DecorationImage(
                             fit: BoxFit.cover,
-                            image: NetworkImage(widget.foto)),
+                            image: NetworkImage(producto.fotos[0])),
                         borderRadius: BorderRadius.all(Radius.circular(5))),
                   )),
-              Text("Accesorio para auto " + widget.index.toString(),
+              Text(producto.nombre,
                   style: TextStyle(
                       fontFamily: "Quicksand",
                       fontSize: 15,
@@ -47,7 +49,7 @@ class _ItemWidget extends State<ItemWidget> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text("Precio: S/34.000",
+                  Text("Precio: S/" + producto.precioToFixed,
                       textAlign: TextAlign.start,
                       style: TextStyle(
                           fontFamily: "Quicksand",
@@ -58,7 +60,7 @@ class _ItemWidget extends State<ItemWidget> {
                           fontFamily: "Quicksand",
                           fontSize: 12,
                           color: Colors.black)),
-                  Text("Cantidad: 12",
+                  Text("Cantidad: " + widget.lineaDePedido.cantidad.toString(),
                       textAlign: TextAlign.start,
                       style: TextStyle(
                           fontFamily: "Quicksand",

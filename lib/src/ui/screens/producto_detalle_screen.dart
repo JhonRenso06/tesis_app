@@ -1,7 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tesis_app/src/providers/carrito_provider.dart';
 import 'package:tesis_app/src/model/producto.dart';
+import 'package:tesis_app/src/ui/widgets/cantidad_carrito_widget.dart';
 import 'package:tesis_app/src/ui/widgets/caracteristicas_widget.dart';
 
 class ProductoDetalleScreen extends StatefulWidget {
@@ -16,8 +19,9 @@ class ProductoDetalleScreen extends StatefulWidget {
 class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
   TextEditingController cantidadController = new TextEditingController();
   MediaQueryData pantalla;
-  int _current;
+  int _current, cantidad;
   initState() {
+    cantidad = widget.producto.stock > 0 ? 1 : 0;
     super.initState();
     _current = 0;
   }
@@ -26,6 +30,7 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
   Widget build(BuildContext context) {
     pantalla = MediaQuery.of(context);
     var width = pantalla.size.width;
+    var carritoProvider = Provider.of<CarritoProvider>(context);
 
     return DefaultTabController(
       length: 1,
@@ -39,22 +44,17 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                     leading: Material(
                       color: Colors.transparent,
                       child: IconButton(
-                        icon: Icon(Icons.close, color: Colors.white),  
+                        icon: Icon(Icons.close, color: Colors.white),
                         onPressed: () {
                           Navigator.pop(context);
                         },
                       ),
                     ),
                     actions: [
-                      Material(
-                        color: Colors.transparent,
-                        child: IconButton(
-                          icon: Icon(Icons.shopping_cart), 
-                          onPressed: (){
-
-                          }
-                        ),
-                      )
+                      Padding(
+                          padding: const EdgeInsets.only(top: 15, left: 15),
+                          child:
+                              CantidadCarritoWidget(carritoProvider.cantidad)),
                     ],
                     backgroundColor: Color.fromRGBO(77, 17, 48, 1),
                     expandedHeight: MediaQuery.of(context).size.width * 0.9,
@@ -115,16 +115,18 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                             ),
                           ),
                           Container(
-                            height: kToolbarHeight + MediaQuery.of(context).padding.top,
-                                width: double.maxFinite,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [ Colors.black87, Colors.transparent],
+                            height: kToolbarHeight +
+                                MediaQuery.of(context).padding.top,
+                            width: double.maxFinite,
+                            decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                    colors: [
+                                  Colors.black87,
+                                  Colors.transparent
+                                ],
                                     begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter
-                                  )
-                                ),
-                              )
+                                    end: Alignment.bottomCenter)),
+                          )
                         ],
                       ),
                     ),
@@ -212,95 +214,139 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                                                   color: Colors.black)),
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(10),
-                                    child: Container(
-                                      height: 30,
-                                      child: Material(
-                                        color: Colors.white,
-                                        shape: const RoundedRectangleBorder(
-                                          side: BorderSide(
-                                              color: Color.fromRGBO(
-                                                  224, 224, 224, 1),
-                                              width: 1),
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(30.0)),
-                                        ),
-                                        child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: <Widget>[
-                                              Container(
-                                                  width: width / 6,
-                                                  child: ButtonTheme(
-                                                    buttonColor: Colors.white,
-                                                    shape: RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius.only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        50),
-                                                                bottomLeft: Radius
-                                                                    .circular(
-                                                                        50))),
-                                                    child: RaisedButton(
-                                                        elevation: 0,
-                                                        onPressed: () {
-                                                          print("Less one");
-                                                        },
-                                                        child: Center(
-                                                            child: Icon(
-                                                                Icons.remove,
-                                                                textDirection:
-                                                                    TextDirection
-                                                                        .ltr,
-                                                                color: Colors
-                                                                    .black))),
-                                                  )),
-                                              Container(
-                                                  width: width / 8,
-                                                  color: Colors.white,
-                                                  child: Center(
-                                                    child: Text(
-                                                      "0",
+                                  widget.producto.stock > 0
+                                      ? Padding(
+                                          padding: const EdgeInsets.all(10),
+                                          child: Container(
+                                            height: 30,
+                                            child: Material(
+                                                color: Colors.white,
+                                                shape:
+                                                    const RoundedRectangleBorder(
+                                                  side: BorderSide(
+                                                      color: Color.fromRGBO(
+                                                          224, 224, 224, 1),
+                                                      width: 1),
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(
+                                                              30.0)),
+                                                ),
+                                                child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: <Widget>[
+                                                      Container(
+                                                          width: width / 6,
+                                                          child: ButtonTheme(
+                                                            buttonColor:
+                                                                Colors.white,
+                                                            shape: RoundedRectangleBorder(
+                                                                borderRadius: BorderRadius.only(
+                                                                    topLeft: Radius
+                                                                        .circular(
+                                                                            50),
+                                                                    bottomLeft:
+                                                                        Radius.circular(
+                                                                            50))),
+                                                            child: RaisedButton(
+                                                                elevation: 0,
+                                                                onPressed: () {
+                                                                  if (this.cantidad >
+                                                                      0) {
+                                                                    setState(
+                                                                        () {
+                                                                      this.cantidad =
+                                                                          this.cantidad -
+                                                                              1;
+                                                                    });
+                                                                  }
+                                                                },
+                                                                child: Center(
+                                                                    child: Icon(
+                                                                        Icons
+                                                                            .remove,
+                                                                        textDirection:
+                                                                            TextDirection
+                                                                                .ltr,
+                                                                        color: Colors
+                                                                            .black))),
+                                                          )),
+                                                      Container(
+                                                          width: width / 8,
+                                                          color: Colors.white,
+                                                          child: Center(
+                                                            child: Text(
+                                                              cantidad
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontFamily:
+                                                                      "Quicksand",
+                                                                  fontSize: 20),
+                                                            ),
+                                                          )),
+                                                      Container(
+                                                          width: width / 6,
+                                                          child: ButtonTheme(
+                                                            buttonColor:
+                                                                Colors.white,
+                                                            shape: RoundedRectangleBorder(
+                                                                borderRadius: BorderRadius.only(
+                                                                    topRight: Radius
+                                                                        .circular(
+                                                                            50),
+                                                                    bottomRight:
+                                                                        Radius.circular(
+                                                                            50))),
+                                                            child: RaisedButton(
+                                                                elevation: 0,
+                                                                onPressed: () {
+                                                                  if (this.cantidad <
+                                                                      widget
+                                                                          .producto
+                                                                          .stock) {
+                                                                    setState(
+                                                                        () {
+                                                                      this.cantidad =
+                                                                          this.cantidad +
+                                                                              1;
+                                                                    });
+                                                                  }
+                                                                },
+                                                                child: Center(
+                                                                    child: Icon(
+                                                                        Icons
+                                                                            .add,
+                                                                        textDirection:
+                                                                            TextDirection
+                                                                                .rtl,
+                                                                        color: Colors
+                                                                            .black))),
+                                                          )),
+                                                    ])),
+                                          ),
+                                        )
+                                      : Row(children: <Widget>[
+                                          Padding(
+                                              padding: const EdgeInsets.all(10),
+                                              child: Container(
+                                                  height: 30,
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width /
+                                                      3,
+                                                  child: Text("Agotado",
                                                       style: TextStyle(
-                                                          color: Colors.black,
+                                                          color: Colors.red,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 20,
                                                           fontFamily:
-                                                              "Quicksand",
-                                                          fontSize: 20),
-                                                    ),
-                                                  )),
-                                              Container(
-                                                  width: width / 6,
-                                                  child: ButtonTheme(
-                                                    buttonColor: Colors.white,
-                                                    shape: RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius.only(
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        50),
-                                                                bottomRight: Radius
-                                                                    .circular(
-                                                                        50))),
-                                                    child: RaisedButton(
-                                                        elevation: 0,
-                                                        onPressed: () {
-                                                          print("Add one");
-                                                        },
-                                                        child: Center(
-                                                            child: Icon(
-                                                                Icons.add,
-                                                                textDirection:
-                                                                    TextDirection
-                                                                        .rtl,
-                                                                color: Colors
-                                                                    .black))),
-                                                  )),
-                                            ]),
-                                      ),
-                                    ),
-                                  )
+                                                              "Quicksand"))))
+                                        ]),
                                 ]),
                                 Padding(
                                   padding: const EdgeInsets.only(
@@ -323,9 +369,14 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                                               Radius.circular(30.0)),
                                         ),
                                         child: MaterialButton(
-                                            onPressed: () {
-                                              print("Añadir al carrito");
-                                            },
+                                            onPressed: widget.producto.stock > 0
+                                                ? () {
+                                                    carritoProvider
+                                                        .addLineaDePedido(
+                                                            cantidad,
+                                                            widget.producto);
+                                                  }
+                                                : null,
                                             child: Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.center,
