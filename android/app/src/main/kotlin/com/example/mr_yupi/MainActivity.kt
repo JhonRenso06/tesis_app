@@ -1,4 +1,4 @@
-package com.example.tesis_app
+package com.example.mr_yupi
 
 import io.flutter.embedding.android.FlutterActivity
 
