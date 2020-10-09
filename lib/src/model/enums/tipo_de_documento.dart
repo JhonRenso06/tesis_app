@@ -1,1 +1,1 @@
-enum TipoDeDocumento { RUC, DNI }
+enum TipoDeDocumento { DNI, RUC }

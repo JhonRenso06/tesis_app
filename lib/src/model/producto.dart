@@ -1,7 +1,7 @@
-import 'package:tesis_app/src/model/caracteristicas.dart';
-import 'package:tesis_app/src/model/categoria.dart';
-import 'package:tesis_app/src/model/enums/moneda.dart';
-import 'package:tesis_app/src/model/enums/tipo_de_producto.dart';
+import 'package:mr_yupi/src/model/caracteristicas.dart';
+import 'package:mr_yupi/src/model/categoria.dart';
+import 'package:mr_yupi/src/model/enums/moneda.dart';
+import 'package:mr_yupi/src/model/enums/tipo_de_producto.dart';
 
 class Producto {
   Categoria categoria;
@@ -70,7 +70,5 @@ class Producto {
   }
 
   num get precioDescuento => this.precio - (this.precio * this.descuento);
-  String get porcentajeDescuento => "-${(this.descuento * 100).toInt()}%";
-  String get precioDescuentoToFixed => precioDescuento.toStringAsFixed(2);
-  String get precioToFixed => this.precio.toStringAsFixed(2);
+  num get porcentajeDescuento => this.descuento * 100;
 }

@@ -1,104 +1,97 @@
 import 'package:flutter/material.dart';
-import 'package:tesis_app/src/ui/screens/direccion_screen.dart';
+import 'package:mr_yupi/src/model/direccion.dart';
 
-class DireccionWidget extends StatefulWidget {
-  // final int codigo;
-  // final String nombre, foto;
-  // final num precio;
+class DireccionWidget extends StatelessWidget {
+  final Direccion direccion;
+  final Function(Direccion) onEdit, onDelete;
 
-  // DireccionWidget(this.codigo, this.nombre, this.precio, this.foto);
-
-  @override
-  State<StatefulWidget> createState() => _DireccionWidget();
-}
-
-class _DireccionWidget extends State<DireccionWidget> {
-  TextEditingController cantidadController = new TextEditingController();
-  MediaQueryData pantalla;
-  initState() {
-    super.initState();
-  }
+  DireccionWidget(this.direccion, {this.onDelete, this.onEdit});
 
   @override
   Widget build(BuildContext context) {
-    pantalla = MediaQuery.of(context);
-    var width = pantalla.size.width - 10;
-    return Container(
-      width: width,
-      child: Material(
-        color: Color.fromRGBO(241, 243, 244, 1),
-        // color: Colors.red,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(5)),
+    double width = MediaQuery.of(context).size.width;
+    return SizedBox(
+      width: double.maxFinite,
+      child: Card(
+        elevation: 0,
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
         ),
-
-        child: Column(children: <Widget>[
-          Row(children: <Widget>[
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
             Padding(
-              padding: const EdgeInsets.all(8),
-              child: Container(
-                width: width / 3.5,
-                height: 100,
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: AssetImage("assets/direccion.png")),
-                    borderRadius: BorderRadius.all(Radius.circular(5))),
+              padding: const EdgeInsets.only(top: 12, left: 12, right: 12),
+              child: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 12),
+                    child: Image.asset(
+                      "assets/direccion.png",
+                      height: width * 0.2,
+                      width: width * 0.2,
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          direccion.direccion,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          direccion.fullDireccion,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontSize: 10),
+                        ),
+                        Text(
+                          direccion.fullName,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(
+                          direccion.telefono,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
-            Expanded(
-              child: Container(
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        "Manuel Arévalo III Etapa MzB21 Lt36, La Esperanza"
-                                .substring(0, 30) +
-                            "...",
-                        style: TextStyle(
-                            fontFamily: "Quicksand",
-                            fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        "LA ESPERANZA, TRUJILLO, LA LIBERTAD",
-                        style: TextStyle(fontFamily: "Quicksand", fontSize: 10),
-                      ),
-                      Text(
-                        "Renso Vasquez Quiroz",
-                        style: TextStyle(fontFamily: "Quicksand"),
-                      ),
-                      Text(
-                        "Teléfono: 924182041",
-                        style: TextStyle(fontFamily: "Quicksand"),
-                      ),
-                    ]),
-              ),
+            Row(
+              children: [
+                Expanded(
+                  child: FlatButton(
+                    onPressed: () {
+                      if (onEdit != null) {
+                        onEdit(direccion);
+                      }
+                    },
+                    child: Text("Editar"),
+                    shape:
+                        RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+                  ),
+                ),
+                Expanded(
+                  child: FlatButton(
+                    onPressed: () {
+                      if (onEdit != null) {
+                        onEdit(direccion);
+                      }
+                    },
+                    child: Text("Eliminar"),
+                    shape:
+                        RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+                  ),
+                ),
+              ],
             )
-          ]),
-          Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10),
-              child: Divider(color: Color.fromRGBO(158, 158, 156, 1))),
-          RaisedButton(
-              padding: EdgeInsets.only(left: 10, right: 10),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          DireccionScreen("Editar dirección")),
-                );
-              },
-              child: Text(
-                "Editar",
-                style: TextStyle(color: Colors.white, fontFamily: "Quicksand"),
-              ),
-              // color: Color.fromRGBO(77, 17, 48, 1),
-              color: Colors.black,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: new BorderRadius.circular(30),
-              )),
-        ]),
+          ],
+        ),
       ),
     );
   }

@@ -1,10 +1,16 @@
-import 'package:tesis_app/src/model/enums/tipo_de_documento.dart';
+import 'package:mr_yupi/src/model/enums/tipo_de_documento.dart';
 
 class Cliente {
-  String direccion, telefono, correo, documento;
+  String direccion, telefono, correo, documento, password;
   num id;
   TipoDeDocumento tipoDeDocumento;
-  Cliente(this.id, this.documento, this.direccion, this.telefono, this.correo);
+  Cliente(
+      {this.id,
+      this.documento,
+      this.direccion,
+      this.telefono,
+      this.correo,
+      this.password});
 
   Cliente.fromMap(Map<String, dynamic> data) {
     this.id = data["id"];

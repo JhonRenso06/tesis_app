@@ -1,9 +1,9 @@
-import 'package:tesis_app/src/model/direccion.dart';
-import 'package:tesis_app/src/model/enums/metodo_de_pago.dart';
-import 'package:tesis_app/src/model/enums/moneda.dart';
-import 'package:tesis_app/src/model/enums/tipo_de_comprobante.dart';
-import 'package:tesis_app/src/model/linea_de_pedido.dart';
-import 'package:tesis_app/src/model/producto.dart';
+import 'package:mr_yupi/src/model/direccion.dart';
+import 'package:mr_yupi/src/model/enums/metodo_de_pago.dart';
+import 'package:mr_yupi/src/model/enums/moneda.dart';
+import 'package:mr_yupi/src/model/enums/tipo_de_comprobante.dart';
+import 'package:mr_yupi/src/model/linea_de_pedido.dart';
+import 'package:mr_yupi/src/model/producto.dart';
 
 class Pedido {
   num id, subtotal, igv, total, envio;
@@ -95,13 +95,33 @@ class Pedido {
           (lineaDePedido) => lineaDePedido.producto.id == producto.id);
       lineaExistente.cantidad = cantidad;
     } catch (_) {
-      this
-          .lineasDePedido
-          .add(new LineaDePedido.conSubtotal(cantidad, producto));
+      this.lineasDePedido.add(LineaDePedido.withProduct(cantidad, producto));
     }
+  }
+
+  deleteLineaDePedido(Producto producto) {
+    lineasDePedido = lineasDePedido
+        .where(
+          (lineaDePedido) => lineaDePedido.producto.id != producto.id,
+        )
+        .toList();
   }
 
   get cantidad => this.lineasDePedido.length;
 
-  // get igv => this.
+  double calcularTotal() {
+    double total = 0;
+    lineasDePedido.forEach((element) {
+      total += element.cantidad * element.precio;
+    });
+    return total;
+  }
+
+  double calcularSubTotal() {
+    return calcularTotal() / 1.18;
+  }
+
+  double calcularIGV() {
+    return calcularSubTotal() * 0.18;
+  }
 }

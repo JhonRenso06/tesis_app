@@ -20,7 +20,6 @@ class _LineaDePedidoWidget extends State<LineaDePedidoWidget> {
   Widget build(BuildContext context) {
     pantalla = MediaQuery.of(context);
     var width = pantalla.size.width;
-
     return Container(
         // padding: const EdgeInsets.only(bottom: 10),
         width: width,

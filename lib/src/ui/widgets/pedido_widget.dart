@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tesis_app/src/ui/screens/pedido_detalle_screen.dart';
+import 'package:mr_yupi/src/ui/screens/pedido_detalle_screen.dart';
 
 class PedidoWidget extends StatefulWidget {
   @override

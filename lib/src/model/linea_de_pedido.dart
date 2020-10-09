@@ -1,4 +1,4 @@
-import 'package:tesis_app/src/model/producto.dart';
+import 'package:mr_yupi/src/model/producto.dart';
 
 class LineaDePedido {
   Producto producto;
@@ -9,10 +9,15 @@ class LineaDePedido {
     this._cantidad = cantidad;
   }
 
-  LineaDePedido.conSubtotal(int cantidad, Producto producto) {
+  LineaDePedido.withProduct(int cantidad, Producto producto) {
     this._cantidad = cantidad;
     this.producto = producto;
-    this.precio = producto.precio;
+    if (producto.descuento != null && producto.descuento > 0) {
+      this.precio = producto.precioDescuento;
+    } else {
+      this.precio = producto.precio;
+    }
+
     this.subtotal = this._cantidad * this.precio;
   }
 

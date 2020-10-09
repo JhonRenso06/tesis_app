@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tesis_app/src/providers/carrito_provider.dart';
-import 'package:tesis_app/src/ui/screens/inicial_screen.dart';
+import 'package:mr_yupi/src/global/global.dart';
+import 'package:mr_yupi/src/providers/carrito_provider.dart';
+import 'package:mr_yupi/src/ui/screens/home_screen.dart';
 
 class App extends StatelessWidget {
   @override
@@ -9,18 +10,26 @@ class App extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => CarritoProvider(),
       child: MaterialApp(
-        // home: HomeScreen(),
-        home: InicialScreen(),
+        home: HomeScreen(),
+        //home: InicialScreen(),
         theme: ThemeData(
-            primaryColor: Color.fromRGBO(255, 45, 0, 1),
-            fontFamily: 'Quicksand',
-            inputDecorationTheme: InputDecorationTheme(
-                focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black),
-                    borderRadius: BorderRadius.circular(32.0)),
-                contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(32.0)))),
+          primaryColor: Global.primaryColor,
+          accentColor: Global.accentColor,
+          primaryColorDark: Global.primaryColorDark,
+          primaryColorLight: Global.primaryColorLight,
+          primarySwatch: Global.primarySwatch,
+          buttonTheme: Global.buttonTheme,
+          fontFamily: Global.fontFamily,
+          inputDecorationTheme: Global.inputDecorationTheme,
+          appBarTheme: Global.appBarTheme,
+          bottomNavigationBarTheme: BottomNavigationBarThemeData(
+            elevation: 8,
+            selectedItemColor: Global.primarySwatch,
+            unselectedItemColor: Global.primarySwatch[300],
+            showUnselectedLabels: true,
+          ),
+          dividerColor: Global.primaryColorDark,
+        ),
         debugShowCheckedModeBanner: false,
       ),
     );

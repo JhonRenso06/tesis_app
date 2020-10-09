@@ -1,7 +1,7 @@
-import 'package:tesis_app/src/model/cliente.dart';
-import 'package:tesis_app/src/model/departamento.dart';
-import 'package:tesis_app/src/model/distrito.dart';
-import 'package:tesis_app/src/model/provincia.dart';
+import 'package:mr_yupi/src/model/cliente.dart';
+import 'package:mr_yupi/src/model/departamento.dart';
+import 'package:mr_yupi/src/model/distrito.dart';
+import 'package:mr_yupi/src/model/provincia.dart';
 
 enum TipoDireccion {
   CASA,
@@ -17,8 +17,6 @@ enum TipoDireccion {
 
 class Direccion {
   num id;
-  Departamento departamento;
-  Provincia provincia;
   Distrito distrito;
   Cliente cliente;
   String nombre,
@@ -32,10 +30,26 @@ class Direccion {
   num latitud, longitud, numeroDeLote, departamentoOInterior;
   bool predeterminado;
 
+  Direccion(
+      {this.id,
+      this.distrito,
+      this.cliente,
+      this.nombre,
+      this.apellidos,
+      this.celular,
+      this.telefono,
+      this.direccion,
+      this.urbanizacion,
+      this.referencia,
+      this.tipo,
+      this.latitud,
+      this.longitud,
+      this.numeroDeLote,
+      this.departamentoOInterior,
+      this.predeterminado});
+
   Direccion.fromMap(Map<String, dynamic> data) {
     this.id = data["id"];
-    this.departamento = Departamento.fromMap(data["departamento"]);
-    this.provincia = Provincia.fromMap(data["provincia"]);
     this.distrito = Distrito.fromMap(data["distrito"]);
     this.cliente = Cliente.fromMap(data["cliente"]);
     this.nombre = data["nombre"];
@@ -83,5 +97,24 @@ class Direccion {
     this.numeroDeLote = data["numeroDeLote"];
     this.departamentoOInterior = data["departamentoOInterior"];
     this.predeterminado = data["predeterminado"];
+  }
+
+  String get fullDireccion {
+    String full = distrito.nombre;
+    if (distrito.provincia != null) {
+      full += ", ${distrito.provincia.nombre}";
+    }
+    if (distrito.provincia.departamento != null) {
+      full += ", ${distrito.provincia.departamento.nombre}";
+    }
+    return full;
+  }
+
+  String get fullName {
+    String full = nombre;
+    if (apellidos != null && apellidos.isNotEmpty) {
+      full += " $apellidos";
+    }
+    return full;
   }
 }

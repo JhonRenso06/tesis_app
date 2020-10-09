@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tesis_app/src/model/caracteristicas.dart';
+import 'package:mr_yupi/src/model/caracteristicas.dart';
 
 class CaracteristicasWidget extends StatelessWidget {
   final List<Caracteristicas> caracteristicas;
@@ -17,7 +17,10 @@ class CaracteristicasWidget extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8),
               child: Text(caracteristicas[i].id,
-                  style: TextStyle(fontFamily: "Quicksand", fontSize: 12, fontWeight: FontWeight.bold)),
+                  style: TextStyle(
+                      fontFamily: "Quicksand",
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold)),
             ),
             Padding(
               padding: const EdgeInsets.all(8),

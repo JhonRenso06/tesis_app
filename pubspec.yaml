@@ -1,4 +1,4 @@
-name: tesis_app
+name: mr_yupi
 description: A new Flutter project.
 
 # The following line prevents the package from being accidentally published to
@@ -29,11 +29,26 @@ dependencies:
   cupertino_icons: ^0.1.3
   carousel_slider: ^2.2.1
   cached_network_image: ^2.3.1
-  provider:
-  
+  flutter_config: ^1.0.7
+  provider: ^4.3.2+2
+  flutter_secure_storage: ^3.3.3
+  dio: ^3.0.10
+  email_validator: "^1.0.0"
+  http: ^0.12.2
+  rflutter_alert: ^1.0.8
+  flutter_bloc: ^6.0.6
+  shimmer: ^1.1.1
+  like_button: ^1.0.3
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_native_splash: ^0.1.9
+
+flutter_native_splash:
+  image: assets/logo.png
+  color: ffffff
+  android_disable_fullscreen: true
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -49,10 +64,11 @@ flutter:
     - assets/background.jpg
     - assets/background.png
     - assets/logo.png
-    - assets/logo_blanco.png
     - assets/default_user.png
     - assets/direccion.png
-    
+    - assets/empty-cart.png
+    - assets/online-order.png
+
   fonts:
     - family: Quicksand
       fonts:

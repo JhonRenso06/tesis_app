@@ -2,10 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tesis_app/src/providers/carrito_provider.dart';
-import 'package:tesis_app/src/model/producto.dart';
-import 'package:tesis_app/src/ui/widgets/cantidad_carrito_widget.dart';
-import 'package:tesis_app/src/ui/widgets/caracteristicas_widget.dart';
+import 'package:mr_yupi/src/providers/carrito_provider.dart';
+import 'package:mr_yupi/src/model/producto.dart';
+import 'package:mr_yupi/src/ui/widgets/cantidad_carrito_widget.dart';
+import 'package:mr_yupi/src/ui/widgets/caracteristicas_widget.dart';
 
 class ProductoDetalleScreen extends StatefulWidget {
   final Producto producto;
@@ -31,7 +31,6 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
     pantalla = MediaQuery.of(context);
     var width = pantalla.size.width;
     var carritoProvider = Provider.of<CarritoProvider>(context);
-
     return DefaultTabController(
       length: 1,
       child: Scaffold(
@@ -169,8 +168,9 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                                                 children: <Widget>[
                                                   Text(
                                                       "S/" +
-                                                          widget.producto
-                                                              .precioToFixed,
+                                                          widget.producto.precio
+                                                              .toStringAsFixed(
+                                                                  2),
                                                       style: TextStyle(
                                                           decoration:
                                                               TextDecoration
@@ -180,9 +180,9 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                                                           fontSize: 15,
                                                           color: Colors.grey)),
                                                   Text(
-                                                      " " +
-                                                          widget.producto
-                                                              .porcentajeDescuento,
+                                                      widget.producto
+                                                          .porcentajeDescuento
+                                                          .toStringAsFixed(2),
                                                       style: TextStyle(
                                                           fontFamily:
                                                               "Quicksand",
@@ -195,7 +195,8 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                                               Text(
                                                   "S/" +
                                                       widget.producto
-                                                          .precioDescuentoToFixed,
+                                                          .precioDescuento
+                                                          .toStringAsFixed(2),
                                                   style: TextStyle(
                                                       fontFamily: "Quicksand",
                                                       fontSize: 15,
@@ -206,7 +207,8 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                                             ])
                                           : Text(
                                               "S/" +
-                                                  widget.producto.precioToFixed,
+                                                  widget.producto.precio
+                                                      .toStringAsFixed(2),
                                               style: TextStyle(
                                                   fontFamily: "Quicksand",
                                                   fontSize: 15,

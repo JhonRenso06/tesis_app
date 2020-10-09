@@ -1,169 +1,315 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:tesis_app/src/ui/screens/direccion_screen.dart';
-import 'package:tesis_app/src/ui/screens/editar_perfil_screen.dart';
-import 'package:tesis_app/src/ui/widgets/direccion_widget.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mr_yupi/src/bloc/bloc_state.dart';
+import 'package:mr_yupi/src/bloc/perfil_bloc.dart';
+import 'package:mr_yupi/src/global/global.dart';
+import 'package:mr_yupi/src/model/cliente.dart';
+import 'package:mr_yupi/src/model/departamento.dart';
+import 'package:mr_yupi/src/model/direccion.dart';
+import 'package:mr_yupi/src/model/distrito.dart';
+import 'package:mr_yupi/src/model/provincia.dart';
+import 'package:mr_yupi/src/ui/screens/direccion_screen.dart';
+import 'package:mr_yupi/src/ui/screens/editar_perfil_screen.dart';
+import 'package:mr_yupi/src/ui/screens/pedidos_screen.dart';
+import 'package:mr_yupi/src/ui/widgets/direccion_widget.dart';
 
-class PerfilScreen extends StatelessWidget {
+class PerfilScreen extends StatefulWidget {
+  @override
+  _PerfilScreenState createState() => _PerfilScreenState();
+}
+
+class _PerfilScreenState extends State<PerfilScreen> {
+  List<Direccion> direcciones = [
+    Direccion(
+        direccion: "Av Túpac Amaru 1419",
+        distrito: Distrito(
+            id: 1,
+            nombre: "Trujillo",
+            provincia: Provincia(
+                id: 1,
+                nombre: "Trujillo",
+                departamento: Departamento(id: 1, nombre: "La libertad"))),
+        nombre: "Pablo Rafael",
+        apellidos: "Cruz López",
+        telefono: "969647526",
+        predeterminado: false),
+    Direccion(
+      direccion: "Av Túpac Amaru 1419",
+      distrito: Distrito(
+          id: 1,
+          nombre: "Trujillo",
+          provincia: Provincia(
+              id: 1,
+              nombre: "Trujillo",
+              departamento: Departamento(id: 1, nombre: "La libertad"))),
+      nombre: "Pablo Rafael",
+      apellidos: "Cruz López",
+      telefono: "969647526",
+      predeterminado: true,
+    )
+  ];
+  PerfilBloc _cubit;
+
+  @override
+  void initState() {
+    _cubit = PerfilBloc();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    MediaQueryData pantalla = MediaQuery.of(context);
-    var width = pantalla.size.width;
-    List<String> direcciones = [
-      "https://cdn.pixabay.com/photo/2016/11/22/23/44/buildings-1851246_960_720.jpg",
-      "https://cdn.pixabay.com/photo/2016/03/26/22/32/fast-1281628_960_720.jpg",
-      "https://cdn.pixabay.com/photo/2016/11/24/14/00/christmas-tree-1856343_960_720.jpg",
-      "https://cdn.pixabay.com/photo/2016/10/20/06/00/fiat-1754723_960_720.jpg",
-      "https://cdn.pixabay.com/photo/2016/09/12/18/56/ifa-1665443_960_720.jpg",
-      "https://cdn.pixabay.com/photo/2016/11/22/23/44/buildings-1851246_960_720.jpg",
-      "https://cdn.pixabay.com/photo/2016/03/26/22/32/fast-1281628_960_720.jpg",
-      "https://cdn.pixabay.com/photo/2016/11/24/14/00/christmas-tree-1856343_960_720.jpg",
-      "https://cdn.pixabay.com/photo/2016/10/20/06/00/fiat-1754723_960_720.jpg",
-      "https://cdn.pixabay.com/photo/2016/09/12/18/56/ifa-1665443_960_720.jpg"
-    ];
-    return CustomScrollView(
-      slivers: <Widget>[
-        SliverToBoxAdapter(
-            child: Column(
-          children: <Widget>[
-            Container(
-                child: Align(
-                  alignment: Alignment.topRight,
-                  child: MaterialButton(
-                      minWidth: 30,
-                      padding: EdgeInsets.all(2),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => EditarPerfilScreen()),
-                        );
-                      },
-                      child: Icon(
-                        Icons.edit,
-                        color: Colors.white,
-                      )),
-                ),
+    double width = MediaQuery.of(context).size.width;
+
+    return BlocBuilder<PerfilBloc, BlocState<Cliente>>(
+      cubit: _cubit,
+      builder: (context, state) {
+        if (state is LoadingState) {
+          return Container();
+        }
+        if (state is LoadedState && state.message == null) {
+          return Container(
+            child: Text("Iniciar sesión"),
+          );
+        }
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
                 width: width,
-                height: width / 3,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage("assets/background.png"),
-                    fit: BoxFit.cover,
-                  ),
-                )),
-            Material(
-              color: Color.fromRGBO(252, 249, 249, 1),
-              child: Container(
-                  height: width / 4,
-                  transform: Matrix4.translationValues(0.0, -20.0, 0.0),
-                  child: Row(children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(left: 15),
-                      child: Container(
-                        width: width / 4,
-                        height: width / 4,
-                        child: CircleAvatar(
-                          backgroundColor: Colors.white,
-                          radius: width,
-                          backgroundImage:
-                              AssetImage("assets/default_user.png"),
+                height: width * 0.7,
+                child: Stack(
+                  children: [
+                    Container(
+                      height: width * 0.5,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage("assets/background.png"),
+                          fit: BoxFit.cover,
                         ),
                       ),
                     ),
-                    Padding(
-                      padding:
-                          const EdgeInsets.only(left: 15, right: 15, top: 25),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            "Renso Vasquez Quiroz",
-                            style: TextStyle(
-                                fontSize: 12.5,
-                                fontFamily: "Quicksand",
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            "06 Noviembre 1998",
-                            style: TextStyle(
-                                fontSize: 12.5, fontFamily: "Quicksand"),
-                          ),
-                          Text(
-                            "rensovasquez2014@gmail.com",
-                            style: TextStyle(
-                                fontSize: 12.5, fontFamily: "Quicksand"),
-                          )
-                        ],
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                        width: width * 0.84,
+                        height: width * 0.2,
+                        margin: EdgeInsets.only(bottom: width * 0.1),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.person,
+                                          color: Global.accentColor,
+                                        ),
+                                        SizedBox(
+                                          width: 4,
+                                        ),
+                                        Text(
+                                          "Pablo Rafael Cruz López",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.alternate_email,
+                                          color: Global.primaryColorDark,
+                                        ),
+                                        SizedBox(
+                                          width: 4,
+                                        ),
+                                        Text("pablocruz9988@hotmail.com"),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Material(
+                              color: Colors.transparent,
+                              child: Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: IconButton(
+                                  icon: Icon(
+                                    Icons.edit,
+                                    color: Global.accentColor,
+                                  ),
+                                  onPressed: _handleEdit,
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(31),
+                          boxShadow: [
+                            BoxShadow(color: Colors.black26, blurRadius: 15)
+                          ],
+                        ),
                       ),
-                    ),
-                  ])),
-            ),
-          ],
-        )),
-        SliverToBoxAdapter(
-            child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                  child: Text(
-                "Mis direcciones de envío",
-                style: TextStyle(fontFamily: "Quicksand", fontSize: 13),
-              )),
-              MaterialButton(
-                // minWidth: 30,
-                padding: EdgeInsets.only(left: 40),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            DireccionScreen("Agregar dirección")),
-                  );
-                },
-                child: Icon(
-                  Icons.add,
-                  size: 25,
+                    )
+                  ],
                 ),
               ),
-            ],
-          ),
-        )),
-        SliverToBoxAdapter(
-          child: CarouselSlider(
-            options: CarouselOptions(
-                height: 200, enableInfiniteScroll: true, autoPlay: true),
-            items: direcciones.map((oferta) {
-              return Builder(
-                builder: (BuildContext context) {
-                  return Container(
-                    width: MediaQuery.of(context).size.width,
-                    // margin: EdgeInsets.symmetric(horizontal: 5.0),
-                    decoration: BoxDecoration(
-                        // color: Colors.black,
-                        borderRadius: BorderRadius.circular(10)),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: DireccionWidget())
+              Padding(
+                padding: const EdgeInsets.only(left: 6, right: 6),
+                child: SizedBox(
+                  height: 124,
+                  child: Card(
+                    elevation: 0,
+                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    child: Stack(
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              width: 120,
+                              height: 120,
+                              padding: const EdgeInsets.only(
+                                  left: 21, top: 21, bottom: 21),
+                              child: Image.asset(
+                                "assets/online-order.png",
+                              ),
+                            ),
+                            Expanded(
+                              child: Container(
+                                child: Text(
+                                  "Ver mis pedidos",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 24,
+                                    color: Global.accentColor,
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                        Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: _toMisPedidos,
+                          ),
+                        )
                       ],
                     ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 12, bottom: 8, top: 8),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        "Mis direcciones",
+                        textAlign: TextAlign.left,
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.add,
+                        color: Global.accentColor,
+                      ),
+                      onPressed: _addDireccion,
+                    )
+                  ],
+                ),
+              ),
+              CarouselSlider(
+                options: CarouselOptions(
+                  height: 180,
+                  enableInfiniteScroll: true,
+                  autoPlay: false,
+                ),
+                items: direcciones.map((direccion) {
+                  return Builder(
+                    builder: (BuildContext context) {
+                      return Container(
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: DireccionWidget(
+                                direccion,
+                                onEdit: _editDireccion,
+                                onDelete: _deleteDireccion,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   );
-                },
-              );
-            }).toList(),
+                }).toList(),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      width: double.maxFinite,
+                      child: FlatButton(
+                        onPressed: _signOut,
+                        child: Text("Cerrar sesión"),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
           ),
-        )
-        // SliverList(
-        //     delegate: SliverChildBuilderDelegate((context, index) {
-        //   return Padding(
-        //       padding: const EdgeInsets.all(10), child: DireccionWidget());
-        // }, childCount: 4))
-      ],
+        );
+      },
     );
   }
+
+  _signOut() async {}
+
+  _handleEdit() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditarPerfilScreen(),
+      ),
+    );
+  }
+
+  _toMisPedidos() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PedidosScreen(),
+      ),
+    );
+  }
+
+  _addDireccion() {}
+
+  _editDireccion(Direccion direccion) {}
+
+  _deleteDireccion(Direccion direccion) {}
 }

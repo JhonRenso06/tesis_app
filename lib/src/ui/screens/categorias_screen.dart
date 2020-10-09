@@ -1,21 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:tesis_app/src/ui/widgets/categoria_widget.dart';
+import 'package:mr_yupi/src/model/categoria.dart';
+import 'package:mr_yupi/src/ui/widgets/categoria_widget.dart';
 
 class CategoriasScreen extends StatelessWidget {
+  List<Categoria> categorias = [
+    Categoria(
+      id: 0,
+      nombre: "Bebidas",
+      imagen:
+          "https://dam.cocinafacil.com.mx/wp-content/uploads/2019/06/Bebidas-para-combatir-el-calor.jpg",
+    ),
+    Categoria(
+      id: 0,
+      nombre: "Gaseosas",
+      imagen:
+          "https://sites.google.com/site/depositodelicoresygaseosas/_/rsrc/1535240855985/gaseosas-y-jugos/banner%20%20gasesas.jpg",
+    ),
+    Categoria(
+      id: 0,
+      nombre: "Vinos",
+      imagen:
+          "https://www.hotelvinasqueirolo.com/blog/wp-content/uploads/2019/09/Valle-de-Ica-Tierra-de-vinos-y-piscos-peruanos-A.jpg",
+    ),
+  ];
   @override
   Widget build(BuildContext context) {
-    List<String> categorias = [
-      "https://cdn.pixabay.com/photo/2019/07/07/14/03/fiat-4322521_960_720.jpg",
-      "https://cdn.pixabay.com/photo/2016/11/22/23/44/buildings-1851246_960_720.jpg",
-      "https://cdn.pixabay.com/photo/2016/09/12/18/56/ifa-1665443_960_720.jpg",
-      "https://cdn.pixabay.com/photo/2018/05/02/09/29/auto-3368094_960_720.jpg"
-    ];
-
     return ListView.builder(
-        padding: const EdgeInsets.only(left: 5, right: 5, bottom: 20, top: 7),
-        itemCount: categorias.length,
-        itemBuilder: (BuildContext context, int index) {
-          return CategoriaWidget(index, "Categoría", categorias[index]);
-        });
+      padding: const EdgeInsets.all(6),
+      itemCount: categorias.length,
+      itemBuilder: (BuildContext context, int index) {
+        return CategoriaWidget(
+          categorias[index],
+          onTap: _onTap,
+        );
+      },
+    );
   }
+
+  _onTap(Categoria categoria) {}
 }
