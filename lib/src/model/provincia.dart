@@ -7,11 +7,7 @@ class Provincia {
   Departamento departamento;
   List<Distrito> distritos;
 
-  Provincia({
-    this.id,
-    this.nombre,
-    this.departamento,
-  });
+  Provincia({this.id, this.nombre, this.departamento, this.distritos});
 
   Provincia.fromMap(Map<String, dynamic> data) {
     id = data["id"];

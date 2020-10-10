@@ -1,117 +1,205 @@
 import 'package:flutter/material.dart';
-import 'package:mr_yupi/src/ui/screens/pedido_detalle_screen.dart';
+import 'package:mr_yupi/src/global/global.dart';
+import 'package:mr_yupi/src/model/enums/estado_de_pedido.dart';
+import 'package:mr_yupi/src/model/enums/metodo_de_pago.dart';
+import 'package:mr_yupi/src/model/pedido.dart';
 
-class PedidoWidget extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => _PedidoWidget();
-}
+class PedidoWidget extends StatelessWidget {
+  final Pedido pedido;
+  final Function(Pedido) onTap;
 
-class _PedidoWidget extends State<PedidoWidget> {
-  TextEditingController cantidadController = new TextEditingController();
-  MediaQueryData pantalla;
-  initState() {
-    super.initState();
-  }
+  PedidoWidget(this.pedido, {this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    pantalla = MediaQuery.of(context);
-    var width = pantalla.size.width;
-    return Container(
-        padding: const EdgeInsets.only(bottom: 10),
-        width: width,
-        child: Material(
-            color: Colors.white,
-            shape: const RoundedRectangleBorder(
-              side: BorderSide(color: Colors.black, width: 1),
-              borderRadius: BorderRadius.all(Radius.circular(5)),
-            ),
-            child: Column(children: <Widget>[
-              Padding(
-                  padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
-                  child: Row(
+    return Card(
+      color: Colors.white,
+      elevation: 0,
+      clipBehavior: Clip.antiAliasWithSaveLayer,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(
+          Radius.circular(12),
+        ),
+      ),
+      child: Container(
+        width: double.maxFinite,
+        height: 160,
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Row(
                     children: <Widget>[
                       Expanded(
                         child: Row(
                           children: <Widget>[
                             Text(
-                              "Pedido No 209674176",
+                              "Pedido No ${pedido.codigo}",
                               style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  // color: Color.fromRGBO(255, 87, 51, 1),
-                                  fontFamily: "Quicksand"),
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ],
                         ),
                       ),
+                      Text(
+                        "Detalle",
+                        style: TextStyle(
+                          color: Global.accentColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 4,
+                      ),
+                      Icon(
+                        Icons.arrow_forward_ios,
+                        color: Global.accentColor,
+                        size: 16,
+                      )
                     ],
-                  )),
-              Padding(
-                  padding: const EdgeInsets.only(left: 10, right: 10),
-                  child: Divider(color: Color.fromRGBO(158, 158, 156, 1))),
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                        child: Text(
-                      "Fecha de solicitud",
-                      style: TextStyle(
-                          fontFamily: "Quicksand",
-                          // color: Color.fromRGBO(158, 158, 156, 1)
-                          color: Colors.black),
-                    )),
-                    Text(
-                      "2020-09-20",
-                      style: TextStyle(
-                          fontFamily: "Quicksand",
-                          // color: Color.fromRGBO(158, 158, 156, 1)
-                          color: Colors.black),
-                    )
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10),
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                        child: Text(
-                      "Monto total",
-                      style: TextStyle(
-                          fontFamily: "Quicksand",
-                          // color: Color.fromRGBO(158, 158, 156, 1)
-                          color: Colors.black),
-                    )),
-                    Text(
-                      "S/600",
-                      style: TextStyle(
-                          fontFamily: "Quicksand",
-                          // color: Color.fromRGBO(158, 158, 156, 1)
-                          color: Colors.black),
-                    )
-                  ],
-                ),
-              ),
-              RaisedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => PedidoDetalleScreen()),
-                    );
-                  },
-                  child: Text(
-                    "Ver pedido",
-                    style:
-                        TextStyle(color: Colors.white, fontFamily: "Quicksand"),
                   ),
-                  // color: Color.fromRGBO(255, 87, 51, 1),
-                  color: Colors.black,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(25.0),
-                  ))
-            ])));
+                  Divider(
+                    color: Color.fromRGBO(158, 158, 156, 1),
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    "Fecha de solicitud",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  Global.dateFormatter(pedido.fechaDeEmision),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 2,
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    "Método de pago",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  metodoDePago(),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    "Total",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  "S/. ${pedido.total.toStringAsFixed(2)}",
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                      Container(
+                        width: 100,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              "assets/status.png",
+                              width: 50,
+                              height: 50,
+                            ),
+                            textEstado()
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () {
+                    if (this.onTap != null) {
+                      this.onTap(pedido);
+                    }
+                  },
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget textEstado() {
+    Color color;
+    String str = pedido.strEstado;
+    switch (pedido.estado) {
+      case EstadoDePedido.ATENDIDO:
+        color = Colors.greenAccent[700];
+        str += "\n ${Global.dateFormatter(pedido.fechaDeEntrega)}";
+        break;
+      case EstadoDePedido.CANCELADO:
+        color = Colors.red;
+        break;
+      default:
+        color = Colors.blue;
+        break;
+    }
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Text(
+        str,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          color: color,
+          fontWeight: FontWeight.bold,
+          fontSize: 12,
+        ),
+      ),
+    );
+  }
+
+  String metodoDePago() {
+    switch (pedido.metodoDePago) {
+      case MetodoDePago.TARJETA:
+        return "Tarjeta";
+      default:
+        return "Efectivo";
+    }
   }
 }

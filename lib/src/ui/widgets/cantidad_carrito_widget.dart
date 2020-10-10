@@ -30,10 +30,8 @@ class CantidadCarritoWidget extends StatelessWidget {
                 ),
               ),
               decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(color: Global.accentColor, blurRadius: 4),
-                ],
                 borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Global.accentColor, width: 1),
                 color: Colors.white,
               ),
             ),

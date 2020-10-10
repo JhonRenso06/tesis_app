@@ -4,14 +4,16 @@ import 'package:mr_yupi/src/model/direccion.dart';
 class DireccionWidget extends StatelessWidget {
   final Direccion direccion;
   final Function(Direccion) onEdit, onDelete;
+  final Function(Direccion) onPredeterminado;
+  final Direccion predeterminado;
 
-  DireccionWidget(this.direccion, {this.onDelete, this.onEdit});
+  DireccionWidget(this.direccion,
+      {this.onDelete, this.onEdit, this.onPredeterminado, this.predeterminado});
 
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     return SizedBox(
-      width: double.maxFinite,
       child: Card(
         elevation: 0,
         clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -20,7 +22,25 @@ class DireccionWidget extends StatelessWidget {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
+            Row(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 12),
+                    child: Text("Dirección predeterminada"),
+                  ),
+                ),
+                Radio<Direccion>(
+                  value: direccion,
+                  groupValue: predeterminado,
+                  onChanged: onPredeterminado,
+                ),
+              ],
+            ),
+            Divider(),
             Padding(
               padding: const EdgeInsets.only(top: 12, left: 12, right: 12),
               child: Row(
@@ -79,8 +99,8 @@ class DireccionWidget extends StatelessWidget {
                 Expanded(
                   child: FlatButton(
                     onPressed: () {
-                      if (onEdit != null) {
-                        onEdit(direccion);
+                      if (onDelete != null) {
+                        onDelete(direccion);
                       }
                     },
                     child: Text("Eliminar"),

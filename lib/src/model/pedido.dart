@@ -1,4 +1,5 @@
 import 'package:mr_yupi/src/model/direccion.dart';
+import 'package:mr_yupi/src/model/enums/estado_de_pedido.dart';
 import 'package:mr_yupi/src/model/enums/metodo_de_pago.dart';
 import 'package:mr_yupi/src/model/enums/moneda.dart';
 import 'package:mr_yupi/src/model/enums/tipo_de_comprobante.dart';
@@ -6,29 +7,35 @@ import 'package:mr_yupi/src/model/linea_de_pedido.dart';
 import 'package:mr_yupi/src/model/producto.dart';
 
 class Pedido {
-  num id, subtotal, igv, total, envio;
+  num id, subtotal, igv, total;
+  bool delivery;
   Direccion direccion;
   DateTime fechaDeEmision;
+  DateTime fechaDeEntrega;
   MetodoDePago metodoDePago;
   TipoDeComprobante tipoDeComprobante;
   Moneda moneda;
   String serieDeCorrelativo, numeroDeCorrelativo;
   List<LineaDePedido> lineasDePedido;
+  EstadoDePedido estado;
 
-  Pedido(
-      {this.id,
-      this.subtotal,
-      this.igv,
-      this.total,
-      this.envio,
-      this.direccion,
-      this.fechaDeEmision,
-      this.metodoDePago,
-      this.tipoDeComprobante,
-      this.moneda,
-      this.serieDeCorrelativo,
-      this.numeroDeCorrelativo,
-      this.lineasDePedido}) {
+  Pedido({
+    this.id,
+    this.subtotal,
+    this.igv,
+    this.total,
+    this.delivery,
+    this.direccion,
+    this.fechaDeEmision,
+    this.metodoDePago,
+    this.tipoDeComprobante,
+    this.moneda,
+    this.serieDeCorrelativo,
+    this.numeroDeCorrelativo,
+    this.estado,
+    this.lineasDePedido,
+    this.fechaDeEntrega,
+  }) {
     if (this.lineasDePedido == null) {
       this.lineasDePedido = new List();
     }
@@ -39,7 +46,7 @@ class Pedido {
     this.subtotal = data["subtotal"];
     this.igv = data["igv"];
     this.total = data["total"];
-    this.envio = data["envio"];
+    this.delivery = data["delivery"];
     this.direccion = data["direccion"];
     this.fechaDeEmision =
         DateTime.fromMillisecondsSinceEpoch(data["fechaDeEmision"] * 1000);
@@ -123,5 +130,31 @@ class Pedido {
 
   double calcularIGV() {
     return calcularSubTotal() * 0.18;
+  }
+
+  String get codigo {
+    if (id != null) {
+      String str = id.toString();
+      while (str.length < 9) {
+        str = "0" + str;
+      }
+      return str;
+    }
+    return "";
+  }
+
+  String get strEstado {
+    switch (estado) {
+      case EstadoDePedido.EN_PROCESO:
+        return "En proceso";
+      case EstadoDePedido.ATENDIDO:
+        return "Atendido";
+      case EstadoDePedido.EN_CAMINO:
+        return "En camino";
+      case EstadoDePedido.ENTREGADO:
+        return "Entregado";
+      case EstadoDePedido.CANCELADO:
+        return "Cancelado";
+    }
   }
 }

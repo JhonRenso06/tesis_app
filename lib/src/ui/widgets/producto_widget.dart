@@ -25,7 +25,7 @@ class ProductoWidget extends StatelessWidget {
               Column(
                 children: [
                   Container(
-                    height: constraints.maxHeight * 0.75,
+                    height: constraints.maxHeight * 0.70,
                     child: CachedNetworkImage(
                       width: double.maxFinite,
                       height: double.maxFinite,
@@ -43,7 +43,7 @@ class ProductoWidget extends StatelessWidget {
                   ),
                   Container(
                     width: double.maxFinite,
-                    height: constraints.maxHeight * 0.25,
+                    height: constraints.maxHeight * 0.30,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -51,8 +51,7 @@ class ProductoWidget extends StatelessWidget {
                         Text(
                           producto.nombre.substring(0, 20) + "...",
                           textAlign: TextAlign.center,
-                          style:
-                              TextStyle(fontFamily: "Quicksand", fontSize: 15),
+                          style: TextStyle(fontSize: 15),
                         ),
                         producto.descuento != null && producto.descuento > 0
                             ? Column(
@@ -66,7 +65,6 @@ class ProductoWidget extends StatelessWidget {
                                         style: TextStyle(
                                           decoration:
                                               TextDecoration.lineThrough,
-                                          fontFamily: "Quicksand",
                                           fontSize: 15,
                                           color: Colors.grey,
                                         ),

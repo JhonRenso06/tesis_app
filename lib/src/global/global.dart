@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class Global {
   static const double radius = 18;
   static const double horizontalPadding = 12;
   static const double verticalPadding = 14;
   static const String fontFamily = 'Quicksand';
-
+  static DateFormat formatter = DateFormat("dd/MM/yyyy");
   static Color get primaryColor {
     return Colors.white;
   }
@@ -101,5 +102,9 @@ class Global {
       900: Color(0xFF870000)
     };
     return MaterialColor(0xFF870000, coloresCodes);
+  }
+
+  static String dateFormatter(DateTime date) {
+    return formatter.format(date);
   }
 }

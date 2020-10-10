@@ -158,7 +158,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         Row(
                           children: [
                             Flexible(flex: 1, child: registerButton),
-                            //Flexible(flex: 1, child: forgetPasswordButton)
                           ],
                         )
                       ],

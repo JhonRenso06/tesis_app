@@ -39,6 +39,7 @@ dependencies:
   flutter_bloc: ^6.0.6
   shimmer: ^1.1.1
   like_button: ^1.0.3
+  intl: ^0.16.1
 
 dev_dependencies:
   flutter_test:
@@ -68,6 +69,7 @@ flutter:
     - assets/direccion.png
     - assets/empty-cart.png
     - assets/online-order.png
+    - assets/status.png
 
   fonts:
     - family: Quicksand

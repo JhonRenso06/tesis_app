@@ -48,7 +48,8 @@ class _ItemCarritoWidget extends State<ItemCarritoWidget> {
                 children: [
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(top: 4, left: 8),
+                      padding:
+                          const EdgeInsets.only(top: 8, left: 8, bottom: 4),
                       child: Text(
                         producto.nombre,
                         textAlign: TextAlign.start,
@@ -60,7 +61,7 @@ class _ItemCarritoWidget extends State<ItemCarritoWidget> {
                     ),
                   ),
                   Container(
-                    margin: const EdgeInsets.only(right: 4),
+                    margin: const EdgeInsets.only(right: 8),
                     width: 24,
                     height: 24,
                     child: IconButton(

@@ -144,7 +144,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             FocusScope.of(context).nextFocus();
           },
           decoration: InputDecoration(
-            hintText: "Contraseña",
+            labelText: "Contraseña",
             suffixIcon: Container(
               width: 16,
               height: 16,
@@ -185,7 +185,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
         decoration: InputDecoration(
-          hintText: _tipo == TipoDeDocumento.DNI ? "DNI" : "RUC",
+          labelText: _tipo == TipoDeDocumento.DNI ? "DNI" : "RUC",
           counterText: "",
         ),
         validator: (val) {

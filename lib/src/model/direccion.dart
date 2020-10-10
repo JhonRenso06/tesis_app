@@ -1,7 +1,5 @@
 import 'package:mr_yupi/src/model/cliente.dart';
-import 'package:mr_yupi/src/model/departamento.dart';
 import 'package:mr_yupi/src/model/distrito.dart';
-import 'package:mr_yupi/src/model/provincia.dart';
 
 enum TipoDireccion {
   CASA,
@@ -12,7 +10,8 @@ enum TipoDireccion {
   LOCAL,
   CENTRO,
   MERCADO,
-  GALERIA
+  GALERIA,
+  OTRO
 }
 
 class Direccion {
@@ -25,9 +24,11 @@ class Direccion {
       telefono,
       direccion,
       urbanizacion,
-      referencia;
+      referencia,
+      numeroDeLote,
+      departamentoOInterior;
   TipoDireccion tipo;
-  num latitud, longitud, numeroDeLote, departamentoOInterior;
+  num latitud, longitud;
   bool predeterminado;
 
   Direccion(

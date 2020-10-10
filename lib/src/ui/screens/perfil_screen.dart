@@ -13,6 +13,7 @@ import 'package:mr_yupi/src/ui/screens/direccion_screen.dart';
 import 'package:mr_yupi/src/ui/screens/editar_perfil_screen.dart';
 import 'package:mr_yupi/src/ui/screens/pedidos_screen.dart';
 import 'package:mr_yupi/src/ui/widgets/direccion_widget.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class PerfilScreen extends StatefulWidget {
   @override
@@ -20,6 +21,8 @@ class PerfilScreen extends StatefulWidget {
 }
 
 class _PerfilScreenState extends State<PerfilScreen> {
+  Direccion _predeterminado;
+
   List<Direccion> direcciones = [
     Direccion(
         direccion: "Av Túpac Amaru 1419",
@@ -33,16 +36,20 @@ class _PerfilScreenState extends State<PerfilScreen> {
         nombre: "Pablo Rafael",
         apellidos: "Cruz López",
         telefono: "969647526",
+        tipo: TipoDireccion.CASA,
         predeterminado: false),
     Direccion(
-      direccion: "Av Túpac Amaru 1419",
+      direccion: "Av America 2050",
+      tipo: TipoDireccion.CONDOMINIO,
       distrito: Distrito(
+        id: 1,
+        nombre: "Trujillo",
+        provincia: Provincia(
           id: 1,
           nombre: "Trujillo",
-          provincia: Provincia(
-              id: 1,
-              nombre: "Trujillo",
-              departamento: Departamento(id: 1, nombre: "La libertad"))),
+          departamento: Departamento(id: 1, nombre: "La libertad"),
+        ),
+      ),
       nombre: "Pablo Rafael",
       apellidos: "Cruz López",
       telefono: "969647526",
@@ -54,6 +61,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
   @override
   void initState() {
     _cubit = PerfilBloc();
+    _predeterminado = direcciones[1];
     super.initState();
   }
 
@@ -113,10 +121,13 @@ class _PerfilScreenState extends State<PerfilScreen> {
                                         SizedBox(
                                           width: 4,
                                         ),
-                                        Text(
-                                          "Pablo Rafael Cruz López",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
+                                        Expanded(
+                                          child: Text(
+                                            "Pablo Rafael Cruz López",
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -130,7 +141,12 @@ class _PerfilScreenState extends State<PerfilScreen> {
                                         SizedBox(
                                           width: 4,
                                         ),
-                                        Text("pablocruz9988@hotmail.com"),
+                                        Expanded(
+                                          child: Text(
+                                            "pablocruz9988@hotmail.com",
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ],
@@ -176,28 +192,32 @@ class _PerfilScreenState extends State<PerfilScreen> {
                     child: Stack(
                       children: [
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Container(
-                              width: 120,
-                              height: 120,
+                            Padding(
                               padding: const EdgeInsets.only(
-                                  left: 21, top: 21, bottom: 21),
+                                  right: 21, top: 21, bottom: 21),
                               child: Image.asset(
                                 "assets/online-order.png",
+                                width: 100,
+                                height: 100,
                               ),
                             ),
-                            Expanded(
-                              child: Container(
-                                child: Text(
-                                  "Ver mis pedidos",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 24,
-                                    color: Global.accentColor,
-                                  ),
-                                ),
+                            Text(
+                              "Ver mis pedidos",
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
                               ),
+                            ),
+                            SizedBox(
+                              width: 4,
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              color: Global.accentColor,
                             )
                           ],
                         ),
@@ -235,34 +255,16 @@ class _PerfilScreenState extends State<PerfilScreen> {
               ),
               CarouselSlider(
                 options: CarouselOptions(
-                  height: 180,
-                  enableInfiniteScroll: true,
+                  enableInfiniteScroll: false,
                   autoPlay: false,
                 ),
                 items: direcciones.map((direccion) {
-                  return Builder(
-                    builder: (BuildContext context) {
-                      return Container(
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: DireccionWidget(
-                                direccion,
-                                onEdit: _editDireccion,
-                                onDelete: _deleteDireccion,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
+                  return DireccionWidget(
+                    direccion,
+                    onEdit: _editDireccion,
+                    onDelete: _deleteDireccion,
+                    onPredeterminado: _changePredeterminado,
+                    predeterminado: _predeterminado,
                   );
                 }).toList(),
               ),
@@ -307,9 +309,50 @@ class _PerfilScreenState extends State<PerfilScreen> {
     );
   }
 
-  _addDireccion() {}
+  _addDireccion() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => DireccionScreen(),
+      ),
+    );
+  }
 
-  _editDireccion(Direccion direccion) {}
+  _editDireccion(Direccion direccion) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => DireccionScreen(direccion: direccion),
+      ),
+    );
+  }
 
-  _deleteDireccion(Direccion direccion) {}
+  _deleteDireccion(Direccion direccion) async {
+    bool result = await Alert(
+        context: context,
+        title: "Cofirmación",
+        desc: "¿Está seguro que quiere eliminar esta dirección?",
+        type: AlertType.info,
+        buttons: [
+          DialogButton(
+            child: Text(
+              "Si",
+              style: TextStyle(color: Colors.white),
+            ),
+            onPressed: () => {Navigator.pop(context, true)},
+          ),
+          DialogButton(
+            child: Text(
+              "Cancelar",
+              style: TextStyle(color: Colors.white),
+            ),
+            onPressed: () => {Navigator.pop(context, false)},
+          )
+        ]).show();
+    if (result != null && result == true) {}
+  }
+
+  _changePredeterminado(Direccion direccion) {
+    setState(() {
+      _predeterminado = direccion;
+    });
+  }
 }
