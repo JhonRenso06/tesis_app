@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mr_yupi/src/ui/screens/finalizar_pedido_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:mr_yupi/src/model/linea_de_pedido.dart';
 import 'package:mr_yupi/src/providers/carrito_provider.dart';
@@ -134,7 +135,6 @@ class CarritoScreen extends StatelessWidget {
                             "Total",
                             style: TextStyle(
                               fontSize: 18,
-                              fontFamily: "Quicksand",
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -143,7 +143,6 @@ class CarritoScreen extends StatelessWidget {
                           "S/. ${carritoProvider.total.toStringAsFixed(2)}",
                           style: TextStyle(
                             fontSize: 18,
-                            fontFamily: "Quicksand",
                           ),
                         ),
                       ],
@@ -154,11 +153,16 @@ class CarritoScreen extends StatelessWidget {
                 SizedBox(
                   width: double.maxFinite,
                   child: RaisedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      _handleProcesarCompra(context);
+                    },
                     child: Text(
                       "Procesar pedido",
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 20, color: Colors.white),
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
@@ -170,5 +174,11 @@ class CarritoScreen extends StatelessWidget {
     );
   }
 
-  _handleProcesarCompra() {}
+  _handleProcesarCompra(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => FinalizarPedidoScreen(),
+      ),
+    );
+  }
 }

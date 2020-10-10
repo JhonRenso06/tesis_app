@@ -1,5 +1,6 @@
 import 'package:mr_yupi/src/model/direccion.dart';
 import 'package:mr_yupi/src/model/enums/estado_de_pedido.dart';
+import 'package:mr_yupi/src/model/enums/metodo_de_envio.dart';
 import 'package:mr_yupi/src/model/enums/metodo_de_pago.dart';
 import 'package:mr_yupi/src/model/enums/moneda.dart';
 import 'package:mr_yupi/src/model/enums/tipo_de_comprobante.dart';
@@ -18,24 +19,25 @@ class Pedido {
   String serieDeCorrelativo, numeroDeCorrelativo;
   List<LineaDePedido> lineasDePedido;
   EstadoDePedido estado;
+  MetodoDeEnvio metodoDeEnvio;
 
-  Pedido({
-    this.id,
-    this.subtotal,
-    this.igv,
-    this.total,
-    this.delivery,
-    this.direccion,
-    this.fechaDeEmision,
-    this.metodoDePago,
-    this.tipoDeComprobante,
-    this.moneda,
-    this.serieDeCorrelativo,
-    this.numeroDeCorrelativo,
-    this.estado,
-    this.lineasDePedido,
-    this.fechaDeEntrega,
-  }) {
+  Pedido(
+      {this.id,
+      this.subtotal,
+      this.igv,
+      this.total,
+      this.delivery,
+      this.direccion,
+      this.fechaDeEmision,
+      this.metodoDePago,
+      this.tipoDeComprobante,
+      this.moneda,
+      this.serieDeCorrelativo,
+      this.numeroDeCorrelativo,
+      this.estado,
+      this.lineasDePedido,
+      this.fechaDeEntrega,
+      this.metodoDeEnvio}) {
     if (this.lineasDePedido == null) {
       this.lineasDePedido = new List();
     }
