@@ -107,6 +107,21 @@ class ProductoWidget extends StatelessWidget {
                   ),
                 ],
               ),
+              if (producto.stock <= 0)
+                Container(
+                  width: double.maxFinite,
+                  height: constraints.maxHeight * 0.7,
+                  color: Colors.white54,
+                  child: Center(
+                    child: Text(
+                      "Agotado",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
               Material(
                 color: Colors.transparent,
                 child: InkWell(

@@ -340,12 +340,15 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
       );
     }
 
-    return Text(
-      "S/ ${widget.producto.precio.toStringAsFixed(2)}",
-      textAlign: TextAlign.center,
-      style: TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.bold,
+    return SizedBox(
+      width: double.maxFinite,
+      child: Text(
+        "S/ ${widget.producto.precio.toStringAsFixed(2)}",
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }

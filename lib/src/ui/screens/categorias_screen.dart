@@ -3,7 +3,7 @@ import 'package:mr_yupi/src/model/categoria.dart';
 import 'package:mr_yupi/src/ui/widgets/categoria_widget.dart';
 
 class CategoriasScreen extends StatelessWidget {
-  List<Categoria> categorias = [
+  final List<Categoria> categorias = [
     Categoria(
       id: 0,
       nombre: "Bebidas",

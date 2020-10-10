@@ -157,6 +157,8 @@ class Pedido {
         return "Entregado";
       case EstadoDePedido.CANCELADO:
         return "Cancelado";
+      default:
+        return "En proceso";
     }
   }
 }
