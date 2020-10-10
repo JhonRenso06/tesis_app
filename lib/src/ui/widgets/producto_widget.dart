@@ -70,7 +70,7 @@ class ProductoWidget extends StatelessWidget {
                                         ),
                                       ),
                                       Text(
-                                        "-${producto.porcentajeDescuento.toStringAsFixed(2)}%",
+                                        " - ${producto.porcentajeDescuento.toStringAsFixed(2)}%",
                                         style: TextStyle(
                                           fontFamily: "Quicksand",
                                           fontSize: 15,

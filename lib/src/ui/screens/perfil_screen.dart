@@ -253,21 +253,58 @@ class _PerfilScreenState extends State<PerfilScreen> {
                   ],
                 ),
               ),
-              CarouselSlider(
-                options: CarouselOptions(
-                  enableInfiniteScroll: false,
-                  autoPlay: false,
+              if (direcciones.length > 0)
+                CarouselSlider(
+                  options: CarouselOptions(
+                    enableInfiniteScroll: false,
+                    autoPlay: false,
+                  ),
+                  items: direcciones.map((direccion) {
+                    return DireccionWidget(
+                      direccion,
+                      onEdit: _editDireccion,
+                      onDelete: _deleteDireccion,
+                      onPredeterminado: _changePredeterminado,
+                      predeterminado: _predeterminado,
+                    );
+                  }).toList(),
+                )
+              else
+                SizedBox(
+                  height: 180,
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      left: 24,
+                      right: 24,
+                    ),
+                    child: Material(
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      child: InkWell(
+                        onTap: _addDireccion,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.add,
+                              color: Global.accentColor,
+                            ),
+                            SizedBox(
+                              width: 8,
+                            ),
+                            Text(
+                              "Agrega una dirección",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-                items: direcciones.map((direccion) {
-                  return DireccionWidget(
-                    direccion,
-                    onEdit: _editDireccion,
-                    onDelete: _deleteDireccion,
-                    onPredeterminado: _changePredeterminado,
-                    predeterminado: _predeterminado,
-                  );
-                }).toList(),
-              ),
               Padding(
                 padding: const EdgeInsets.all(12),
                 child: Column(

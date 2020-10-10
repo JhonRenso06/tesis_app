@@ -9,6 +9,8 @@ class ImageCardWidget extends StatelessWidget {
   final Function onTap;
   final double elevation;
   final EdgeInsets margin;
+  final double radius;
+  final BoxFit fit;
 
   ImageCardWidget(
       {this.width = double.maxFinite,
@@ -17,7 +19,9 @@ class ImageCardWidget extends StatelessWidget {
       this.imageUrl,
       this.onTap,
       this.elevation = 0,
-      this.margin = const EdgeInsets.all(6)});
+      this.margin = const EdgeInsets.all(6),
+      this.radius = 12,
+      this.fit = BoxFit.cover});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +31,7 @@ class ImageCardWidget extends StatelessWidget {
       semanticContainer: false,
       clipBehavior: Clip.antiAliasWithSaveLayer,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(radius),
       ),
       child: SizedBox(
         width: this.width,
@@ -36,7 +40,6 @@ class ImageCardWidget extends StatelessWidget {
           width: double.maxFinite,
           height: double.maxFinite,
           imageUrl: this.imageUrl,
-          fit: BoxFit.cover,
           placeholder: (context, _) => Shimmer.fromColors(
             baseColor: Colors.grey[200],
             highlightColor: Colors.grey[300],
@@ -56,7 +59,7 @@ class ImageCardWidget extends StatelessWidget {
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: imageProvider,
-                fit: BoxFit.cover,
+                fit: this.fit,
               ),
             ),
           ),

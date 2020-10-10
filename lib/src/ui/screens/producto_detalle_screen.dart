@@ -1,6 +1,9 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:mr_yupi/src/global/global.dart';
+import 'package:mr_yupi/src/ui/screens/carrito_screen.dart';
+import 'package:mr_yupi/src/ui/widgets/image_card_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:mr_yupi/src/providers/carrito_provider.dart';
 import 'package:mr_yupi/src/model/producto.dart';
@@ -17,466 +20,471 @@ class ProductoDetalleScreen extends StatefulWidget {
 }
 
 class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
-  TextEditingController cantidadController = new TextEditingController();
-  MediaQueryData pantalla;
-  int _current, cantidad;
+  TextEditingController _controller = new TextEditingController();
+  int _cantidad, _current;
+  double _widthCantidad = 45;
   initState() {
-    cantidad = widget.producto.stock > 0 ? 1 : 0;
     super.initState();
+    _cantidad = 1;
     _current = 0;
+    _controller.value = _controller.value.copyWith(text: "1");
   }
 
   @override
   Widget build(BuildContext context) {
-    pantalla = MediaQuery.of(context);
-    var width = pantalla.size.width;
     var carritoProvider = Provider.of<CarritoProvider>(context);
     return DefaultTabController(
       length: 1,
       child: Scaffold(
-          backgroundColor: Colors.white,
-          body: NestedScrollView(
-              headerSliverBuilder:
-                  (BuildContext context, bool innerBoxIsScrolled) {
-                return <Widget>[
-                  SliverAppBar(
-                    leading: Material(
+        backgroundColor: Colors.white,
+        body: NestedScrollView(
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return <Widget>[
+              SliverAppBar(
+                actions: [
+                  SizedBox(
+                    width: 70,
+                    height: 70,
+                    child: Material(
                       color: Colors.transparent,
-                      child: IconButton(
-                        icon: Icon(Icons.close, color: Colors.white),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ),
-                    actions: [
-                      Padding(
-                          padding: const EdgeInsets.only(top: 15, left: 15),
-                          child:
-                              CantidadCarritoWidget(carritoProvider.cantidad)),
-                    ],
-                    backgroundColor: Color.fromRGBO(77, 17, 48, 1),
-                    expandedHeight: MediaQuery.of(context).size.width * 0.9,
-                    floating: false,
-                    pinned: true,
-                    flexibleSpace: FlexibleSpaceBar(
-                      background: Stack(
-                        children: <Widget>[
-                          Container(
-                            child: CarouselSlider(
-                              options: CarouselOptions(
-                                  viewportFraction: 1,
-                                  height: double.maxFinite,
-                                  onPageChanged: (index, _) {
-                                    setState(() {
-                                      _current = index;
-                                    });
-                                  },
-                                  enableInfiniteScroll: true,
-                                  autoPlay: false),
-                              items: widget.producto.fotos.map((foto) {
-                                return SizedBox(
-                                  width: width,
-                                  child: CachedNetworkImage(
-                                    fit: BoxFit.cover,
-                                    imageUrl: foto,
-                                    placeholder: (context, url) =>
-                                        CircularProgressIndicator(),
-                                    errorWidget: (context, url, error) =>
-                                        Icon(Icons.error),
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-                          ),
-                          Positioned(
-                            bottom: 0,
-                            child: Container(
-                              width: width,
-                              child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: widget.producto.fotos.map((foto) {
-                                    int index =
-                                        widget.producto.fotos.indexOf(foto);
-                                    return Container(
-                                      width: 8.0,
-                                      height: 8.0,
-                                      margin: EdgeInsets.symmetric(
-                                          vertical: 10.0, horizontal: 2.0),
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: _current == index
-                                            ? Color.fromRGBO(77, 17, 48, 1)
-                                            : Color.fromRGBO(0, 0, 0, 0.2),
-                                      ),
-                                    );
-                                  }).toList()),
-                            ),
-                          ),
-                          Container(
-                            height: kToolbarHeight +
-                                MediaQuery.of(context).padding.top,
-                            width: double.maxFinite,
-                            decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                    colors: [
-                                  Colors.black87,
-                                  Colors.transparent
-                                ],
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter)),
-                          )
-                        ],
+                      child: CantidadCarritoWidget(
+                        carritoProvider.cantidad,
+                        onTap: _toCart,
                       ),
                     ),
                   ),
-                ];
-              },
-              body: new TabBarView(children: [
-                ListView.builder(
-                    itemCount: 1,
-                    itemBuilder: (context, _) {
-                      return Stack(children: <Widget>[
-                        Container(
-                            width: width,
-                            color: Colors.white,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.all(10),
-                                  child: Container(
-                                    child: Text(widget.producto.nombre,
-                                        style: TextStyle(
-                                            fontFamily: "Quicksand",
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold)),
-                                  ),
+                ],
+                expandedHeight: MediaQuery.of(context).size.width * 0.9,
+                floating: false,
+                pinned: true,
+                flexibleSpace: FlexibleSpaceBar(
+                  background: Stack(
+                    children: <Widget>[
+                      Container(
+                        color: Colors.white,
+                        padding: EdgeInsets.only(
+                          top: MediaQuery.of(context).padding.top,
+                        ),
+                        child: CarouselSlider(
+                          options: CarouselOptions(
+                            viewportFraction: 1,
+                            height: double.maxFinite,
+                            onPageChanged: (index, _) {
+                              setState(() {
+                                _current = index;
+                              });
+                            },
+                            enableInfiniteScroll: false,
+                            autoPlay: false,
+                          ),
+                          items: widget.producto.fotos.map((foto) {
+                            return ImageCardWidget(
+                              imageUrl: foto,
+                              margin: const EdgeInsets.all(0),
+                              radius: 0,
+                              fit: BoxFit.contain,
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: widget.producto.fotos.map((foto) {
+                              int index = widget.producto.fotos.indexOf(foto);
+                              return Container(
+                                width: 8.0,
+                                height: 8.0,
+                                margin: EdgeInsets.symmetric(
+                                  vertical: 10.0,
+                                  horizontal: 2.0,
                                 ),
-                                Row(children: <Widget>[
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 15, right: 15),
-                                      child: widget.producto.descuento !=
-                                                  null &&
-                                              widget.producto.descuento > 0
-                                          ? Column(children: <Widget>[
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: <Widget>[
-                                                  Text(
-                                                      "S/" +
-                                                          widget.producto.precio
-                                                              .toStringAsFixed(
-                                                                  2),
-                                                      style: TextStyle(
-                                                          decoration:
-                                                              TextDecoration
-                                                                  .lineThrough,
-                                                          fontFamily:
-                                                              "Quicksand",
-                                                          fontSize: 15,
-                                                          color: Colors.grey)),
-                                                  Text(
-                                                      widget.producto
-                                                          .porcentajeDescuento
-                                                          .toStringAsFixed(2),
-                                                      style: TextStyle(
-                                                          fontFamily:
-                                                              "Quicksand",
-                                                          fontSize: 15,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: Colors.black)),
-                                                ],
-                                              ),
-                                              Text(
-                                                  "S/" +
-                                                      widget.producto
-                                                          .precioDescuento
-                                                          .toStringAsFixed(2),
-                                                  style: TextStyle(
-                                                      fontFamily: "Quicksand",
-                                                      fontSize: 15,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Color.fromRGBO(
-                                                          77, 17, 48, 1))),
-                                            ])
-                                          : Text(
-                                              "S/" +
-                                                  widget.producto.precio
-                                                      .toStringAsFixed(2),
-                                              style: TextStyle(
-                                                  fontFamily: "Quicksand",
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black)),
-                                    ),
-                                  ),
-                                  widget.producto.stock > 0
-                                      ? Padding(
-                                          padding: const EdgeInsets.all(10),
-                                          child: Container(
-                                            height: 30,
-                                            child: Material(
-                                                color: Colors.white,
-                                                shape:
-                                                    const RoundedRectangleBorder(
-                                                  side: BorderSide(
-                                                      color: Color.fromRGBO(
-                                                          224, 224, 224, 1),
-                                                      width: 1),
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(
-                                                              30.0)),
-                                                ),
-                                                child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: <Widget>[
-                                                      Container(
-                                                          width: width / 6,
-                                                          child: ButtonTheme(
-                                                            buttonColor:
-                                                                Colors.white,
-                                                            shape: RoundedRectangleBorder(
-                                                                borderRadius: BorderRadius.only(
-                                                                    topLeft: Radius
-                                                                        .circular(
-                                                                            50),
-                                                                    bottomLeft:
-                                                                        Radius.circular(
-                                                                            50))),
-                                                            child: RaisedButton(
-                                                                elevation: 0,
-                                                                onPressed: () {
-                                                                  if (this.cantidad >
-                                                                      0) {
-                                                                    setState(
-                                                                        () {
-                                                                      this.cantidad =
-                                                                          this.cantidad -
-                                                                              1;
-                                                                    });
-                                                                  }
-                                                                },
-                                                                child: Center(
-                                                                    child: Icon(
-                                                                        Icons
-                                                                            .remove,
-                                                                        textDirection:
-                                                                            TextDirection
-                                                                                .ltr,
-                                                                        color: Colors
-                                                                            .black))),
-                                                          )),
-                                                      Container(
-                                                          width: width / 8,
-                                                          color: Colors.white,
-                                                          child: Center(
-                                                            child: Text(
-                                                              cantidad
-                                                                  .toString(),
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .black,
-                                                                  fontFamily:
-                                                                      "Quicksand",
-                                                                  fontSize: 20),
-                                                            ),
-                                                          )),
-                                                      Container(
-                                                          width: width / 6,
-                                                          child: ButtonTheme(
-                                                            buttonColor:
-                                                                Colors.white,
-                                                            shape: RoundedRectangleBorder(
-                                                                borderRadius: BorderRadius.only(
-                                                                    topRight: Radius
-                                                                        .circular(
-                                                                            50),
-                                                                    bottomRight:
-                                                                        Radius.circular(
-                                                                            50))),
-                                                            child: RaisedButton(
-                                                                elevation: 0,
-                                                                onPressed: () {
-                                                                  if (this.cantidad <
-                                                                      widget
-                                                                          .producto
-                                                                          .stock) {
-                                                                    setState(
-                                                                        () {
-                                                                      this.cantidad =
-                                                                          this.cantidad +
-                                                                              1;
-                                                                    });
-                                                                  }
-                                                                },
-                                                                child: Center(
-                                                                    child: Icon(
-                                                                        Icons
-                                                                            .add,
-                                                                        textDirection:
-                                                                            TextDirection
-                                                                                .rtl,
-                                                                        color: Colors
-                                                                            .black))),
-                                                          )),
-                                                    ])),
-                                          ),
-                                        )
-                                      : Row(children: <Widget>[
-                                          Padding(
-                                              padding: const EdgeInsets.all(10),
-                                              child: Container(
-                                                  height: 30,
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width /
-                                                      3,
-                                                  child: Text("Agotado",
-                                                      style: TextStyle(
-                                                          color: Colors.red,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 20,
-                                                          fontFamily:
-                                                              "Quicksand"))))
-                                        ]),
-                                ]),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 5, left: 10, right: 10, bottom: 5),
-                                  child: Divider(
-                                      color: Color.fromRGBO(224, 224, 224, 1)),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: _current == index
+                                      ? Color.fromRGBO(77, 17, 48, 1)
+                                      : Color.fromRGBO(0, 0, 0, 0.2),
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 5, left: 10, right: 10, bottom: 5),
-                                  child: Center(
-                                    child: Container(
-                                      height: 30,
-                                      width: width / 2,
-                                      child: Material(
-                                        color: Colors.white,
-                                        shape: const RoundedRectangleBorder(
-                                          side: BorderSide(color: Colors.black),
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(30.0)),
-                                        ),
-                                        child: MaterialButton(
-                                            onPressed: widget.producto.stock > 0
-                                                ? () {
-                                                    carritoProvider
-                                                        .addLineaDePedido(
-                                                            cantidad,
-                                                            widget.producto);
-                                                  }
-                                                : null,
-                                            child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: <Widget>[
-                                                  Text("Añadir al carrito",
-                                                      style: TextStyle(
-                                                          color: Colors.black,
-                                                          fontFamily:
-                                                              "Quicksand",
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 15)),
-                                                  Icon(
-                                                    Icons.shopping_cart,
-                                                    color: Colors.black,
-                                                    size: 15,
-                                                  ),
-                                                ])),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 5, left: 10, right: 10, bottom: 5),
-                                  child: Divider(
-                                      color: Color.fromRGBO(224, 224, 224, 1)),
-                                ),
-                                widget.producto.descripcion != null
-                                    ? Column(children: <Widget>[
-                                        Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 5, left: 10, right: 10),
-                                            child: Text("Descripción",
-                                                style: TextStyle(
-                                                    fontFamily: "Quicksand",
-                                                    fontWeight:
-                                                        FontWeight.bold))),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              top: 5,
-                                              left: 10,
-                                              right: 10,
-                                              bottom: 5),
-                                          child: Divider(
-                                              color: Color.fromRGBO(
-                                                  224, 224, 224, 1)),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              top: 5,
-                                              left: 10,
-                                              right: 10,
-                                              bottom: 5),
-                                          child: Text(
-                                            widget.producto.descripcion,
-                                            style: TextStyle(
-                                                fontFamily: "Quicksand"),
-                                          ),
-                                        ),
-                                      ])
-                                    : SizedBox.shrink(),
-                                widget.producto.caracteristicas != null
-                                    ? Column(children: <Widget>[
-                                        Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 5, left: 10, right: 10),
-                                            child: Text("Características",
-                                                style: TextStyle(
-                                                    fontFamily: "Quicksand",
-                                                    fontWeight:
-                                                        FontWeight.bold))),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              top: 5,
-                                              left: 10,
-                                              right: 10,
-                                              bottom: 5),
-                                          child: Divider(
-                                              color: Color.fromRGBO(
-                                                  224, 224, 224, 1)),
-                                        ),
-                                        Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 5,
-                                                left: 10,
-                                                right: 10,
-                                                bottom: 5),
-                                            child: CaracteristicasWidget(widget
-                                                .producto.caracteristicas)),
-                                      ])
-                                    : SizedBox.shrink()
-                              ],
-                            )),
-                      ]);
-                      // return info();
-                    }),
-              ]))),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        height:
+                            kToolbarHeight + MediaQuery.of(context).padding.top,
+                        width: double.maxFinite,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Colors.black26, Colors.transparent],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ];
+          },
+          body: ListView(
+            children: [
+              Container(
+                width: double.infinity,
+                color: Colors.white,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Container(
+                        child: Text(
+                          widget.producto.nombre,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: 5,
+                        left: 10,
+                        right: 10,
+                        bottom: 5,
+                      ),
+                      child: Divider(
+                        color: Color.fromRGBO(224, 224, 224, 1),
+                      ),
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        Flexible(
+                          child: _precioWidget,
+                          flex: 1,
+                        ),
+                        Flexible(
+                          child: _cantidadPicker,
+                          flex: 1,
+                        ),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: 5,
+                        left: 10,
+                        right: 10,
+                        bottom: 5,
+                      ),
+                      child: Divider(
+                        color: Color.fromRGBO(224, 224, 224, 1),
+                      ),
+                    ),
+                    RaisedButton.icon(
+                      onPressed: widget.producto.stock > 0 ? _addCart : null,
+                      label: Text("Agregar al carrito"),
+                      icon: Icon(Icons.add_shopping_cart),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: 5,
+                        left: 10,
+                        right: 10,
+                        bottom: 5,
+                      ),
+                      child: Divider(
+                        color: Color.fromRGBO(224, 224, 224, 1),
+                      ),
+                    ),
+                    if (widget.producto.descripcion != null)
+                      Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              top: 5,
+                              left: 10,
+                              right: 10,
+                            ),
+                            child: Text(
+                              "Descripción",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              top: 5,
+                              left: 10,
+                              right: 10,
+                              bottom: 5,
+                            ),
+                            child: Divider(
+                              color: Color.fromRGBO(224, 224, 224, 1),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              top: 5,
+                              left: 10,
+                              right: 10,
+                              bottom: 5,
+                            ),
+                            child: Text(
+                              widget.producto.descripcion,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              top: 5,
+                              left: 10,
+                              right: 10,
+                              bottom: 5,
+                            ),
+                            child: Divider(
+                              color: Color.fromRGBO(224, 224, 224, 1),
+                            ),
+                          ),
+                        ],
+                      ),
+                    if (widget.producto.caracteristicas != null)
+                      Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              top: 5,
+                              left: 10,
+                              right: 10,
+                            ),
+                            child: Text(
+                              "Características",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              top: 5,
+                              left: 10,
+                              right: 10,
+                              bottom: 5,
+                            ),
+                            child: Divider(
+                              color: Color.fromRGBO(224, 224, 224, 1),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              top: 5,
+                              left: 10,
+                              right: 10,
+                              bottom: 5,
+                            ),
+                            child: CaracteristicasWidget(
+                              widget.producto.caracteristicas,
+                            ),
+                          ),
+                        ],
+                      )
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
+  }
+
+  Widget get _precioWidget {
+    if (widget.producto.descuento != null && widget.producto.descuento > 0) {
+      return Column(
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                "S/ ${widget.producto.precio.toStringAsFixed(2)}",
+                style: TextStyle(
+                  decoration: TextDecoration.lineThrough,
+                  fontSize: 16,
+                  color: Colors.grey,
+                ),
+              ),
+              Text(
+                " - ${widget.producto.porcentajeDescuento.toStringAsFixed(2)}%",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          Text(
+            "S/ ${widget.producto.precioDescuento.toStringAsFixed(2)}",
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Global.accentColor,
+            ),
+          ),
+        ],
+      );
+    }
+
+    return Text(
+      "S/ ${widget.producto.precio.toStringAsFixed(2)}",
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+
+  Widget get _cantidadPicker {
+    if (widget.producto.stock != null && widget.producto.stock > 0) {
+      return SizedBox(
+        height: 45,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: _widthCantidad,
+              child: OutlineButton(
+                onPressed: _handleLess,
+                child: Center(
+                  child: Icon(
+                    Icons.remove,
+                    textDirection: TextDirection.ltr,
+                    color: Colors.black,
+                  ),
+                ),
+                padding: const EdgeInsets.all(0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(50),
+                    bottomLeft: Radius.circular(50),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              width: _widthCantidad,
+              child: TextField(
+                controller: _controller,
+                keyboardType: TextInputType.numberWithOptions(
+                  decimal: false,
+                  signed: false,
+                ),
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                onSubmitted: _handleSubmit,
+                textAlign: TextAlign.center,
+                decoration: InputDecoration(
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(0),
+                    borderSide: BorderSide(
+                      color: Global.accentColor,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(0),
+                    borderSide: BorderSide(
+                      color: Global.primaryColorDark,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              width: _widthCantidad,
+              child: OutlineButton(
+                onPressed: _handlePlus,
+                child: Center(
+                  child: Icon(
+                    Icons.add,
+                    textDirection: TextDirection.ltr,
+                    color: Colors.black,
+                  ),
+                ),
+                padding: const EdgeInsets.all(0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(50),
+                    bottomRight: Radius.circular(50),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    return SizedBox(
+      width: double.maxFinite,
+      child: Text(
+        "Agotado",
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          color: Colors.red,
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+        ),
+      ),
+    );
+  }
+
+  _toCart() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => CarritoScreen(),
+      ),
+    );
+  }
+
+  _handlePlus() {
+    if (_cantidad < widget.producto.stock) {
+      _cantidad++;
+      _controller.value =
+          _controller.value.copyWith(text: _cantidad.toString());
+    }
+  }
+
+  _handleLess() {
+    if (_cantidad > 1) {
+      _cantidad--;
+      _controller.value =
+          _controller.value.copyWith(text: _cantidad.toString());
+    }
+  }
+
+  _handleSubmit(str) {
+    int cantidad;
+    if (str == "") {
+      cantidad = 0;
+    } else {
+      cantidad = int.parse(str);
+    }
+    if (!(cantidad > 0 && cantidad < widget.producto.stock)) {
+      _controller.value =
+          _controller.value.copyWith(text: _cantidad.toString());
+    } else {
+      _cantidad = cantidad;
+    }
+  }
+
+  _addCart() {
+    var carritoProvider = Provider.of<CarritoProvider>(context, listen: false);
+    carritoProvider.addLineaDePedido(_cantidad, widget.producto);
+    Scaffold.of(context)
+        .showSnackBar(SnackBar(content: Text("Se agrego al carrito")));
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:mr_yupi/src/model/caracteristicas.dart';
 import 'package:mr_yupi/src/model/producto.dart';
+import 'package:mr_yupi/src/ui/screens/carrito_screen.dart';
 import 'package:mr_yupi/src/ui/screens/producto_detalle_screen.dart';
 import 'package:mr_yupi/src/ui/widgets/image_card_widget.dart';
 import 'package:mr_yupi/src/ui/widgets/producto_widget.dart';
@@ -224,7 +225,7 @@ class _ProductosScreenState extends State<ProductosScreen> {
     );
   }
 
-  _handleProduct(Producto producto) {
+  _handleProduct(Producto producto) async {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => ProductoDetalleScreen(producto),
