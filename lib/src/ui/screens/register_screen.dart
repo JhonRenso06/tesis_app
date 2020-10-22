@@ -2,15 +2,15 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mr_yupi/src/bloc/perfil_bloc.dart';
+import 'package:mr_yupi/src/enums/tipo_de_documento.dart';
+import 'package:mr_yupi/src/model/api_response.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
-import 'package:mr_yupi/src/bloc/bloc_state.dart';
-import 'package:mr_yupi/src/bloc/register_bloc.dart';
 import 'package:mr_yupi/src/global/global.dart';
 import 'package:mr_yupi/src/model/api_message.dart';
 import 'package:mr_yupi/src/model/cliente.dart';
 import 'package:mr_yupi/src/model/cliente_juridico.dart';
 import 'package:mr_yupi/src/model/cliente_natural.dart';
-import 'package:mr_yupi/src/model/enums/tipo_de_documento.dart';
 import 'package:mr_yupi/src/ui/widgets/loading_widget.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -23,7 +23,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String _nombre, _apellidos, _email, _password, _documento;
   bool _loading, _obscurePassword, _obscureRepeatPassword;
   TipoDeDocumento _tipo;
-  RegisterBloc _cubit;
 
   @override
   void initState() {
@@ -32,7 +31,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _obscurePassword = true;
     _obscureRepeatPassword = true;
     _tipo = TipoDeDocumento.DNI;
-    _cubit = RegisterBloc();
     super.initState();
   }
 
@@ -260,13 +258,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ),
             ),
-            BlocListener<RegisterBloc, BlocState<APIMessage>>(
-              cubit: _cubit,
+            BlocListener<PerfilBloc, APIResponse<Cliente>>(
+              cubit: context.bloc<PerfilBloc>(),
               listener: (context, state) {
-                if (state is LoadedState) {
+                if (state.hasMessage) {
                   _showSuccess(state.message);
-                }
-                if (state is ErrorState) {
+                } else if (state.hasException) {
                   Alert(
                     context: context,
                     title: "Upss..",
@@ -277,12 +274,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
               },
               child: SizedBox.shrink(),
             ),
-            BlocBuilder<RegisterBloc, BlocState<APIMessage>>(
-              cubit: _cubit,
+            BlocBuilder<PerfilBloc, APIResponse>(
+              cubit: context.bloc<PerfilBloc>(),
               builder: (context, state) {
-                return state is LoadingState
-                    ? LoadingWidget()
-                    : SizedBox.shrink();
+                return state.loading ? LoadingWidget() : SizedBox.shrink();
               },
             ),
           ],
@@ -309,7 +304,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             correo: _email,
             password: _password);
       }
-      _cubit.register(cliente);
+      context.bloc<PerfilBloc>().register(cliente);
     }
   }
 

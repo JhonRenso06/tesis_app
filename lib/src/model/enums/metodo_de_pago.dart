@@ -1,1 +1,0 @@
-enum MetodoDePago { TARJETA, EFECTIVO }

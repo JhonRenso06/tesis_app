@@ -15,11 +15,11 @@ class _FinPedidoScreenState extends State<FinPedidoScreen> {
         height: double.maxFinite,
         decoration: BoxDecoration(
           gradient: LinearGradient(
+            begin: Alignment.bottomCenter,
             colors: [
               Colors.white,
               Global.primarySwatch[50],
             ],
-            begin: Alignment.bottomCenter,
           ),
         ),
         child: Column(

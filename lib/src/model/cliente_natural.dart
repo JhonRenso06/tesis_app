@@ -1,28 +1,25 @@
+import 'package:mr_yupi/src/enums/tipo_de_documento.dart';
 import 'package:mr_yupi/src/model/cliente.dart';
 
 class ClienteNatural extends Cliente {
-  String nombre, apellidos;
+  String nombre;
+  String apellidos;
 
-  ClienteNatural(
-      {this.nombre,
-      this.apellidos,
-      num id,
-      String documento,
-      String direccion,
-      String telefono,
-      String correo,
-      String password})
-      : super(
+  ClienteNatural({
+    num id,
+    String documento,
+    String telefono,
+    String correo,
+    String password,
+    this.nombre,
+    this.apellidos,
+  }) : super(
           id: id,
           documento: documento,
-          direccion: direccion,
           telefono: telefono,
           correo: correo,
           password: password,
-        );
-
-  ClienteNatural.fromMap(Map<String, dynamic> data)
-      : this.nombre = data["nombre"],
-        this.apellidos = data["apellidos"],
-        super.fromMap(data);
+        ) {
+    super.tipoDeDocumento = TipoDeDocumento.DNI;
+  }
 }

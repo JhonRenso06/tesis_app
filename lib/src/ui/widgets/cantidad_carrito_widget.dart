@@ -1,14 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mr_yupi/src/bloc/carrito_bloc.dart';
 import 'package:mr_yupi/src/global/global.dart';
+import 'package:mr_yupi/src/model/pedido.dart';
 
 class CantidadCarritoWidget extends StatelessWidget {
-  final int cantidad;
   final Function onTap;
 
-  CantidadCarritoWidget(this.cantidad, {this.onTap});
+  CantidadCarritoWidget({this.onTap});
 
   @override
   Widget build(BuildContext context) {
+    return BlocBuilder<CarritoBloc, Pedido>(
+      builder: (context, state) {
+        if (state != null) {
+          return button(state.lineasDePedido.length);
+        }
+        return button(0);
+      },
+    );
+  }
+
+  Widget button(int cantidad) {
     return IconButton(
       onPressed: this.onTap,
       icon: Stack(

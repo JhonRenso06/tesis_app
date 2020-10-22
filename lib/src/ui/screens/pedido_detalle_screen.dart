@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mr_yupi/src/enums/estado_de_pedido.dart';
+import 'package:mr_yupi/src/enums/metodo_de_pago.dart';
 import 'package:mr_yupi/src/global/global.dart';
-import 'package:mr_yupi/src/model/enums/estado_de_pedido.dart';
-import 'package:mr_yupi/src/model/enums/metodo_de_pago.dart';
 import 'package:mr_yupi/src/model/pedido.dart';
 import 'package:mr_yupi/src/ui/widgets/linea_de_pedido_widget.dart';
 
@@ -34,11 +34,12 @@ class _PedidoDetalleScreenState extends State<PedidoDetalleScreen> {
               _resumenDeCompra,
               _direccionDetalle,
             ]..addAll(
-                widget.pedido.lineasDePedido
-                    .map(
-                      (e) => LineaDePedidoWidget(e),
-                    )
-                    .toList(),
+                widget.pedido.lineasDePedido.map(
+                  (e) {
+                    print(e.id);
+                    return LineaDePedidoWidget(e);
+                  },
+                ).toList(),
               ),
           ),
         ),
@@ -95,7 +96,7 @@ class _PedidoDetalleScreenState extends State<PedidoDetalleScreen> {
                                 ),
                                 Text(
                                   Global.dateFormatter(
-                                      widget.pedido.fechaDeEmision),
+                                      widget.pedido.fechaEmision),
                                 ),
                               ],
                             ),
@@ -231,7 +232,7 @@ class _PedidoDetalleScreenState extends State<PedidoDetalleScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            widget.pedido.direccion.direccion,
+                            widget.pedido.direccion.descripcion,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
@@ -264,11 +265,11 @@ class _PedidoDetalleScreenState extends State<PedidoDetalleScreen> {
 
   Widget textEstado() {
     Color color;
-    String str = widget.pedido.strEstado;
+    String str = widget.pedido.estado.name;
     switch (widget.pedido.estado) {
       case EstadoDePedido.ATENDIDO:
         color = Colors.greenAccent[700];
-        str += "\n ${Global.dateFormatter(widget.pedido.fechaDeEntrega)}";
+        str += "\n ${Global.dateFormatter(widget.pedido.fechaEntrega)}";
         break;
       case EstadoDePedido.CANCELADO:
         color = Colors.red;

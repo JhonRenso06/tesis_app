@@ -1,19 +1,20 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mr_yupi/src/bloc/carrito_bloc.dart';
 import 'package:mr_yupi/src/global/global.dart';
+import 'package:mr_yupi/src/model/precio.dart';
+import 'package:mr_yupi/src/model/producto_establecimiento.dart';
 import 'package:mr_yupi/src/ui/screens/carrito_screen.dart';
 import 'package:mr_yupi/src/ui/widgets/image_card_widget.dart';
-import 'package:provider/provider.dart';
-import 'package:mr_yupi/src/providers/carrito_provider.dart';
-import 'package:mr_yupi/src/model/producto.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mr_yupi/src/ui/widgets/cantidad_carrito_widget.dart';
 import 'package:mr_yupi/src/ui/widgets/caracteristicas_widget.dart';
 
 class ProductoDetalleScreen extends StatefulWidget {
-  final Producto producto;
+  final ProductoEstablecimiento productoEstablecimiento;
 
-  ProductoDetalleScreen(this.producto);
+  ProductoDetalleScreen(this.productoEstablecimiento);
 
   @override
   State<StatefulWidget> createState() => _ProductoDetalleScreen();
@@ -32,7 +33,6 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var carritoProvider = Provider.of<CarritoProvider>(context);
     return DefaultTabController(
       length: 1,
       child: Scaffold(
@@ -48,7 +48,6 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                     child: Material(
                       color: Colors.transparent,
                       child: CantidadCarritoWidget(
-                        carritoProvider.cantidad,
                         onTap: _toCart,
                       ),
                     ),
@@ -65,27 +64,34 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                         padding: EdgeInsets.only(
                           top: MediaQuery.of(context).padding.top,
                         ),
-                        child: CarouselSlider(
-                          options: CarouselOptions(
-                            viewportFraction: 1,
-                            height: double.maxFinite,
-                            onPageChanged: (index, _) {
-                              setState(() {
-                                _current = index;
-                              });
-                            },
-                            enableInfiniteScroll: false,
-                            autoPlay: false,
-                          ),
-                          items: widget.producto.fotos.map((foto) {
-                            return ImageCardWidget(
-                              imageUrl: foto,
-                              margin: const EdgeInsets.all(0),
-                              radius: 0,
-                              fit: BoxFit.contain,
-                            );
-                          }).toList(),
-                        ),
+                        child:
+                            widget.productoEstablecimiento.producto.foto != null
+                                ? CarouselSlider(
+                                    options: CarouselOptions(
+                                      viewportFraction: 1,
+                                      height: double.maxFinite,
+                                      onPageChanged: (index, _) {
+                                        setState(() {
+                                          _current = index;
+                                        });
+                                      },
+                                      enableInfiniteScroll: false,
+                                      autoPlay: false,
+                                    ),
+                                    items: widget
+                                        .productoEstablecimiento.producto.fotos
+                                        .map((foto) {
+                                      return ImageCardWidget(
+                                        imageUrl: foto,
+                                        margin: const EdgeInsets.all(0),
+                                        radius: 0,
+                                        fit: BoxFit.contain,
+                                      );
+                                    }).toList(),
+                                  )
+                                : Center(
+                                    child: Image.asset("assets/products.png"),
+                                  ),
                       ),
                       Positioned(
                         bottom: 0,
@@ -93,8 +99,12 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                           width: MediaQuery.of(context).size.width,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: widget.producto.fotos.map((foto) {
-                              int index = widget.producto.fotos.indexOf(foto);
+                            children: widget
+                                .productoEstablecimiento.producto.fotos
+                                .map((foto) {
+                              int index = widget
+                                  .productoEstablecimiento.producto.fotos
+                                  .indexOf(foto);
                               return Container(
                                 width: 8.0,
                                 height: 8.0,
@@ -119,9 +129,9 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                         width: double.maxFinite,
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [Colors.black26, Colors.transparent],
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
+                            colors: [Colors.black26, Colors.transparent],
                           ),
                         ),
                       )
@@ -143,7 +153,7 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                       padding: const EdgeInsets.all(10),
                       child: Container(
                         child: Text(
-                          widget.producto.nombre,
+                          widget.productoEstablecimiento.producto.nombre,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 20,
@@ -165,16 +175,15 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                     ),
                     Row(
                       mainAxisSize: MainAxisSize.max,
-                      children: <Widget>[
-                        Flexible(
-                          child: _precioWidget,
-                          flex: 1,
-                        ),
-                        Flexible(
-                          child: _cantidadPicker,
-                          flex: 1,
-                        ),
-                      ],
+                      children: widget
+                          .productoEstablecimiento.producto.precios.reversed
+                          .map(
+                            (e) => Flexible(
+                              flex: 1,
+                              child: _precioWidget(e),
+                            ),
+                          )
+                          .toList(),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(
@@ -187,11 +196,33 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                         color: Color.fromRGBO(224, 224, 224, 1),
                       ),
                     ),
-                    RaisedButton.icon(
-                      onPressed: widget.producto.stock > 0 ? _addCart : null,
-                      label: Text("Agregar al carrito"),
-                      icon: Icon(Icons.add_shopping_cart),
-                    ),
+                    Builder(builder: (context) {
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: Center(
+                              child: RaisedButton.icon(
+                                onPressed:
+                                    widget.productoEstablecimiento.stock > 0
+                                        ? () {
+                                            _addCart(context);
+                                          }
+                                        : null,
+                                label: Text("Agregar al carrito"),
+                                icon: Icon(Icons.add_shopping_cart),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 21,
+                              right: 21,
+                            ),
+                            child: _cantidadPicker,
+                          )
+                        ],
+                      );
+                    }),
                     Padding(
                       padding: const EdgeInsets.only(
                         top: 5,
@@ -203,7 +234,8 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                         color: Color.fromRGBO(224, 224, 224, 1),
                       ),
                     ),
-                    if (widget.producto.descripcion != null)
+                    if (widget.productoEstablecimiento.producto.descripcion !=
+                        null)
                       Column(
                         children: <Widget>[
                           Padding(
@@ -238,7 +270,8 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                               bottom: 5,
                             ),
                             child: Text(
-                              widget.producto.descripcion,
+                              widget
+                                  .productoEstablecimiento.producto.descripcion,
                             ),
                           ),
                           Padding(
@@ -254,7 +287,9 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                           ),
                         ],
                       ),
-                    if (widget.producto.caracteristicas != null)
+                    if (widget
+                            .productoEstablecimiento.producto.caracteristicas !=
+                        null)
                       Column(
                         children: <Widget>[
                           Padding(
@@ -289,7 +324,8 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                               bottom: 5,
                             ),
                             child: CaracteristicasWidget(
-                              widget.producto.caracteristicas,
+                              widget.productoEstablecimiento.producto
+                                  .caracteristicas,
                             ),
                           ),
                         ],
@@ -304,15 +340,16 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
     );
   }
 
-  Widget get _precioWidget {
-    if (widget.producto.descuento != null && widget.producto.descuento > 0) {
+  Widget _precioWidget(Precio precio) {
+    if (widget.productoEstablecimiento.producto.descuento != null &&
+        widget.productoEstablecimiento.producto.descuento > 0) {
       return Column(
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                "S/ ${widget.producto.precio.toStringAsFixed(2)}",
+                "S/ ${precio.monto.toStringAsFixed(2)}",
                 style: TextStyle(
                   decoration: TextDecoration.lineThrough,
                   fontSize: 16,
@@ -320,7 +357,7 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                 ),
               ),
               Text(
-                " - ${widget.producto.porcentajeDescuento.toStringAsFixed(2)}%",
+                " - ${widget.productoEstablecimiento.producto.descuento.toStringAsFixed(2)}%",
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -329,7 +366,7 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
             ],
           ),
           Text(
-            "S/ ${widget.producto.precioDescuento.toStringAsFixed(2)}",
+            "S/ ${widget.productoEstablecimiento.producto.precios[0].monto.toStringAsFixed(2)}",
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -342,19 +379,33 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
 
     return SizedBox(
       width: double.maxFinite,
-      child: Text(
-        "S/ ${widget.producto.precio.toStringAsFixed(2)}",
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
+      child: Column(
+        children: [
+          Text(
+            "< ${precio.cantidad}",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey,
+            ),
+          ),
+          Text(
+            "S/ ${precio.monto.toStringAsFixed(2)}",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          )
+        ],
       ),
     );
   }
 
   Widget get _cantidadPicker {
-    if (widget.producto.stock != null && widget.producto.stock > 0) {
+    if (widget.productoEstablecimiento.stock != null &&
+        widget.productoEstablecimiento.stock > 0) {
       return SizedBox(
         height: 45,
         child: Row(
@@ -432,7 +483,6 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
       );
     }
     return SizedBox(
-      width: double.maxFinite,
       child: Text(
         "Agotado",
         textAlign: TextAlign.center,
@@ -454,7 +504,7 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
   }
 
   _handlePlus() {
-    if (_cantidad < widget.producto.stock) {
+    if (_cantidad < widget.productoEstablecimiento.stock) {
       _cantidad++;
       _controller.value =
           _controller.value.copyWith(text: _cantidad.toString());
@@ -476,7 +526,7 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
     } else {
       cantidad = int.parse(str);
     }
-    if (!(cantidad > 0 && cantidad < widget.producto.stock)) {
+    if (!(cantidad > 0 && cantidad < widget.productoEstablecimiento.stock)) {
       _controller.value =
           _controller.value.copyWith(text: _cantidad.toString());
     } else {
@@ -484,10 +534,11 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
     }
   }
 
-  _addCart() {
-    var carritoProvider = Provider.of<CarritoProvider>(context, listen: false);
-    carritoProvider.addLineaDePedido(_cantidad, widget.producto);
-    Scaffold.of(context)
+  _addCart(BuildContext ctx) {
+    context
+        .bloc<CarritoBloc>()
+        .addLineaDePedido(widget.productoEstablecimiento, _cantidad);
+    Scaffold.of(ctx)
         .showSnackBar(SnackBar(content: Text("Se agrego al carrito")));
   }
 }

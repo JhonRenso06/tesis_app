@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mr_yupi/src/global/global.dart';
-import 'package:mr_yupi/src/model/caracteristicas.dart';
+import 'package:mr_yupi/src/model/caracteristica.dart';
 
 class CaracteristicasWidget extends StatelessWidget {
-  final List<Caracteristicas> caracteristicas;
+  final List<Caracteristica> caracteristicas;
   CaracteristicasWidget(this.caracteristicas);
 
   @override
@@ -19,7 +18,7 @@ class CaracteristicasWidget extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8),
               child: Text(
-                caracteristicas[i].id,
+                caracteristicas[i].clave,
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
@@ -30,7 +29,7 @@ class CaracteristicasWidget extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8),
               child: Text(
-                caracteristicas[i].descripcion,
+                caracteristicas[i].valor,
                 style: TextStyle(
                   fontSize: 14,
                   color: i % 2 == 0 ? Colors.white : Colors.black,

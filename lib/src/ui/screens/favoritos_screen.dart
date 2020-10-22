@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:mr_yupi/src/model/caracteristicas.dart';
-import 'package:mr_yupi/src/model/producto.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mr_yupi/src/bloc/establecimiento_bloc.dart';
+import 'package:mr_yupi/src/bloc/favoritos_bloc.dart';
+import 'package:mr_yupi/src/bloc/productos_bloc.dart';
+import 'package:mr_yupi/src/model/api_response.dart';
+import 'package:mr_yupi/src/model/establecimiento.dart';
+import 'package:mr_yupi/src/model/producto_establecimiento.dart';
 import 'package:mr_yupi/src/ui/screens/producto_detalle_screen.dart';
+import 'package:mr_yupi/src/ui/widgets/list_shimmer_widget.dart';
 import 'package:mr_yupi/src/ui/widgets/producto_widget.dart';
 
 class FavoritosScreen extends StatefulWidget {
@@ -10,117 +16,126 @@ class FavoritosScreen extends StatefulWidget {
 }
 
 class _FavoritosScreenState extends State<FavoritosScreen> {
-  List<Producto> productos = [
-    new Producto(
-        id: 1,
-        nombre: "Chivas regal - blended scotch whisky",
-        descripcion: "Occaecat amet labore proident cillum veniam magna anim.",
-        caracteristicas: [
-          new Caracteristicas("Alto de escritorio (cm)", "78"),
-          new Caracteristicas("Ancho de escritorio (cm)", "110"),
-          new Caracteristicas("Profundidad de escritorio (cm)", "45"),
-          new Caracteristicas("Material de tablero", "Melamina"),
-          new Caracteristicas("Material de estructura", "Melamine")
-        ],
-        fotos: [
-          "https://licoreria247.pe/content-borracho-total/uploads/2019/12/Whisky-Chivas-Regal-12-750ml-Licoreria247.png",
-        ],
-        stock: 20,
-        precio: 9.90,
-        descuento: 0.1),
-    new Producto(
-        id: 2,
-        nombre: "Cubre volante deportivo sparco SPC1111GR gris",
-        fotos: [
-          "https://jumbocolombiafood.vteximg.com.br/arquivos/ids/176126-750-750/7702090032789-20-281-29.jpg"
-        ],
-        stock: 10,
-        precio: 34),
-    new Producto(
-        id: 3,
-        nombre: "Aspiradora auto 12v sparco SPV1302AZ azul",
-        fotos: [
-          'https://s7d2.scene7.com/is/image/TottusPE/41462527?\$S7Product\$&wid=458&hei=458&op_sharpen=0',
-        ],
-        stock: 0,
-        precio: 99,
-        descuento: 0.2),
-    new Producto(
-        id: 4,
-        nombre:
-            "Holder Soporte Celular Smartphone Brazo Extendible Auto Universal",
-        fotos: [
-          "https://http2.mlstatic.com/refresco-hit-naranja-pet-15l-3-unidades-D_NQ_NP_630169-MLV43006172478_082020-F.jpg"
-        ],
-        stock: 16,
-        precio: 24.99,
-        descuento: 0.5),
-    new Producto(
-        id: 4,
-        nombre:
-            "Holder Soporte Celular Smartphone Brazo Extendible Auto Universal",
-        fotos: [
-          "https://pideygana.com/wp-content/uploads/2019/07/7702090023893-20-281-29.jpg"
-        ],
-        stock: 16,
-        precio: 24.99,
-        descuento: 0.5),
-    new Producto(
-        id: 4,
-        nombre:
-            "Holder Soporte Celular Smartphone Brazo Extendible Auto Universal",
-        fotos: [
-          "https://oechsle.vteximg.com.br/arquivos/ids/1348064-1500-1500/image-2a0db5dc261c4a5ba70c737a43937c2b.jpg"
-        ],
-        stock: 16,
-        precio: 24.99,
-        descuento: 0.5),
-    new Producto(
-        id: 4,
-        nombre:
-            "Holder Soporte Celular Smartphone Brazo Extendible Auto Universal",
-        fotos: [
-          "https://assets.pernod-ricard.com/styles/marque_mini_carrosselbreakpoints_theme_pernodricard_desktop_1x/s3/kahlua_especial.png"
-        ],
-        stock: 16,
-        precio: 24.99,
-        descuento: 0.5),
-    new Producto(
-        id: 4,
-        nombre:
-            "Holder Soporte Celular Smartphone Brazo Extendible Auto Universal",
-        fotos: [
-          "https://shop.torres.es/media/catalog/product/cache/2/small_image/332x431/9df78eab33525d08d6e5fb8d27136e95/c/a/calvados_vsop_1.jpg"
-        ],
-        stock: 16,
-        precio: 24.99,
-        descuento: 0.5)
-  ];
+  @override
+  void initState() {
+    loadData();
+    super.initState();
+  }
+
+  loadData() {
+    Establecimiento establecimiento = context.bloc<EstablecimientoBloc>().state;
+    context.bloc<FavoritosBloc>().initialLoad(establecimiento);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8, top: 8),
-      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: MediaQuery.of(context).size.width / 2,
-        mainAxisSpacing: 8,
-        crossAxisSpacing: 8,
-        childAspectRatio: 3 / 6,
-      ),
-      itemBuilder: (context, index) {
-        return ProductoWidget(
-          productos[index],
-          onTap: _handleProduct,
-        );
+    return BlocBuilder<FavoritosBloc,
+        APIResponse<Paginate<ProductoEstablecimiento>>>(
+      builder: (context, state) {
+        if (state.loading || !state.hasData) {
+          return ListShimmerWidget(
+            padding:
+                const EdgeInsets.only(left: 8, right: 8, bottom: 8, top: 8),
+            isGrib: true,
+            maxHeigth: 350,
+            itemCount: 5,
+          );
+        }
+        if (state.hasData && state.data.items.length == 0) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Image.asset(
+                "assets/empty-box.png",
+                height: 120,
+                width: 120,
+              ),
+              SizedBox(
+                height: 12,
+                width: double.maxFinite,
+              ),
+              Text(
+                "Aún no tienes productos favoritos",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              )
+            ],
+          );
+        }
+        return gridProductos(state);
       },
-      itemCount: productos.length,
     );
   }
 
-  _handleProduct(Producto producto) {
+  Widget gridProductos(APIResponse<Paginate<ProductoEstablecimiento>> state) {
+    return CustomScrollView(
+      slivers: [
+        SliverPadding(
+          padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
+          sliver: SliverGrid(
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: MediaQuery.of(context).size.width / 2,
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 8,
+              childAspectRatio: 3 / 6,
+            ),
+            delegate: SliverChildBuilderDelegate(
+              (context, int index) {
+                return ProductoWidget(
+                  state.data.items[index],
+                  onTap: _handleProduct,
+                  onRemove: _onRemove,
+                );
+              },
+              childCount: state.data.items.length,
+            ),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: Container(
+            height: 70,
+            width: double.maxFinite,
+            child: Center(
+              child: !state.loadMore
+                  ? Container(
+                      height: 14,
+                      width: 14,
+                      decoration: BoxDecoration(
+                        color: Colors.grey,
+                        borderRadius: BorderRadius.circular(7),
+                      ),
+                    )
+                  : Container(
+                      height: 17,
+                      width: 17,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                      ),
+                    ),
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  _handleProduct(ProductoEstablecimiento producto) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => ProductoDetalleScreen(producto),
       ),
     );
+  }
+
+  _onRemove(int id) async {
+    await context.bloc<FavoritosBloc>().removeFavorito(id);
+    await context.bloc<ProductosBloc>().removeFavorito(id);
+    Establecimiento establecimiento = context.bloc<EstablecimientoBloc>().state;
+    context.bloc<FavoritosBloc>().initialLoadNoLoading(establecimiento);
   }
 }

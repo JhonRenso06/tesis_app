@@ -1,28 +1,45 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mr_yupi/src/bloc/bloc_state.dart';
-import 'package:mr_yupi/src/model/api_exception.dart';
+import 'package:mr_yupi/src/model/api_response.dart';
 import 'package:mr_yupi/src/model/cliente.dart';
 import 'package:mr_yupi/src/resources/auth_repository.dart';
 
-class PerfilBloc extends Cubit<BlocState<Cliente>> {
+class PerfilBloc extends Cubit<APIResponse<Cliente>> {
   AuthRepository _repository;
 
-  PerfilBloc() : super(InitialState()) {
+  PerfilBloc() : super(APIResponse()) {
     _repository = AuthRepository();
   }
 
   getCurrentClient() async {
-    try {
-      emit(LoadingState<Cliente>());
-      Cliente cliente = await _repository.getCurrentClient();
-      emit(LoadedState<Cliente>(data: cliente));
-    } on APIException catch (ex) {
-      emit(ErrorState<Cliente>(exception: ex));
-    } catch (ex) {
-      print(ex);
-      emit(ErrorState<Cliente>(
-          exception:
-              APIException(message: 'Error desconocido, intente mas tarde')));
-    }
+    emit(state.toLoading());
+    var response = await _repository.getCurrentClient();
+    emit(response);
+  }
+
+  Future<Cliente> getCliente() async {
+    return (await _repository.getCurrentClient()).data;
+  }
+
+  updateMe(Cliente cliente) async {
+    emit(state.toLoading());
+    var response = await _repository.updateMe(cliente);
+    emit(response);
+  }
+
+  signOut() async {
+    var response = await _repository.signOut();
+    emit(response);
+  }
+
+  login(Cliente cliente) async {
+    emit(state.toLoading());
+    var response = await _repository.login(cliente);
+    emit(response);
+  }
+
+  register(Cliente cliente) async {
+    emit(state.toLoading());
+    var response = await _repository.register(cliente);
+    emit(response);
   }
 }

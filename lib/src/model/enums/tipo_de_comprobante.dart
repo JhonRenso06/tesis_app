@@ -1,1 +1,0 @@
-enum TipoDeComprobante { BOLETA, FACTURA }

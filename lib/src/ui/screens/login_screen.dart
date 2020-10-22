@@ -2,9 +2,9 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mr_yupi/src/bloc/perfil_bloc.dart';
+import 'package:mr_yupi/src/model/api_response.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
-import 'package:mr_yupi/src/bloc/bloc_state.dart';
-import 'package:mr_yupi/src/bloc/login_bloc.dart';
 import 'package:mr_yupi/src/global/global.dart';
 import 'package:mr_yupi/src/model/api_message.dart';
 import 'package:mr_yupi/src/model/cliente.dart';
@@ -22,13 +22,11 @@ class _LoginScreenState extends State<LoginScreen> {
   GlobalKey<FormState> _formKey;
   String _email, _password;
   bool _obscurePassword;
-  LoginBloc _cubit;
 
   @override
   void initState() {
     _formKey = GlobalKey();
     _obscurePassword = true;
-    _cubit = LoginBloc();
     super.initState();
   }
 
@@ -165,29 +163,29 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-              BlocListener<LoginBloc, BlocState<APIMessage>>(
-                cubit: _cubit,
+              BlocListener<PerfilBloc, APIResponse<Cliente>>(
+                cubit: context.bloc<PerfilBloc>(),
                 listener: (context, state) {
-                  if (state is LoadedState) {
-                    _showSuccess(state.message);
-                  }
-                  if (state is ErrorState) {
-                    Alert(
-                      context: context,
-                      title: "Upss..",
-                      desc: state.exception.message,
-                      type: AlertType.error,
-                    ).show();
+                  if (!state.loading) {
+                    if (state.hasMessage) {
+                      _showSuccess(state.message);
+                    }
+                    if (state.hasException) {
+                      Alert(
+                        context: context,
+                        title: "Upss..",
+                        desc: state.exception.message,
+                        type: AlertType.error,
+                      ).show();
+                    }
                   }
                 },
                 child: SizedBox.shrink(),
               ),
-              BlocBuilder<LoginBloc, BlocState<APIMessage>>(
-                cubit: _cubit,
+              BlocBuilder<PerfilBloc, APIResponse<Cliente>>(
+                cubit: context.bloc<PerfilBloc>(),
                 builder: (context, state) {
-                  return state is LoadingState
-                      ? LoadingWidget()
-                      : SizedBox.shrink();
+                  return state.loading ? LoadingWidget() : SizedBox.shrink();
                 },
               ),
             ],
@@ -198,7 +196,9 @@ class _LoginScreenState extends State<LoginScreen> {
   void _handleLogin() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      _cubit.login(Cliente(correo: _email, password: _password));
+      context
+          .bloc<PerfilBloc>()
+          .login(Cliente(correo: _email, password: _password));
     }
   }
 

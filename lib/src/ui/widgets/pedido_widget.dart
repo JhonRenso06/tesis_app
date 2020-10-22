@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mr_yupi/src/enums/estado_de_pedido.dart';
+import 'package:mr_yupi/src/enums/metodo_de_pago.dart';
 import 'package:mr_yupi/src/global/global.dart';
-import 'package:mr_yupi/src/model/enums/estado_de_pedido.dart';
-import 'package:mr_yupi/src/model/enums/metodo_de_pago.dart';
 import 'package:mr_yupi/src/model/pedido.dart';
 
 class PedidoWidget extends StatelessWidget {
@@ -84,7 +84,7 @@ class PedidoWidget extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  Global.dateFormatter(pedido.fechaDeEmision),
+                                  Global.dateFormatter(pedido.fechaEmision),
                                 ),
                               ],
                             ),
@@ -167,11 +167,11 @@ class PedidoWidget extends StatelessWidget {
 
   Widget textEstado() {
     Color color;
-    String str = pedido.strEstado;
+    String str = pedido.estado.name;
     switch (pedido.estado) {
       case EstadoDePedido.ATENDIDO:
         color = Colors.greenAccent[700];
-        str += "\n ${Global.dateFormatter(pedido.fechaDeEntrega)}";
+        str += "\n ${Global.dateFormatter(pedido.fechaEntrega)}";
         break;
       case EstadoDePedido.CANCELADO:
         color = Colors.red;

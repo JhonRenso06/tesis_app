@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
-import 'package:mr_yupi/src/model/enums/metodo_de_envio.dart';
+import 'package:mr_yupi/src/enums/metodo_de_envio.dart';
 import 'package:mr_yupi/src/model/linea_de_pedido.dart';
 import 'package:mr_yupi/src/model/pedido.dart';
-import 'package:mr_yupi/src/model/producto.dart';
+import 'package:mr_yupi/src/model/producto_establecimiento.dart';
 
 class CarritoProvider with ChangeNotifier {
   Pedido pedido;
@@ -11,13 +11,14 @@ class CarritoProvider with ChangeNotifier {
     pedido = new Pedido();
   }
 
-  addLineaDePedido(int cantidad, Producto producto) {
-    this.pedido.addLineaDePedido(cantidad, producto);
+  addLineaDePedido(
+      int cantidad, ProductoEstablecimiento productoEstablecimiento) {
+    this.pedido.addLineaDePedido(cantidad, productoEstablecimiento);
     notifyListeners();
   }
 
-  deleteLineaDePedido(Producto producto) {
-    this.pedido.deleteLineaDePedido(producto);
+  deleteLineaDePedido(ProductoEstablecimiento productoEstablecimiento) {
+    this.pedido.deleteLineaDePedido(productoEstablecimiento);
     notifyListeners();
   }
 

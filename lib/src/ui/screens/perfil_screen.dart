@@ -1,17 +1,18 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mr_yupi/src/bloc/bloc_state.dart';
+import 'package:mr_yupi/src/bloc/direccion_bloc.dart';
 import 'package:mr_yupi/src/bloc/perfil_bloc.dart';
 import 'package:mr_yupi/src/global/global.dart';
+import 'package:mr_yupi/src/model/api_response.dart';
 import 'package:mr_yupi/src/model/cliente.dart';
-import 'package:mr_yupi/src/model/departamento.dart';
 import 'package:mr_yupi/src/model/direccion.dart';
-import 'package:mr_yupi/src/model/distrito.dart';
-import 'package:mr_yupi/src/model/provincia.dart';
 import 'package:mr_yupi/src/ui/screens/direccion_screen.dart';
 import 'package:mr_yupi/src/ui/screens/editar_perfil_screen.dart';
+import 'package:mr_yupi/src/ui/screens/login_screen.dart';
 import 'package:mr_yupi/src/ui/screens/pedidos_screen.dart';
+import 'package:mr_yupi/src/ui/screens/direcciones_screen.dart';
+import 'package:mr_yupi/src/ui/widgets/card_shimmer_widget.dart';
 import 'package:mr_yupi/src/ui/widgets/direccion_widget.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
@@ -23,45 +24,8 @@ class PerfilScreen extends StatefulWidget {
 class _PerfilScreenState extends State<PerfilScreen> {
   Direccion _predeterminado;
 
-  List<Direccion> direcciones = [
-    Direccion(
-        direccion: "Av Túpac Amaru 1419",
-        distrito: Distrito(
-            id: 1,
-            nombre: "Trujillo",
-            provincia: Provincia(
-                id: 1,
-                nombre: "Trujillo",
-                departamento: Departamento(id: 1, nombre: "La libertad"))),
-        nombre: "Pablo Rafael",
-        apellidos: "Cruz López",
-        telefono: "969647526",
-        tipo: TipoDireccion.CASA,
-        predeterminado: false),
-    Direccion(
-      direccion: "Av America 2050",
-      tipo: TipoDireccion.CONDOMINIO,
-      distrito: Distrito(
-        id: 1,
-        nombre: "Trujillo",
-        provincia: Provincia(
-          id: 1,
-          nombre: "Trujillo",
-          departamento: Departamento(id: 1, nombre: "La libertad"),
-        ),
-      ),
-      nombre: "Pablo Rafael",
-      apellidos: "Cruz López",
-      telefono: "969647526",
-      predeterminado: true,
-    )
-  ];
-  PerfilBloc _cubit;
-
   @override
   void initState() {
-    _cubit = PerfilBloc();
-    _predeterminado = direcciones[1];
     super.initState();
   }
 
@@ -69,15 +33,35 @@ class _PerfilScreenState extends State<PerfilScreen> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
 
-    return BlocBuilder<PerfilBloc, BlocState<Cliente>>(
-      cubit: _cubit,
+    return BlocBuilder<PerfilBloc, APIResponse<Cliente>>(
+      cubit: context.bloc<PerfilBloc>(),
       builder: (context, state) {
-        if (state is LoadingState) {
-          return Container();
+        if (state.loading) {
+          return SizedBox.shrink();
         }
-        if (state is LoadedState && state.message == null) {
-          return Container(
-            child: Text("Iniciar sesión"),
+        if (!state.hasData) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                "assets/profile.png",
+                height: width * 0.4,
+                width: width * 0.4,
+              ),
+              SizedBox(
+                height: 38,
+                width: double.maxFinite,
+              ),
+              Container(
+                width: double.maxFinite,
+                padding: const EdgeInsets.only(left: 38, right: 38),
+                child: OutlineButton(
+                  child: Text("Iniciar sesión"),
+                  onPressed: _toLogin,
+                ),
+              ),
+            ],
           );
         }
         return SingleChildScrollView(
@@ -123,7 +107,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
                                         ),
                                         Expanded(
                                           child: Text(
-                                            "Pablo Rafael Cruz López",
+                                            state.data.fullName,
                                             overflow: TextOverflow.ellipsis,
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
@@ -143,7 +127,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
                                         ),
                                         Expanded(
                                           child: Text(
-                                            "pablocruz9988@hotmail.com",
+                                            state.data.correo,
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
@@ -233,78 +217,57 @@ class _PerfilScreenState extends State<PerfilScreen> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 12, bottom: 8, top: 8),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        "Mis direcciones",
-                        textAlign: TextAlign.left,
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.add,
-                        color: Global.accentColor,
-                      ),
-                      onPressed: _addDireccion,
-                    )
-                  ],
-                ),
-              ),
-              if (direcciones.length > 0)
-                CarouselSlider(
-                  options: CarouselOptions(
-                    enableInfiniteScroll: false,
-                    autoPlay: false,
-                  ),
-                  items: direcciones.map((direccion) {
-                    return DireccionWidget(
-                      direccion,
-                      onEdit: _editDireccion,
-                      onDelete: _deleteDireccion,
-                      onPredeterminado: _changePredeterminado,
-                      predeterminado: _predeterminado,
-                    );
-                  }).toList(),
-                )
-              else
-                SizedBox(
-                  height: 180,
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                      left: 24,
-                      right: 24,
-                    ),
-                    child: Material(
-                      color: Colors.white,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                      child: InkWell(
-                        onTap: _addDireccion,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                padding: const EdgeInsets.only(left: 6, right: 6),
+                child: SizedBox(
+                  height: 124,
+                  child: Card(
+                    elevation: 0,
+                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    child: Stack(
+                      children: [
+                        Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
-                              Icons.add,
-                              color: Global.accentColor,
-                            ),
-                            SizedBox(
-                              width: 8,
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  right: 21, top: 21, bottom: 21),
+                              child: Image.asset(
+                                "assets/address.png",
+                                width: 100,
+                                height: 100,
+                              ),
                             ),
                             Text(
-                              "Agrega una dirección",
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              "Mis direcciones",
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
                             ),
+                            SizedBox(
+                              width: 4,
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              color: Global.accentColor,
+                            )
                           ],
                         ),
-                      ),
+                        Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: _toMisDirecciones,
+                          ),
+                        )
+                      ],
                     ),
                   ),
                 ),
+              ),
               Padding(
                 padding: const EdgeInsets.all(12),
                 child: Column(
@@ -326,15 +289,30 @@ class _PerfilScreenState extends State<PerfilScreen> {
     );
   }
 
-  _signOut() async {}
+  _signOut() {
+    context.bloc<PerfilBloc>().signOut();
+  }
 
-  _handleEdit() {
-    Navigator.push(
+  _toLogin() async {
+    await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => EditarPerfilScreen(),
+        builder: (context) => LoginScreen(),
       ),
     );
+  }
+
+  _handleEdit() async {
+    Cliente cliente = await context.bloc<PerfilBloc>().getCliente();
+    bool result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditarPerfilScreen(cliente),
+      ),
+    );
+    if (result != null && result) {
+      await context.bloc<PerfilBloc>().getCurrentClient();
+    }
   }
 
   _toMisPedidos() {
@@ -346,18 +324,11 @@ class _PerfilScreenState extends State<PerfilScreen> {
     );
   }
 
-  _addDireccion() {
-    Navigator.of(context).push(
+  _toMisDirecciones() {
+    Navigator.push(
+      context,
       MaterialPageRoute(
-        builder: (context) => DireccionScreen(),
-      ),
-    );
-  }
-
-  _editDireccion(Direccion direccion) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => DireccionScreen(direccion: direccion),
+        builder: (context) => DireccionesScreen(),
       ),
     );
   }

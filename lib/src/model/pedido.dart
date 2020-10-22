@@ -1,117 +1,79 @@
+import 'package:mr_yupi/src/enums/estado_de_pedido.dart';
+import 'package:mr_yupi/src/enums/metodo_de_envio.dart';
+import 'package:mr_yupi/src/enums/metodo_de_pago.dart';
+import 'package:mr_yupi/src/enums/moneda.dart';
 import 'package:mr_yupi/src/model/direccion.dart';
-import 'package:mr_yupi/src/model/enums/estado_de_pedido.dart';
-import 'package:mr_yupi/src/model/enums/metodo_de_envio.dart';
-import 'package:mr_yupi/src/model/enums/metodo_de_pago.dart';
-import 'package:mr_yupi/src/model/enums/moneda.dart';
-import 'package:mr_yupi/src/model/enums/tipo_de_comprobante.dart';
 import 'package:mr_yupi/src/model/linea_de_pedido.dart';
-import 'package:mr_yupi/src/model/producto.dart';
+import 'package:mr_yupi/src/model/model.dart';
+import 'package:mr_yupi/src/model/producto_establecimiento.dart';
 
-class Pedido {
-  num id, subtotal, igv, total;
-  bool delivery;
-  Direccion direccion;
-  DateTime fechaDeEmision;
-  DateTime fechaDeEntrega;
-  MetodoDePago metodoDePago;
-  TipoDeComprobante tipoDeComprobante;
+class Pedido extends Model {
+  num id;
+  num igv;
+  num subtotal;
+  num costoDeEnvio;
+  num total;
   Moneda moneda;
-  String serieDeCorrelativo, numeroDeCorrelativo;
-  List<LineaDePedido> lineasDePedido;
-  EstadoDePedido estado;
+  MetodoDePago metodoDePago;
   MetodoDeEnvio metodoDeEnvio;
+  EstadoDePedido estado;
+  DateTime fechaEmision;
+  DateTime fechaAtendido;
+  DateTime fechaCamino;
+  DateTime fechaEntrega;
+  DateTime fechaCancelado;
+  Direccion direccion;
+  List<LineaDePedido> lineasDePedido;
 
-  Pedido(
-      {this.id,
-      this.subtotal,
-      this.igv,
-      this.total,
-      this.delivery,
-      this.direccion,
-      this.fechaDeEmision,
-      this.metodoDePago,
-      this.tipoDeComprobante,
-      this.moneda,
-      this.serieDeCorrelativo,
-      this.numeroDeCorrelativo,
-      this.estado,
-      this.lineasDePedido,
-      this.fechaDeEntrega,
-      this.metodoDeEnvio}) {
-    if (this.lineasDePedido == null) {
-      this.lineasDePedido = new List();
+  Pedido({
+    this.id,
+    this.igv,
+    this.subtotal,
+    this.costoDeEnvio,
+    this.total,
+    this.moneda,
+    this.metodoDePago,
+    this.metodoDeEnvio,
+    this.estado,
+    this.fechaEmision,
+    this.fechaAtendido,
+    this.fechaCamino,
+    this.fechaEntrega,
+    this.fechaCancelado,
+    this.direccion,
+    this.lineasDePedido,
+  }) {
+    if (lineasDePedido == null) {
+      lineasDePedido = List();
     }
   }
 
-  Pedido.fromMap(Map<String, dynamic> data) {
-    this.id = data["id"];
-    this.subtotal = data["subtotal"];
-    this.igv = data["igv"];
-    this.total = data["total"];
-    this.delivery = data["delivery"];
-    this.direccion = data["direccion"];
-    this.fechaDeEmision =
-        DateTime.fromMillisecondsSinceEpoch(data["fechaDeEmision"] * 1000);
-    switch (data["metodoDePago"]) {
-      case 'TARJETA':
-        this.metodoDePago = MetodoDePago.TARJETA;
-        break;
-      case 'EFECTIVO':
-        this.metodoDePago = MetodoDePago.EFECTIVO;
-        break;
-      default:
-        this.metodoDePago = MetodoDePago.EFECTIVO;
-        break;
-    }
-    switch (data["tipoDeComprobante"]) {
-      case 'BOLETA':
-        this.tipoDeComprobante = TipoDeComprobante.BOLETA;
-        break;
-      case 'FACTURA':
-        this.tipoDeComprobante = TipoDeComprobante.FACTURA;
-        break;
-      default:
-        this.tipoDeComprobante = TipoDeComprobante.BOLETA;
-        break;
-    }
-    this.moneda = data["moneda"];
-    switch (data["moneda"]) {
-      case 'SOLES':
-        this.moneda = Moneda.SOLES;
-        break;
-      case 'DOLARES':
-        this.moneda = Moneda.DOLARES;
-        break;
-      default:
-        this.moneda = Moneda.SOLES;
-        break;
-    }
-    this.serieDeCorrelativo = data["serieDeCorrelativo"];
-    this.numeroDeCorrelativo = data["numeroDeCorrelativo"];
-
-    this.lineasDePedido = new List();
-    if (data["lineasDePedido"] != null) {
-      List<dynamic> lineasDePedidoAux = data["lineasDePedido"];
-      lineasDePedidoAux.forEach((element) {
-        this.lineasDePedido.add(new LineaDePedido.fromMap(element));
-      });
-    }
-  }
-
-  addLineaDePedido(int cantidad, Producto producto) {
+  addLineaDePedido(
+      int cantidad, ProductoEstablecimiento productoEstablecimiento) {
     try {
-      var lineaExistente = lineasDePedido.firstWhere(
-          (lineaDePedido) => lineaDePedido.producto.id == producto.id);
+      var lineaExistente = lineasDePedido.firstWhere((lineaDePedido) =>
+          lineaDePedido.productoEstablecimiento.id ==
+          productoEstablecimiento.id);
       lineaExistente.cantidad = cantidad;
+      lineaExistente.precio = productoEstablecimiento.definirPrecio(cantidad);
+      lineaExistente.subtotal = lineaExistente.calcularSubTotal();
     } catch (_) {
-      this.lineasDePedido.add(LineaDePedido.withProduct(cantidad, producto));
+      LineaDePedido lineaDePedido = LineaDePedido(
+        cantidad: cantidad,
+        productoEstablecimiento: productoEstablecimiento,
+        precio: productoEstablecimiento.definirPrecio(cantidad),
+      );
+      lineaDePedido.subtotal = lineaDePedido.calcularSubTotal();
+      this.lineasDePedido.add(lineaDePedido);
     }
   }
 
-  deleteLineaDePedido(Producto producto) {
+  deleteLineaDePedido(ProductoEstablecimiento productoEstablecimiento) {
     lineasDePedido = lineasDePedido
         .where(
-          (lineaDePedido) => lineaDePedido.producto.id != producto.id,
+          (lineaDePedido) =>
+              lineaDePedido.productoEstablecimiento.id !=
+              productoEstablecimiento.id,
         )
         .toList();
   }
@@ -121,7 +83,7 @@ class Pedido {
   double calcularTotal() {
     double total = 0;
     lineasDePedido.forEach((element) {
-      total += element.cantidad * element.precio;
+      total += element.calcularSubTotal();
     });
     return total;
   }
@@ -145,20 +107,59 @@ class Pedido {
     return "";
   }
 
-  String get strEstado {
-    switch (estado) {
-      case EstadoDePedido.EN_PROCESO:
-        return "En proceso";
-      case EstadoDePedido.ATENDIDO:
-        return "Atendido";
-      case EstadoDePedido.EN_CAMINO:
-        return "En camino";
-      case EstadoDePedido.ENTREGADO:
-        return "Entregado";
-      case EstadoDePedido.CANCELADO:
-        return "Cancelado";
-      default:
-        return "En proceso";
+  @override
+  Model fromMap(Map<String, dynamic> data) {
+    id = data["id"];
+    igv = data["igv"] != null ? num.parse(data["igv"]) : 0;
+    subtotal = data["subtotal"] != null ? num.parse(data["subtotal"]) : 0;
+    costoDeEnvio =
+        data["costoDeEnvio"] != null ? num.parse(data["costoDeEnvio"]) : 0;
+    total = data["total"] != null ? num.parse(data["total"]) : 0;
+    moneda = MonedaExtension.parse(data["moneda"]);
+    metodoDePago = MetodoDePagoExtension.parse(data["metodoDePago"]);
+    metodoDeEnvio = MetodoDeEnvioExtension.parse(data["metodoDeEnvio"]);
+    estado = EstadoDePedidoExtension.parse(data["estado"]);
+    fechaEmision = data["fechaEmision"] != null
+        ? DateTime.parse(data["fechaEmision"])
+        : null;
+    fechaAtendido = data["fechaAtendido"] != null
+        ? DateTime.parse(data["fechaAtendido"])
+        : null;
+    fechaCamino = data["fechaCamino"] != null
+        ? DateTime.parse(data["fechaCamino"])
+        : null;
+    fechaEntrega = data["fechaEntrega"] != null
+        ? DateTime.parse(data["fechaEntrega"])
+        : null;
+    fechaCancelado = data["fechaCancelado"] != null
+        ? DateTime.parse(data["fechaCancelado"])
+        : null;
+    if (data["direccion"] != null) {
+      direccion = Direccion().fromMap(data["direccion"]);
     }
+    lineasDePedido = List();
+    if (data["lineasDePedido"] != null) {
+      (data["lineasDePedido"] as List).forEach((element) {
+        lineasDePedido.add(LineaDePedido().fromMap(element));
+      });
+    }
+    return this;
+  }
+
+  @override
+  Map<String, dynamic> toMap() {
+    return {
+      'metodoDePago': metodoDePago?.index,
+      'metodoDeEnvio': metodoDeEnvio.index,
+      'direccion': direccion.id,
+      'lineasDePedido': lineasDePedido
+          .map(
+            (e) => {
+              'cantidad': e.cantidad,
+              'productoEstablecimiento': e.productoEstablecimiento.id
+            },
+          )
+          .toList(),
+    };
   }
 }

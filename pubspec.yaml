@@ -40,11 +40,15 @@ dependencies:
   shimmer: ^1.1.1
   like_button: ^1.0.3
   intl: ^0.16.1
+  sliver_tools: ^0.1.7
+  floor: ^0.17.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_native_splash: ^0.1.9
+  floor_generator: ^0.17.0
+  build_runner: ^1.10.3
 
 flutter_native_splash:
   image: assets/logo.png
@@ -70,6 +74,11 @@ flutter:
     - assets/empty-cart.png
     - assets/online-order.png
     - assets/status.png
+    - assets/profile.png
+    - assets/address.png
+    - assets/ubigeo.json
+    - assets/products.png
+    - assets/empty-box.png
 
   fonts:
     - family: Quicksand

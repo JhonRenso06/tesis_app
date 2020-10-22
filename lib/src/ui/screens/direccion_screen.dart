@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mr_yupi/src/bloc/departamento_bloc.dart';
+import 'package:mr_yupi/src/bloc/direccion_bloc.dart';
+import 'package:mr_yupi/src/enums/tipo_de_direccion.dart';
+import 'package:mr_yupi/src/model/api_exception.dart';
+import 'package:mr_yupi/src/model/api_message.dart';
+import 'package:mr_yupi/src/model/api_response.dart';
 import 'package:mr_yupi/src/model/departamento.dart';
 import 'package:mr_yupi/src/model/direccion.dart';
 import 'package:mr_yupi/src/model/distrito.dart';
 import 'package:mr_yupi/src/model/provincia.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class DireccionScreen extends StatefulWidget {
   final Direccion direccion;
@@ -15,26 +23,38 @@ class DireccionScreen extends StatefulWidget {
 class _DireccionScreenState extends State<DireccionScreen> {
   String _title, dropdownValue;
   Direccion _direccion;
-  int _departamento;
-  int _provincia;
-  int _distrito;
-  List<DropdownMenuItem<int>> _itemsDepartamento;
-  List<DropdownMenuItem<int>> _itemsProvincias;
-  List<DropdownMenuItem<int>> _itemsDistritos;
+  String _departamento;
+  String _provincia;
+  String _distrito;
+  List<DropdownMenuItem<String>> _itemsDepartamento;
+  List<DropdownMenuItem<String>> _itemsProvincias;
+  List<DropdownMenuItem<String>> _itemsDistritos;
   List<Departamento> _departamentos;
   GlobalKey<FormState> _formKey = GlobalKey();
+  Map<String, FocusNode> focusMap = {
+    "nombre": FocusNode(),
+    "apellidos": FocusNode(),
+    "celular": FocusNode(),
+    "tipo": FocusNode(),
+    "departamento": FocusNode(),
+    "provincia": FocusNode(),
+    "distrito": FocusNode(),
+    "direccion": FocusNode(),
+    "lote": FocusNode(),
+    "int": FocusNode(),
+    "urbanizacion": FocusNode(),
+    "referencia": FocusNode(),
+    "guardar": FocusNode(),
+  };
+
   @override
   void initState() {
-    dropdownValue = "Casa";
     if (widget.direccion == null) {
       _title = "Crear dirección";
-      _direccion = Direccion(tipo: TipoDireccion.CASA);
+      _direccion = Direccion(tipo: TipoDeDireccion.CASA);
     } else {
       _title = "Editar dirección";
       _direccion = widget.direccion;
-      _departamento = _direccion.distrito.provincia.departamento.id;
-      _provincia = _direccion.distrito.provincia.id;
-      _distrito = _direccion.distrito.id;
     }
     _itemsDepartamento = [
       DropdownMenuItem(
@@ -54,45 +74,20 @@ class _DireccionScreenState extends State<DireccionScreen> {
         child: Text("Elige un distrito"),
       ),
     ];
-    loadDepartamento();
+    context.bloc<DepartamentoBloc>().getDepartamentos();
     super.initState();
   }
 
-  void loadDepartamento() {
-    _departamentos = [
-      Departamento(
-        id: 1,
-        nombre: "La libertad",
-        provincias: [
-          Provincia(
-            id: 1,
-            nombre: "Trujillo",
-            distritos: [
-              Distrito(
-                id: 1,
-                nombre: "Trujillo",
-              )
-            ],
-          )
-        ],
-      ),
-      Departamento(
-        id: 2,
-        nombre: "Lima",
-        provincias: [
-          Provincia(
-            id: 2,
-            nombre: "Lima",
-            distritos: [
-              Distrito(
-                id: 2,
-                nombre: "Lima",
-              )
-            ],
-          )
-        ],
-      )
-    ];
+  @override
+  void dispose() {
+    this.focusMap.forEach((key, value) {
+      value.dispose();
+    });
+    super.dispose();
+  }
+
+  void loadDepartamento(List<Departamento> departamentos) {
+    _departamentos = departamentos;
     _itemsDepartamento.addAll(
       _departamentos.map(
         (e) => DropdownMenuItem(
@@ -110,7 +105,7 @@ class _DireccionScreenState extends State<DireccionScreen> {
     }
   }
 
-  _onChangeDepartamento(int id) {
+  _onChangeDepartamento(String id) {
     try {
       Departamento departamento =
           _departamentos.firstWhere((element) => element.id == id);
@@ -145,9 +140,10 @@ class _DireccionScreenState extends State<DireccionScreen> {
       _distrito = null;
       setState(() {});
     }
+    FocusScope.of(context).requestFocus(focusMap["provincia"]);
   }
 
-  _onChangeProvincia(int id) {
+  _onChangeProvincia(String id) {
     try {
       Departamento departamento =
           _departamentos.firstWhere((element) => element.id == _departamento);
@@ -174,6 +170,7 @@ class _DireccionScreenState extends State<DireccionScreen> {
     } catch (_) {
       _distrito = null;
     }
+    FocusScope.of(context).requestFocus(focusMap["distrito"]);
   }
 
   @override
@@ -181,12 +178,15 @@ class _DireccionScreenState extends State<DireccionScreen> {
     Widget nombreField = Padding(
       padding: const EdgeInsets.only(bottom: 15),
       child: TextFormField(
+        focusNode: focusMap["nombre"],
+        initialValue: widget.direccion?.nombre,
         decoration: InputDecoration(
           labelText: 'Nombre',
         ),
         textInputAction: TextInputAction.next,
         keyboardType: TextInputType.text,
-        onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
+        onFieldSubmitted: (_) =>
+            FocusScope.of(context).requestFocus(focusMap["apellidos"]),
         validator: (val) {
           if (val.isEmpty) {
             return "Ingrese su nombre";
@@ -202,12 +202,15 @@ class _DireccionScreenState extends State<DireccionScreen> {
     Widget apellidosField = Padding(
       padding: const EdgeInsets.only(bottom: 15),
       child: TextFormField(
+        focusNode: focusMap["apellidos"],
+        initialValue: widget.direccion?.apellidos,
         decoration: InputDecoration(
           labelText: 'Apellidos',
         ),
         textInputAction: TextInputAction.next,
         keyboardType: TextInputType.text,
-        onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
+        onFieldSubmitted: (_) =>
+            FocusScope.of(context).requestFocus(focusMap["celular"]),
         validator: (val) {
           if (val.isEmpty) {
             return "Ingrese sus apellidos";
@@ -223,13 +226,16 @@ class _DireccionScreenState extends State<DireccionScreen> {
     Widget telefonoField = Padding(
       padding: const EdgeInsets.only(bottom: 15),
       child: TextFormField(
+        focusNode: focusMap["celular"],
+        initialValue: widget.direccion?.telefono,
         obscureText: false,
         maxLength: 9,
         textInputAction: TextInputAction.next,
         keyboardType:
             TextInputType.numberWithOptions(decimal: false, signed: false),
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-        onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
+        onFieldSubmitted: (_) =>
+            FocusScope.of(context).requestFocus(focusMap["tipo"]),
         decoration: InputDecoration(
           labelText: "Celular",
           counterText: "",
@@ -247,61 +253,67 @@ class _DireccionScreenState extends State<DireccionScreen> {
     );
 
     Widget tipoWidget = Padding(
-      padding: const EdgeInsets.only(bottom: 15),
+      padding: const EdgeInsets.only(bottom: 0),
       child: DropdownButtonFormField(
+        focusNode: focusMap["tipo"],
         items: [
           DropdownMenuItem(
-            value: TipoDireccion.CASA,
-            child: Text("Casa"),
+            value: TipoDeDireccion.CASA,
+            child: Text(TipoDeDireccion.CASA.name),
           ),
           DropdownMenuItem(
-            value: TipoDireccion.CENTRO,
-            child: Text("Centro"),
+            value: TipoDeDireccion.CENTRO,
+            child: Text(TipoDeDireccion.CENTRO.name),
           ),
           DropdownMenuItem(
-            value: TipoDireccion.CONDOMINIO,
-            child: Text("Condominio"),
+            value: TipoDeDireccion.CONDOMINIO,
+            child: Text(TipoDeDireccion.CONDOMINIO.name),
           ),
           DropdownMenuItem(
-            value: TipoDireccion.DEPARTAMENTO,
-            child: Text("Departamento"),
+            value: TipoDeDireccion.DEPARTAMENTO,
+            child: Text(TipoDeDireccion.DEPARTAMENTO.name),
           ),
           DropdownMenuItem(
-            value: TipoDireccion.GALERIA,
-            child: Text("Galeria"),
+            value: TipoDeDireccion.GALERIA,
+            child: Text(TipoDeDireccion.GALERIA.name),
           ),
           DropdownMenuItem(
-            value: TipoDireccion.LOCAL,
-            child: Text("Local"),
+            value: TipoDeDireccion.LOCAL,
+            child: Text(TipoDeDireccion.LOCAL.name),
           ),
           DropdownMenuItem(
-            value: TipoDireccion.MERCADO,
-            child: Text("Mercado"),
+            value: TipoDeDireccion.MERCADO,
+            child: Text(TipoDeDireccion.MERCADO.name),
           ),
           DropdownMenuItem(
-            value: TipoDireccion.OFICINA,
-            child: Text("Oficina"),
+            value: TipoDeDireccion.OFICINA,
+            child: Text(TipoDeDireccion.OFICINA.name),
           ),
           DropdownMenuItem(
-            value: TipoDireccion.OTRO,
-            child: Text("Otro"),
+            value: TipoDeDireccion.OTRO,
+            child: Text(TipoDeDireccion.OTRO.name),
           ),
         ],
         onChanged: (value) {
           setState(() {
             _direccion.tipo = value;
           });
+          FocusScope.of(context).requestFocus(focusMap["departamento"]);
         },
         onSaved: (value) {
           _direccion.tipo = value;
         },
         value: _direccion.tipo,
+        validator: (val) {
+          return null;
+        },
       ),
     );
 
     Widget departamentoWidget = Padding(
       padding: const EdgeInsets.only(bottom: 15),
-      child: DropdownButtonFormField<int>(
+      child: DropdownButtonFormField<String>(
+        focusNode: focusMap["departamento"],
         items: _itemsDepartamento,
         onChanged: _onChangeDepartamento,
         validator: (val) {
@@ -319,7 +331,8 @@ class _DireccionScreenState extends State<DireccionScreen> {
 
     Widget provinciaWidget = Padding(
       padding: const EdgeInsets.only(bottom: 15),
-      child: DropdownButtonFormField<int>(
+      child: DropdownButtonFormField<String>(
+        focusNode: focusMap["provincia"],
         items: _itemsProvincias,
         onChanged: _onChangeProvincia,
         validator: (val) {
@@ -337,12 +350,14 @@ class _DireccionScreenState extends State<DireccionScreen> {
 
     Widget distritoWidget = Padding(
       padding: const EdgeInsets.only(bottom: 15),
-      child: DropdownButtonFormField<int>(
+      child: DropdownButtonFormField<String>(
+        focusNode: focusMap["distrito"],
         items: _itemsDistritos,
         onChanged: (value) {
           setState(() {
             _distrito = value;
           });
+          FocusScope.of(context).requestFocus(focusMap["direccion"]);
         },
         validator: (val) {
           if (val == null) {
@@ -360,12 +375,15 @@ class _DireccionScreenState extends State<DireccionScreen> {
     Widget direccionField = Padding(
       padding: const EdgeInsets.only(bottom: 15),
       child: TextFormField(
+        focusNode: focusMap["direccion"],
+        initialValue: widget.direccion?.descripcion,
         decoration: InputDecoration(
           labelText: "Dirección",
         ),
         textInputAction: TextInputAction.next,
         keyboardType: TextInputType.text,
-        onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
+        onFieldSubmitted: (_) =>
+            FocusScope.of(context).requestFocus(focusMap["lote"]),
         validator: (val) {
           if (val.isEmpty) {
             return "Ingrese su dirección";
@@ -373,7 +391,7 @@ class _DireccionScreenState extends State<DireccionScreen> {
           return null;
         },
         onSaved: (val) {
-          _direccion.direccion = val;
+          _direccion.descripcion = val;
         },
       ),
     );
@@ -381,12 +399,15 @@ class _DireccionScreenState extends State<DireccionScreen> {
     Widget nLoteField = Padding(
       padding: const EdgeInsets.only(bottom: 15),
       child: TextFormField(
+        focusNode: focusMap["lote"],
+        initialValue: widget.direccion?.numeroDeLote,
         decoration: InputDecoration(
           labelText: "Nro/Lote",
         ),
         textInputAction: TextInputAction.next,
         keyboardType: TextInputType.text,
-        onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
+        onFieldSubmitted: (_) =>
+            FocusScope.of(context).requestFocus(focusMap["int"]),
         validator: (val) {
           if (val.isEmpty) {
             return "Campo requerido";
@@ -404,51 +425,63 @@ class _DireccionScreenState extends State<DireccionScreen> {
     Widget dptoField = Padding(
       padding: const EdgeInsets.only(bottom: 15),
       child: TextFormField(
+        focusNode: focusMap["int"],
+        initialValue: widget.direccion?.departamentoOInterior,
         decoration: InputDecoration(
           labelText: "Dpto/Int (opcional)",
         ),
         textInputAction: TextInputAction.next,
         keyboardType: TextInputType.text,
-        onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
+        onFieldSubmitted: (_) =>
+            FocusScope.of(context).requestFocus(focusMap["urbanizacion"]),
         onSaved: (val) {
           if (val.isNotEmpty) {
             _direccion.departamentoOInterior = val;
           }
         },
+        validator: (_) => null,
       ),
     );
 
     Widget urbanizacionField = Padding(
       padding: const EdgeInsets.only(bottom: 15),
       child: TextFormField(
+        focusNode: focusMap["urbanizacion"],
+        initialValue: widget.direccion?.urbanizacion,
         decoration: InputDecoration(
           labelText: "Urbanización (opcional)",
         ),
         textInputAction: TextInputAction.next,
         keyboardType: TextInputType.text,
-        onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
+        onFieldSubmitted: (_) =>
+            FocusScope.of(context).requestFocus(focusMap["referencia"]),
         onSaved: (val) {
           if (val.isNotEmpty) {
             _direccion.urbanizacion = val;
           }
         },
+        validator: (_) => null,
       ),
     );
 
     Widget refereciaField = Padding(
       padding: const EdgeInsets.only(bottom: 15),
       child: TextFormField(
+        focusNode: focusMap["referencia"],
+        initialValue: widget.direccion?.referencia,
         decoration: InputDecoration(
           labelText: "Referencia (opcional)",
         ),
-        textInputAction: TextInputAction.next,
+        textInputAction: TextInputAction.done,
         keyboardType: TextInputType.text,
-        onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
+        onFieldSubmitted: (_) =>
+            FocusScope.of(context).requestFocus(focusMap["guardar"]),
         onSaved: (val) {
           if (val.isNotEmpty) {
             _direccion.referencia = val;
           }
         },
+        validator: (_) => null,
       ),
     );
 
@@ -457,8 +490,20 @@ class _DireccionScreenState extends State<DireccionScreen> {
       child: SizedBox(
         width: double.maxFinite,
         child: RaisedButton(
+          focusNode: focusMap["guardar"],
           child: Text("Guardar"),
           onPressed: _handleSave,
+        ),
+      ),
+    );
+
+    Widget buttonEliminar = Padding(
+      padding: const EdgeInsets.only(bottom: 15),
+      child: SizedBox(
+        width: double.maxFinite,
+        child: FlatButton(
+          child: Text("Eliminar"),
+          onPressed: _handleEliminar,
         ),
       ),
     );
@@ -470,29 +515,118 @@ class _DireccionScreenState extends State<DireccionScreen> {
         ),
       ),
       body: SingleChildScrollView(
-        child: Container(
-          color: Colors.white,
+        child: BlocListener<DepartamentoBloc, APIResponse<List<Departamento>>>(
+          cubit: context.bloc<DepartamentoBloc>(),
+          listener: (context, state) {
+            if (state.hasData) {
+              loadDepartamento(state.data);
+            }
+          },
           child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(8),
             child: Form(
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  nombreField,
-                  apellidosField,
-                  telefonoField,
-                  tipoWidget,
-                  departamentoWidget,
-                  provinciaWidget,
-                  distritoWidget,
-                  direccionField,
-                  nLoteField,
-                  dptoField,
-                  urbanizacionField,
-                  refereciaField,
-                  buttonGuardar
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.all(11),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 4,
+                            bottom: 14,
+                            top: 0,
+                          ),
+                          child: Text(
+                            "Datos generales",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        nombreField,
+                        apellidosField,
+                        telefonoField,
+                        tipoWidget,
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.all(11),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 4,
+                            bottom: 14,
+                            top: 0,
+                          ),
+                          child: Text(
+                            "Datos de ubicación",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        departamentoWidget,
+                        provinciaWidget,
+                        distritoWidget,
+                        direccionField,
+                        nLoteField,
+                        dptoField,
+                        urbanizacionField,
+                        refereciaField,
+                      ],
+                    ),
+                  ),
+                  BlocListener<DireccionBloc, APIResponse>(
+                    cubit: context.bloc<DireccionBloc>(),
+                    listener: (context, state) {
+                      if (!state.loading) {
+                        if (state.hasMessage) {
+                          _onSuccess(state.message);
+                        }
+                        if (state.hasException) {
+                          _onError(state.exception);
+                        }
+                      }
+                    },
+                    child: BlocBuilder<DireccionBloc, APIResponse>(
+                      cubit: context.bloc<DireccionBloc>(),
+                      builder: (context, state) {
+                        if (state.loading) {
+                          return CircularProgressIndicator();
+                        } else {
+                          if (widget.direccion != null) {
+                            return Column(
+                              children: [
+                                buttonGuardar,
+                                buttonEliminar,
+                              ],
+                            );
+                          }
+                          return buttonGuardar;
+                        }
+                      },
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -505,6 +639,46 @@ class _DireccionScreenState extends State<DireccionScreen> {
   _handleSave() {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
+      _direccion.distrito = Distrito(id: _distrito);
+      if (widget.direccion != null) {
+        context.bloc<DireccionBloc>().updateDireccion(_direccion);
+      } else {
+        context.bloc<DireccionBloc>().createDireccion(_direccion);
+      }
     }
+  }
+
+  _onSuccess(APIMessage message) async {
+    await Alert(
+        context: context,
+        title: "¡Genial!",
+        desc: message.message,
+        type: AlertType.success,
+        closeFunction: () {
+          print("Salio");
+        },
+        buttons: [
+          DialogButton(
+            child: Text(
+              "OK",
+              style: TextStyle(color: Colors.white),
+            ),
+            onPressed: () => {Navigator.pop(context)},
+          )
+        ]).show();
+    Navigator.pop(context, true);
+  }
+
+  _onError(APIException exception) {
+    Alert(
+      context: context,
+      title: "Upss..",
+      desc: exception.message,
+      type: AlertType.error,
+    ).show();
+  }
+
+  _handleEliminar() {
+    context.bloc<DireccionBloc>().deleteDireccion(_direccion);
   }
 }

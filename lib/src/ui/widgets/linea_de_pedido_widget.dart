@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:mr_yupi/src/model/linea_de_pedido.dart';
@@ -22,27 +24,33 @@ class LineaDePedidoWidget extends StatelessWidget {
             Container(
               width: 100,
               height: 100,
-              child: CachedNetworkImage(
-                width: double.maxFinite,
-                height: double.maxFinite,
-                imageUrl: lineaDePedido.producto.fotos[0],
-                fit: BoxFit.contain,
-                placeholder: (context, _) => Shimmer.fromColors(
-                  baseColor: Colors.grey[200],
-                  highlightColor: Colors.grey[300],
-                  enabled: true,
-                  child: Container(
-                    color: Colors.white,
-                  ),
-                ),
-              ),
+              child: lineaDePedido.productoEstablecimiento.producto.foto != null
+                  ? CachedNetworkImage(
+                      width: double.maxFinite,
+                      height: double.maxFinite,
+                      imageUrl:
+                          lineaDePedido.productoEstablecimiento.producto.foto,
+                      fit: BoxFit.contain,
+                      placeholder: (context, _) => Shimmer.fromColors(
+                        baseColor: Colors.grey[200],
+                        highlightColor: Colors.grey[300],
+                        enabled: true,
+                        child: Container(
+                          color: Colors.white,
+                        ),
+                      ),
+                      errorWidget: (_, __, d) =>
+                          Image.asset("assets/products.png"),
+                    )
+                  : Image.asset("assets/products.png"),
             ),
+            SizedBox(width: 18),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    lineaDePedido.producto.nombre,
+                    lineaDePedido.productoEstablecimiento.producto.nombre,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Divider(),

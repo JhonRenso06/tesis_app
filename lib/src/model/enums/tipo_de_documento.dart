@@ -1,1 +1,0 @@
-enum TipoDeDocumento { DNI, RUC }

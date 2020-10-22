@@ -1,9 +1,21 @@
-import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mr_yupi/src/model/enums/tipo_de_documento.dart';
+import 'package:mr_yupi/src/bloc/perfil_bloc.dart';
+import 'package:mr_yupi/src/enums/tipo_de_documento.dart';
+import 'package:mr_yupi/src/model/api_message.dart';
+import 'package:mr_yupi/src/model/api_response.dart';
+import 'package:mr_yupi/src/model/cliente.dart';
+import 'package:mr_yupi/src/model/cliente_juridico.dart';
+import 'package:mr_yupi/src/model/cliente_natural.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mr_yupi/src/ui/widgets/loading_widget.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class EditarPerfilScreen extends StatefulWidget {
+  final Cliente cliente;
+
+  EditarPerfilScreen(this.cliente);
+
   @override
   _EditarPerfilScreenState createState() => _EditarPerfilScreenState();
 }
@@ -12,10 +24,11 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
   TipoDeDocumento _tipo;
   GlobalKey<FormState> _formKey;
   String _nombre, _apellidos, _email, _documento;
-
   @override
   void initState() {
-    _tipo = TipoDeDocumento.DNI;
+    _tipo = widget.cliente.tipoDeDocumento;
+    _formKey = GlobalKey();
+    print(widget.cliente.toMap());
     super.initState();
   }
 
@@ -66,6 +79,14 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
           }
           return null;
         },
+        initialValue: () {
+          if (widget.cliente is ClienteJuridico) {
+            return (widget.cliente as ClienteJuridico).razonSocial;
+          }
+          if (widget.cliente is ClienteNatural) {
+            return (widget.cliente as ClienteNatural).nombre;
+          }
+        }(),
         onSaved: (val) {
           _nombre = val;
         },
@@ -90,28 +111,11 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
         onSaved: (val) {
           _apellidos = val;
         },
-      ),
-    );
-
-    Widget emailField = Padding(
-      padding: const EdgeInsets.only(bottom: 15),
-      child: TextFormField(
-        obscureText: false,
-        textInputAction: TextInputAction.next,
-        keyboardType: TextInputType.emailAddress,
-        onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
-        decoration: InputDecoration(
-          labelText: "Email",
-        ),
-        validator: (val) {
-          if (val.isEmpty || !EmailValidator.validate(val)) {
-            return "Ingrese un email";
+        initialValue: () {
+          if (widget.cliente is ClienteNatural) {
+            return (widget.cliente as ClienteNatural).apellidos;
           }
-          return null;
-        },
-        onSaved: (val) {
-          _email = val;
-        },
+        }(),
       ),
     );
 
@@ -142,6 +146,7 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
         onSaved: (val) {
           _documento = val;
         },
+        initialValue: widget.cliente.documento,
       ),
     );
 
@@ -161,7 +166,6 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
         documentoField,
         nombreField,
         apellidosField,
-        emailField,
         registerButton
       ];
     } else {
@@ -170,7 +174,6 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
         tipoWidget,
         documentoField,
         nombreField,
-        emailField,
         registerButton
       ];
     }
@@ -180,20 +183,95 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
           title: Text(
         "Editar perfil",
       )),
-      body: SingleChildScrollView(
-        child: Container(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: form,
+      body: ScrollConfiguration(
+        behavior: ScrollBehavior()
+          ..buildViewportChrome(context, null, AxisDirection.down),
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              padding: EdgeInsets.only(left: 30, right: 30),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: form,
+                  ),
+                ),
+              ),
             ),
-          ),
+            BlocListener<PerfilBloc, APIResponse<Cliente>>(
+              cubit: context.bloc<PerfilBloc>(),
+              listener: (context, state) {
+                if (!state.loading) {
+                  if (state.hasMessage) {
+                    _showSuccess(state.message);
+                  } else if (state.hasException) {
+                    Alert(
+                      context: context,
+                      title: "Upss..",
+                      desc: state.exception.message,
+                      type: AlertType.error,
+                    ).show();
+                  }
+                }
+              },
+              child: SizedBox.shrink(),
+            ),
+            BlocBuilder<PerfilBloc, APIResponse>(
+              cubit: context.bloc<PerfilBloc>(),
+              builder: (context, state) {
+                return state.loading ? LoadingWidget() : SizedBox.shrink();
+              },
+            ),
+          ],
         ),
       ),
     );
   }
 
-  _onSave() {}
+  _onSave() {
+    if (_formKey.currentState.validate()) {
+      _formKey.currentState.save();
+      Cliente cliente;
+      if (_tipo == TipoDeDocumento.DNI) {
+        cliente = ClienteNatural(
+          documento: _documento,
+          nombre: _nombre,
+          apellidos: _apellidos,
+          correo: _email,
+        );
+      } else {
+        cliente = ClienteJuridico(
+          documento: _documento,
+          razonSocial: _nombre,
+          correo: _email,
+        );
+      }
+      context.bloc<PerfilBloc>().updateMe(cliente);
+    }
+  }
+
+  _showSuccess(APIMessage message) async {
+    await Alert(
+        context: context,
+        title: "¡Genial!",
+        desc: message.message,
+        type: AlertType.success,
+        closeFunction: () {
+          print("Salio");
+        },
+        buttons: [
+          DialogButton(
+            child: Text(
+              "OK",
+              style: TextStyle(color: Colors.white),
+            ),
+            onPressed: () => {Navigator.pop(context)},
+          )
+        ]).show();
+    Navigator.pop(context, true);
+  }
 }

@@ -1,74 +1,112 @@
-import 'package:mr_yupi/src/model/caracteristicas.dart';
+import 'package:mr_yupi/src/enums/moneda.dart';
+import 'package:mr_yupi/src/enums/tipo_de_producto.dart';
+import 'package:mr_yupi/src/model/caracteristica.dart';
 import 'package:mr_yupi/src/model/categoria.dart';
-import 'package:mr_yupi/src/model/enums/moneda.dart';
-import 'package:mr_yupi/src/model/enums/tipo_de_producto.dart';
+import 'package:mr_yupi/src/model/model.dart';
+import 'package:mr_yupi/src/model/precio.dart';
+import 'package:mr_yupi/src/model/unidad_de_medida.dart';
 
-class Producto {
-  Categoria categoria;
-  String codigoDeBarras, nombre, descripcion;
-  List<String> fotos;
-  List<Caracteristicas> caracteristicas;
+class Producto extends Model {
+  num id;
   TipoDeProducto tipo;
   bool exonerado;
-  num id, precio, descuento, peso, medida, stock;
+  bool favorito;
+  String nombre;
+  String descripcion;
   Moneda moneda;
+  num pesoTotal;
+  num descuento;
+  List<Precio> precios;
+  List<String> fotos;
+  UnidadDeMedida unidadDeMedida;
+  Categoria categoria;
+  List<Caracteristica> caracteristicas;
 
-  Producto(
-      {this.id,
-      this.categoria,
-      this.codigoDeBarras,
-      this.nombre,
-      this.descripcion,
-      this.caracteristicas,
-      this.fotos,
-      this.tipo,
-      this.exonerado,
-      this.precio,
-      this.descuento,
-      this.peso,
-      this.stock,
-      this.medida,
-      this.moneda});
+  Producto({
+    this.id,
+    this.tipo,
+    this.exonerado,
+    this.nombre,
+    this.descripcion,
+    this.moneda,
+    this.pesoTotal,
+    this.precios,
+    this.fotos,
+    this.unidadDeMedida,
+    this.categoria,
+    this.caracteristicas,
+    this.favorito = false,
+  });
 
-  Producto.fromMap(Map<String, dynamic> data) {
-    this.id = data["id"];
-    this.categoria = Categoria.fromMap(data["categoria"]);
-    this.codigoDeBarras = data["codigoDeBarras"];
-    this.nombre = data["nombre"];
-    this.descripcion = data["descripcion"];
-    this.fotos = data["fotos"];
-    this.caracteristicas = data["caracteristicas"];
-    switch (data["tipo"]) {
-      case "PRODUCTO":
-        this.tipo = TipoDeProducto.PRODUCTO;
-        break;
-
-      case "SERVICIO":
-        this.tipo = TipoDeProducto.SERVICIO;
-        break;
-
-      default:
-        this.tipo = TipoDeProducto.PRODUCTO;
+  Precio definirPrecio(int cantidad) {
+    for (Precio precio in precios) {
+      if (cantidad >= precio.cantidad) {
+        return precio;
+      }
     }
-    this.exonerado = data["exonerado"];
-    this.precio = data["precio"];
-    this.descuento = data["descuento"];
-    this.peso = data["peso"];
-    this.stock = data["stock"];
-    this.medida = data["medida"];
-    switch (data["moneda"]) {
-      case "SOLES":
-        this.moneda = Moneda.SOLES;
-        break;
-      case "DOLARES":
-        this.moneda = Moneda.DOLARES;
-        break;
-      default:
-        this.moneda = Moneda.SOLES;
-        break;
-    }
+    return precios[0];
   }
 
-  num get precioDescuento => this.precio - (this.precio * this.descuento);
-  num get porcentajeDescuento => this.descuento * 100;
+  @override
+  Model fromMap(Map<String, dynamic> data) {
+    id = data["id"];
+    tipo = TipoDeProductoExtension.parse(data["tipo"]);
+    exonerado = data["exonerado"];
+    nombre = data["nombre"];
+    descripcion = data["descripcion"] ?? "";
+    Moneda.values.forEach((element) {
+      if (data["moneda"] == element.index) {
+        moneda = element;
+      }
+    });
+    pesoTotal = data["pesoTotal"];
+    precios = List();
+    if (data["precios"] != null) {
+      (data["precios"] as List).forEach((element) {
+        precios.add(Precio().fromMap(element));
+      });
+      precios.sort((b, a) => a.cantidad.compareTo(b.cantidad));
+    }
+    fotos = List();
+    (data["fotos"] as List).forEach((element) {
+      fotos.add(element);
+    });
+
+    if (data["unidadDeMedida"] != null) {
+      unidadDeMedida = UnidadDeMedida().fromMap(data["unidadDeMedida"]);
+    }
+    if (data["categoria"] != null) {
+      categoria = Categoria().fromMap(data["categoria"]);
+    }
+    if (data["caracteristicas"] != null) {
+      (data["caracteristicas"] as List).forEach((element) {
+        caracteristicas.add(Caracteristica().fromMap(element));
+      });
+    }
+    favorito = false;
+    return this;
+  }
+
+  @override
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'tipo': tipo,
+      'exonerado': exonerado,
+      'nombre': nombre,
+      'descripcion': descripcion,
+      'moneda': moneda?.index,
+      'pesoTotal': pesoTotal,
+      'unidadDeMedida': unidadDeMedida?.id,
+      'categoria': categoria?.id,
+    };
+  }
+
+  get foto {
+    if (fotos.length > 0) {
+      return fotos[0];
+    } else {
+      return null;
+    }
+  }
 }

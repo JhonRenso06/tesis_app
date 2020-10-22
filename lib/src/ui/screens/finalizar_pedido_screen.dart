@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:mr_yupi/src/enums/metodo_de_envio.dart';
+import 'package:mr_yupi/src/enums/tipo_de_direccion.dart';
 import 'package:mr_yupi/src/global/global.dart';
 import 'package:mr_yupi/src/model/departamento.dart';
 import 'package:mr_yupi/src/model/direccion.dart';
 import 'package:mr_yupi/src/model/distrito.dart';
-import 'package:mr_yupi/src/model/enums/metodo_de_envio.dart';
 import 'package:mr_yupi/src/model/provincia.dart';
 import 'package:mr_yupi/src/providers/carrito_provider.dart';
 import 'package:mr_yupi/src/ui/screens/direccion_screen.dart';
 import 'package:mr_yupi/src/ui/screens/fin_pedido_screen.dart';
-import 'package:mr_yupi/src/ui/screens/seleccionar_direccion_screen.dart';
+import 'package:mr_yupi/src/ui/screens/direcciones_screen.dart';
 import 'package:provider/provider.dart';
 
 class FinalizarPedidoScreen extends StatefulWidget {
@@ -20,29 +21,29 @@ class _FinalizarPedidoScreenState extends State<FinalizarPedidoScreen> {
   Direccion _direccion;
   List<Direccion> direcciones = [
     Direccion(
-        direccion: "Av Túpac Amaru 1419",
+        descripcion: "Av Túpac Amaru 1419",
         distrito: Distrito(
-            id: 1,
+            id: '1',
             nombre: "Trujillo",
             provincia: Provincia(
-                id: 1,
+                id: '1',
                 nombre: "Trujillo",
-                departamento: Departamento(id: 1, nombre: "La libertad"))),
+                departamento: Departamento(id: '1', nombre: "La libertad"))),
         nombre: "Pablo Rafael",
         apellidos: "Cruz López",
         telefono: "969647526",
-        tipo: TipoDireccion.CASA,
+        tipo: TipoDeDireccion.CASA,
         predeterminado: false),
     Direccion(
-      direccion: "Av America 2050",
-      tipo: TipoDireccion.CONDOMINIO,
+      descripcion: "Av America 2050",
+      tipo: TipoDeDireccion.CONDOMINIO,
       distrito: Distrito(
-        id: 1,
+        id: '1',
         nombre: "Trujillo",
         provincia: Provincia(
-          id: 1,
+          id: '1',
           nombre: "Trujillo",
-          departamento: Departamento(id: 1, nombre: "La libertad"),
+          departamento: Departamento(id: '1', nombre: "La libertad"),
         ),
       ),
       nombre: "Pablo Rafael",
@@ -283,7 +284,7 @@ class _FinalizarPedidoScreenState extends State<FinalizarPedidoScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                _direccion.direccion,
+                                _direccion.descripcion,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
@@ -325,7 +326,7 @@ class _FinalizarPedidoScreenState extends State<FinalizarPedidoScreen> {
   _handleCambiarDireccion() async {
     Direccion direccion = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => SeleccionarDireccionScreen(),
+        builder: (context) => DireccionesScreen(),
       ),
     );
     if (direccion != null) {

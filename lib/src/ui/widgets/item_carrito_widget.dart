@@ -1,12 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mr_yupi/src/bloc/carrito_bloc.dart';
+import 'package:mr_yupi/src/model/producto_establecimiento.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:mr_yupi/src/global/global.dart';
 import 'package:mr_yupi/src/model/linea_de_pedido.dart';
-import 'package:mr_yupi/src/model/producto.dart';
 import 'package:mr_yupi/src/providers/carrito_provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ItemCarritoWidget extends StatefulWidget {
   final LineaDePedido lineaDePedido;
@@ -33,7 +35,8 @@ class _ItemCarritoWidget extends State<ItemCarritoWidget> {
 
   @override
   Widget build(BuildContext context) {
-    Producto producto = widget.lineaDePedido.producto;
+    ProductoEstablecimiento productoEstablecimiento =
+        widget.lineaDePedido.productoEstablecimiento;
     LineaDePedido lineaDePedido = widget.lineaDePedido;
     return Card(
       elevation: 0,
@@ -51,7 +54,7 @@ class _ItemCarritoWidget extends State<ItemCarritoWidget> {
                       padding:
                           const EdgeInsets.only(top: 8, left: 8, bottom: 4),
                       child: Text(
-                        producto.nombre,
+                        productoEstablecimiento.producto.nombre,
                         textAlign: TextAlign.start,
                         style: TextStyle(
                           fontSize: 15,
@@ -85,20 +88,25 @@ class _ItemCarritoWidget extends State<ItemCarritoWidget> {
                   Container(
                     width: constraints.maxWidth * 0.4,
                     height: widget.height,
-                    child: CachedNetworkImage(
-                      width: double.maxFinite,
-                      height: double.maxFinite,
-                      imageUrl: producto.fotos[0],
-                      fit: BoxFit.contain,
-                      placeholder: (context, _) => Shimmer.fromColors(
-                        baseColor: Colors.grey[200],
-                        highlightColor: Colors.grey[300],
-                        enabled: true,
-                        child: Container(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
+                    child: productoEstablecimiento.producto.foto != null
+                        ? CachedNetworkImage(
+                            width: double.maxFinite,
+                            height: double.maxFinite,
+                            imageUrl:
+                                productoEstablecimiento.producto.foto ?? "",
+                            fit: BoxFit.contain,
+                            placeholder: (context, _) => Shimmer.fromColors(
+                              baseColor: Colors.grey[200],
+                              highlightColor: Colors.grey[300],
+                              enabled: true,
+                              child: Container(
+                                color: Colors.white,
+                              ),
+                            ),
+                          )
+                        : Center(
+                            child: Image.asset("assets/products.png"),
+                          ),
                   ),
                   Container(
                     padding: const EdgeInsets.only(left: 12, right: 12),
@@ -123,14 +131,19 @@ class _ItemCarritoWidget extends State<ItemCarritoWidget> {
                                     ),
                                   ),
                                 ),
-                                if (producto.descuento != null &&
-                                    producto.descuento > 0)
+                                if (productoEstablecimiento
+                                            .producto.descuento !=
+                                        null &&
+                                    productoEstablecimiento.producto.descuento >
+                                        0)
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
                                       Text(
                                         "S/" +
-                                            producto.precio.toStringAsFixed(2),
+                                            productoEstablecimiento
+                                                .producto.precios[0].monto
+                                                .toStringAsFixed(2),
                                         style: TextStyle(
                                           decoration:
                                               TextDecoration.lineThrough,
@@ -140,9 +153,8 @@ class _ItemCarritoWidget extends State<ItemCarritoWidget> {
                                         ),
                                       ),
                                       Text(
-                                        " - ${producto.porcentajeDescuento.toStringAsFixed(2)}%",
+                                        " - ${productoEstablecimiento.producto.descuento.toStringAsFixed(2)}%",
                                         style: TextStyle(
-                                          fontFamily: "Quicksand",
                                           fontSize: 15,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.black,
@@ -152,7 +164,7 @@ class _ItemCarritoWidget extends State<ItemCarritoWidget> {
                                   )
                                 else
                                   Text(
-                                    "S/. ${producto.precio.toStringAsFixed(2)}",
+                                    "S/. ${lineaDePedido.definirPrecio.toStringAsFixed(2)}",
                                     style: TextStyle(
                                       fontSize: 16,
                                     ),
@@ -162,8 +174,9 @@ class _ItemCarritoWidget extends State<ItemCarritoWidget> {
                             SizedBox(
                               height: 6,
                             ),
-                            if (producto.descuento != null &&
-                                producto.descuento > 0)
+                            if (productoEstablecimiento.producto.descuento !=
+                                    null &&
+                                productoEstablecimiento.producto.descuento > 0)
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
@@ -178,7 +191,7 @@ class _ItemCarritoWidget extends State<ItemCarritoWidget> {
                                     ),
                                   ),
                                   Text(
-                                    "S/. ${producto.precioDescuento.toStringAsFixed(2)}",
+                                    "S/. ${productoEstablecimiento.producto.descuento.toStringAsFixed(2)}",
                                     style: TextStyle(
                                       fontSize: 16,
                                     ),
@@ -202,7 +215,7 @@ class _ItemCarritoWidget extends State<ItemCarritoWidget> {
                                   ),
                                 ),
                                 Text(
-                                  "S/. ${lineaDePedido.subtotal.toStringAsFixed(2)}",
+                                  "S/. ${lineaDePedido.calcularSubTotal().toStringAsFixed(2)}",
                                   style: TextStyle(
                                     fontSize: 16,
                                   ),
@@ -316,20 +329,18 @@ class _ItemCarritoWidget extends State<ItemCarritoWidget> {
     if (cantidad > 1) {
       cantidad--;
       _controller.value = _controller.value.copyWith(text: cantidad.toString());
-      var carritoProvider =
-          Provider.of<CarritoProvider>(context, listen: false);
-      carritoProvider.addLineaDePedido(cantidad, widget.lineaDePedido.producto);
+      context.bloc<CarritoBloc>().addLineaDePedido(
+          widget.lineaDePedido.productoEstablecimiento, cantidad);
     }
   }
 
   _handlePlus() {
     int cantidad = int.parse(_controller.value.text);
-    if (cantidad < widget.lineaDePedido.producto.stock) {
+    if (cantidad < widget.lineaDePedido.productoEstablecimiento.stock) {
       cantidad++;
       _controller.value = _controller.value.copyWith(text: cantidad.toString());
-      var carritoProvider =
-          Provider.of<CarritoProvider>(context, listen: false);
-      carritoProvider.addLineaDePedido(cantidad, widget.lineaDePedido.producto);
+      context.bloc<CarritoBloc>().addLineaDePedido(
+          widget.lineaDePedido.productoEstablecimiento, cantidad);
     }
   }
 
@@ -340,10 +351,10 @@ class _ItemCarritoWidget extends State<ItemCarritoWidget> {
     } else {
       cantidad = int.parse(str);
     }
-    if (cantidad > 0 && cantidad < widget.lineaDePedido.producto.stock) {
-      var carritoProvider =
-          Provider.of<CarritoProvider>(context, listen: false);
-      carritoProvider.addLineaDePedido(cantidad, widget.lineaDePedido.producto);
+    if (cantidad > 0 &&
+        cantidad < widget.lineaDePedido.productoEstablecimiento.stock) {
+      context.bloc<CarritoBloc>().addLineaDePedido(
+          widget.lineaDePedido.productoEstablecimiento, cantidad);
     } else {
       _controller.value = _controller.value
           .copyWith(text: widget.lineaDePedido.cantidad.toString());
@@ -351,7 +362,6 @@ class _ItemCarritoWidget extends State<ItemCarritoWidget> {
   }
 
   _handleDelete() {
-    var carritoProvider = Provider.of<CarritoProvider>(context, listen: false);
-    carritoProvider.deleteLineaDePedido(widget.lineaDePedido.producto);
+    context.bloc<CarritoBloc>().deleteLineaDePedido(widget.lineaDePedido);
   }
 }

@@ -1,14 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
+import 'package:mr_yupi/src/model/producto_establecimiento.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:mr_yupi/src/model/producto.dart';
 
 class ProductoWidget extends StatelessWidget {
-  final Producto producto;
-  final Function(Producto) onTap;
+  final ProductoEstablecimiento productoEstablecimiento;
+  final Function(ProductoEstablecimiento) onTap;
+  final Function(int id) onRemove;
+  final Function(int id) onAdd;
 
-  ProductoWidget(this.producto, {this.onTap});
+  ProductoWidget(this.productoEstablecimiento,
+      {this.onTap, this.onAdd, this.onRemove});
 
   @override
   Widget build(BuildContext context) {
@@ -26,20 +29,25 @@ class ProductoWidget extends StatelessWidget {
                 children: [
                   Container(
                     height: constraints.maxHeight * 0.70,
-                    child: CachedNetworkImage(
-                      width: double.maxFinite,
-                      height: double.maxFinite,
-                      imageUrl: producto.fotos[0],
-                      fit: BoxFit.contain,
-                      placeholder: (context, _) => Shimmer.fromColors(
-                        baseColor: Colors.grey[200],
-                        highlightColor: Colors.grey[300],
-                        enabled: true,
-                        child: Container(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
+                    child: productoEstablecimiento.producto.foto != null
+                        ? CachedNetworkImage(
+                            width: double.maxFinite,
+                            height: double.maxFinite,
+                            imageUrl: productoEstablecimiento.producto.foto,
+                            fit: BoxFit.contain,
+                            placeholder: (context, _) => Shimmer.fromColors(
+                              baseColor: Colors.grey[200],
+                              highlightColor: Colors.grey[300],
+                              enabled: true,
+                              child: Container(
+                                color: Colors.white,
+                              ),
+                            ),
+                            errorWidget: (_, __, ___) {
+                              return Image.asset("assets/products.png");
+                            },
+                          )
+                        : Image.asset("assets/products.png"),
                   ),
                   Container(
                     width: double.maxFinite,
@@ -49,11 +57,16 @@ class ProductoWidget extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          producto.nombre.substring(0, 20) + "...",
+                          productoEstablecimiento.producto.nombre,
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 15),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: TextStyle(
+                            fontSize: 15,
+                          ),
                         ),
-                        producto.descuento != null && producto.descuento > 0
+                        productoEstablecimiento.producto.descuento != null &&
+                                productoEstablecimiento.producto.descuento > 0
                             ? Column(
                                 children: <Widget>[
                                   Row(
@@ -61,7 +74,9 @@ class ProductoWidget extends StatelessWidget {
                                     children: <Widget>[
                                       Text(
                                         "S/" +
-                                            producto.precio.toStringAsFixed(2),
+                                            productoEstablecimiento
+                                                .producto.precios[0].monto
+                                                .toStringAsFixed(2),
                                         style: TextStyle(
                                           decoration:
                                               TextDecoration.lineThrough,
@@ -70,7 +85,7 @@ class ProductoWidget extends StatelessWidget {
                                         ),
                                       ),
                                       Text(
-                                        " - ${producto.porcentajeDescuento.toStringAsFixed(2)}%",
+                                        " - ${productoEstablecimiento.producto.descuento.toStringAsFixed(2)}%",
                                         style: TextStyle(
                                           fontFamily: "Quicksand",
                                           fontSize: 15,
@@ -82,7 +97,8 @@ class ProductoWidget extends StatelessWidget {
                                   ),
                                   Text(
                                     "S/" +
-                                        producto.precioDescuento
+                                        productoEstablecimiento
+                                            .producto.descuento
                                             .toStringAsFixed(2),
                                     style: TextStyle(
                                       fontFamily: "Quicksand",
@@ -94,7 +110,10 @@ class ProductoWidget extends StatelessWidget {
                                 ],
                               )
                             : Text(
-                                "S/" + producto.precio.toStringAsFixed(2),
+                                "S/" +
+                                    productoEstablecimiento
+                                        .producto.precios[0].monto
+                                        .toStringAsFixed(2),
                                 style: TextStyle(
                                   fontFamily: "Quicksand",
                                   fontSize: 15,
@@ -107,7 +126,7 @@ class ProductoWidget extends StatelessWidget {
                   ),
                 ],
               ),
-              if (producto.stock <= 0)
+              if (productoEstablecimiento.stock <= 0)
                 Container(
                   width: double.maxFinite,
                   height: constraints.maxHeight * 0.7,
@@ -127,7 +146,7 @@ class ProductoWidget extends StatelessWidget {
                 child: InkWell(
                   onTap: () {
                     if (this.onTap != null) {
-                      this.onTap(producto);
+                      this.onTap(productoEstablecimiento);
                     }
                   },
                 ),
@@ -137,6 +156,20 @@ class ProductoWidget extends StatelessWidget {
                 height: 50,
                 child: LikeButton(
                   size: 30,
+                  onTap: (value) async {
+                    if (!value) {
+                      if (onAdd != null) {
+                        await onAdd(productoEstablecimiento.producto.id);
+                      }
+                      return true;
+                    } else {
+                      if (onRemove != null) {
+                        await onRemove(productoEstablecimiento.producto.id);
+                      }
+                      return false;
+                    }
+                  },
+                  isLiked: productoEstablecimiento.producto.favorito,
                 ),
               )
             ],

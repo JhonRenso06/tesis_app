@@ -1,38 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mr_yupi/src/bloc/categoria_bloc.dart';
+import 'package:mr_yupi/src/model/api_response.dart';
 import 'package:mr_yupi/src/model/categoria.dart';
 import 'package:mr_yupi/src/ui/widgets/categoria_widget.dart';
+import 'package:mr_yupi/src/ui/widgets/list_shimmer_widget.dart';
+import 'package:mr_yupi/src/ui/widgets/load_more_list.dart';
 
-class CategoriasScreen extends StatelessWidget {
-  final List<Categoria> categorias = [
-    Categoria(
-      id: 0,
-      nombre: "Bebidas",
-      imagen:
-          "https://dam.cocinafacil.com.mx/wp-content/uploads/2019/06/Bebidas-para-combatir-el-calor.jpg",
-    ),
-    Categoria(
-      id: 0,
-      nombre: "Gaseosas",
-      imagen:
-          "https://sites.google.com/site/depositodelicoresygaseosas/_/rsrc/1535240855985/gaseosas-y-jugos/banner%20%20gasesas.jpg",
-    ),
-    Categoria(
-      id: 0,
-      nombre: "Vinos",
-      imagen:
-          "https://www.hotelvinasqueirolo.com/blog/wp-content/uploads/2019/09/Valle-de-Ica-Tierra-de-vinos-y-piscos-peruanos-A.jpg",
-    ),
-  ];
+class CategoriasScreen extends StatefulWidget {
+  @override
+  _CategoriasScreenState createState() => _CategoriasScreenState();
+}
+
+class _CategoriasScreenState extends State<CategoriasScreen> {
+  @override
+  void initState() {
+    context.bloc<CategoriaBloc>().initialLoad();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: const EdgeInsets.all(6),
-      itemCount: categorias.length,
-      itemBuilder: (BuildContext context, int index) {
-        return CategoriaWidget(
-          categorias[index],
-          onTap: _onTap,
-        );
+    return BlocBuilder<CategoriaBloc, APIResponse<Paginate<Categoria>>>(
+      cubit: context.bloc<CategoriaBloc>(),
+      builder: (context, state) {
+        if (state.loading) {
+          return ListShimmerWidget(
+            itemCount: 6,
+            maxHeigth: 200,
+          );
+        }
+        if (state.hasData && state.data.items.length > 0) {
+          return LoadMoreList(
+            loading: state.loadMore,
+            onMaxScroll: () {
+              context.bloc<CategoriaBloc>().loadMore();
+            },
+            padding: const EdgeInsets.all(6),
+            itemCount: state.data.items.length,
+            itemBuilder: (BuildContext context, int index) {
+              return CategoriaWidget(
+                state.data.items[index],
+                onTap: _onTap,
+              );
+            },
+          );
+        }
+        return SizedBox.shrink();
       },
     );
   }

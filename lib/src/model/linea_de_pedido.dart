@@ -1,38 +1,47 @@
-import 'package:mr_yupi/src/model/producto.dart';
+import 'package:mr_yupi/src/model/model.dart';
+import 'package:mr_yupi/src/model/producto_establecimiento.dart';
 
-class LineaDePedido {
-  Producto producto;
-  num id, precio, _cantidad, subtotal;
+class LineaDePedido extends Model {
+  num id;
+  num precio;
+  num cantidad;
+  num subtotal;
+  ProductoEstablecimiento productoEstablecimiento;
 
-  LineaDePedido(
-      {this.id, this.producto, this.precio, num cantidad, this.subtotal}) {
-    this._cantidad = cantidad;
+  LineaDePedido({
+    this.id,
+    this.precio,
+    this.cantidad,
+    this.subtotal,
+    this.productoEstablecimiento,
+  });
+
+  num calcularSubTotal() {
+    return cantidad * definirPrecio;
   }
 
-  LineaDePedido.withProduct(int cantidad, Producto producto) {
-    this._cantidad = cantidad;
-    this.producto = producto;
-    if (producto.descuento != null && producto.descuento > 0) {
-      this.precio = producto.precioDescuento;
-    } else {
-      this.precio = producto.precio;
+  num get definirPrecio {
+    return productoEstablecimiento.definirPrecio(cantidad);
+  }
+
+  @override
+  Model fromMap(Map<String, dynamic> data) {
+    id = data["id"];
+    precio = data["precio"] != null ? num.parse(data["precio"]) : 0;
+    cantidad = data["cantidad"];
+    subtotal = data["subtotal"] != null ? num.parse(data["subtotal"]) : 0;
+    if (data["productoEstablecimiento"] != null) {
+      productoEstablecimiento =
+          ProductoEstablecimiento().fromMap(data["productoEstablecimiento"]);
     }
-
-    this.subtotal = this._cantidad * this.precio;
+    return this;
   }
 
-  LineaDePedido.fromMap(Map<String, dynamic> data) {
-    this.id = data["id"];
-    this.producto = Producto.fromMap(data["producto"]);
-    this.precio = data["precio"];
-    this._cantidad = data["cantidad"];
-    this.subtotal = data["subtotal"];
+  @override
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'cantidad': cantidad,
+    };
   }
-
-  set cantidad(num cantidad) {
-    this._cantidad = cantidad;
-    this.subtotal = cantidad * this.precio;
-  }
-
-  num get cantidad => this._cantidad;
 }
