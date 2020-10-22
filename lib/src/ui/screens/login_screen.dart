@@ -171,6 +171,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       _showSuccess(state.message);
                     }
                     if (state.hasException) {
+                      print("Login");
                       Alert(
                         context: context,
                         title: "Upss..",
@@ -210,7 +211,8 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
     if (result != null && result) {
-      Navigator.pop(context);
+      print("Registro existo");
+      Navigator.pop(context, true);
     }
   }
 

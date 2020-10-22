@@ -16,4 +16,8 @@ class PedidoRepository {
   Future<APIResponse<Paginate<Pedido>>> loadMore(num currentPage) async {
     return await _direccionAPI.getPedidos(page: currentPage + 1);
   }
+
+  Future<APIResponse<Pedido>> crearPedido(Pedido pedido) async {
+    return await _direccionAPI.crearPedido(pedido);
+  }
 }

@@ -17,4 +17,7 @@ abstract class ItemCartDao {
 
   @Query('DELETE FROM ItemCart WHERE id = :id')
   Future<void> deleteItemCart(int id);
+
+  @Query('DELETE FROM ItemCart')
+  Future<void> clear();
 }

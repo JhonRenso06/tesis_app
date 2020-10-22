@@ -67,7 +67,7 @@ class _$FlutterDatabase extends FlutterDatabase {
   Future<sqflite.Database> open(String path, List<Migration> migrations,
       [Callback callback]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
-      version: 2,
+      version: 1,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
       },
@@ -186,6 +186,11 @@ class _$ItemCartDao extends ItemCartDao {
   Future<void> deleteItemCart(int id) async {
     await _queryAdapter.queryNoReturn('DELETE FROM ItemCart WHERE id = ?',
         arguments: <dynamic>[id]);
+  }
+
+  @override
+  Future<void> clear() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM ItemCart');
   }
 
   @override

@@ -44,11 +44,18 @@ class DireccionBloc extends Cubit<APIResponse<Paginate<Direccion>>> {
   }
 
   predeterminadoDireccion(Direccion direccion) async {
-    emit(state.toLoading());
     var result = await _repository.predeterminadoDireccion(direccion);
     var current = state.toCompleted();
     current.exception = result.exception;
     current.message = result.message;
+    print(direccion.descripcion);
+    current.data.items.forEach((element) {
+      if (direccion.id == element.id) {
+        element.predeterminado = true;
+      } else {
+        element.predeterminado = false;
+      }
+    });
     emit(current);
   }
 
@@ -59,5 +66,15 @@ class DireccionBloc extends Cubit<APIResponse<Paginate<Direccion>>> {
     current.exception = result.exception;
     current.message = result.message;
     emit(current);
+  }
+
+  Direccion get direccionDefault {
+    Direccion direccion;
+    state.data.items.forEach((element) {
+      if (element != null && element.predeterminado) {
+        direccion = element;
+      }
+    });
+    return direccion;
   }
 }

@@ -23,6 +23,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String _nombre, _apellidos, _email, _password, _documento;
   bool _loading, _obscurePassword, _obscureRepeatPassword;
   TipoDeDocumento _tipo;
+  PerfilBloc _bloc;
 
   @override
   void initState() {
@@ -31,6 +32,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _obscurePassword = true;
     _obscureRepeatPassword = true;
     _tipo = TipoDeDocumento.DNI;
+    _bloc = PerfilBloc();
     super.initState();
   }
 
@@ -259,26 +261,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
             ),
             BlocListener<PerfilBloc, APIResponse<Cliente>>(
-              cubit: context.bloc<PerfilBloc>(),
+              cubit: _bloc,
               listener: (context, state) {
-                if (state.hasMessage) {
-                  _showSuccess(state.message);
-                } else if (state.hasException) {
-                  Alert(
-                    context: context,
-                    title: "Upss..",
-                    desc: state.exception.message,
-                    type: AlertType.error,
-                  ).show();
+                if (!state.loading) {
+                  if (state.hasMessage) {
+                    _showSuccess(state.message);
+                  } else if (state.hasException) {
+                    print("Register");
+                    Alert(
+                      context: context,
+                      title: "Upss..",
+                      desc: state.exception.message,
+                      type: AlertType.error,
+                    ).show();
+                  }
                 }
               },
-              child: SizedBox.shrink(),
-            ),
-            BlocBuilder<PerfilBloc, APIResponse>(
-              cubit: context.bloc<PerfilBloc>(),
-              builder: (context, state) {
-                return state.loading ? LoadingWidget() : SizedBox.shrink();
-              },
+              child: BlocBuilder<PerfilBloc, APIResponse>(
+                cubit: _bloc,
+                builder: (context, state) {
+                  return state.loading ? LoadingWidget() : SizedBox.shrink();
+                },
+              ),
             ),
           ],
         ),
@@ -304,7 +308,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             correo: _email,
             password: _password);
       }
-      context.bloc<PerfilBloc>().register(cliente);
+      _bloc.register(cliente);
     }
   }
 

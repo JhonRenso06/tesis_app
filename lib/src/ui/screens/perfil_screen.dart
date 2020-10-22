@@ -294,12 +294,15 @@ class _PerfilScreenState extends State<PerfilScreen> {
   }
 
   _toLogin() async {
-    await Navigator.push(
+    bool result = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => LoginScreen(),
       ),
     );
+    if (result != null && result) {
+      context.bloc<PerfilBloc>().getCurrentClient();
+    }
   }
 
   _handleEdit() async {

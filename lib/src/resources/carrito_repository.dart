@@ -67,4 +67,9 @@ class CarritoRepository {
     var id = lineaDePedido.productoEstablecimiento.producto.id;
     await _database.itemCartDao.deleteItemCart(id);
   }
+
+  clear() async {
+    await _initDatabase();
+    await _database.itemCartDao.clear();
+  }
 }

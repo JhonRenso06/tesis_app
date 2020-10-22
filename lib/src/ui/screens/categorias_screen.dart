@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mr_yupi/src/bloc/categoria_bloc.dart';
+import 'package:mr_yupi/src/bloc/productos_categoria_bloc.dart';
 import 'package:mr_yupi/src/model/api_response.dart';
 import 'package:mr_yupi/src/model/categoria.dart';
+import 'package:mr_yupi/src/ui/screens/productos_categoria_screen.dart';
 import 'package:mr_yupi/src/ui/widgets/categoria_widget.dart';
 import 'package:mr_yupi/src/ui/widgets/list_shimmer_widget.dart';
 import 'package:mr_yupi/src/ui/widgets/load_more_list.dart';
@@ -51,5 +53,9 @@ class _CategoriasScreenState extends State<CategoriasScreen> {
     );
   }
 
-  _onTap(Categoria categoria) {}
+  _onTap(Categoria categoria) {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => ProductosPorCategoriaScreen(categoria),
+    ));
+  }
 }

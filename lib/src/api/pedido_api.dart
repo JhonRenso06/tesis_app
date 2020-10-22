@@ -18,4 +18,12 @@ class PedidoAPI extends API {
     });
     return APIResponse.fromResponse(res, paginate);
   }
+
+  Future<APIResponse<Pedido>> crearPedido(Pedido pedido) async {
+    var res = await post('', body: pedido.toMap(), auth: true);
+    if (res.hasException) {
+      return res;
+    }
+    return APIResponse.fromResponse(res, pedido);
+  }
 }

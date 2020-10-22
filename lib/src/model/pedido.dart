@@ -3,6 +3,7 @@ import 'package:mr_yupi/src/enums/metodo_de_envio.dart';
 import 'package:mr_yupi/src/enums/metodo_de_pago.dart';
 import 'package:mr_yupi/src/enums/moneda.dart';
 import 'package:mr_yupi/src/model/direccion.dart';
+import 'package:mr_yupi/src/model/establecimiento.dart';
 import 'package:mr_yupi/src/model/linea_de_pedido.dart';
 import 'package:mr_yupi/src/model/model.dart';
 import 'package:mr_yupi/src/model/producto_establecimiento.dart';
@@ -23,6 +24,7 @@ class Pedido extends Model {
   DateTime fechaEntrega;
   DateTime fechaCancelado;
   Direccion direccion;
+  Establecimiento establecimiento;
   List<LineaDePedido> lineasDePedido;
 
   Pedido({
@@ -42,6 +44,7 @@ class Pedido extends Model {
     this.fechaCancelado,
     this.direccion,
     this.lineasDePedido,
+    this.establecimiento,
   }) {
     if (lineasDePedido == null) {
       lineasDePedido = List();
@@ -143,6 +146,9 @@ class Pedido extends Model {
         lineasDePedido.add(LineaDePedido().fromMap(element));
       });
     }
+    if (data["establecimiento"] != null) {
+      this.establecimiento = Establecimiento().fromMap(data["establecimiento"]);
+    }
     return this;
   }
 
@@ -152,11 +158,12 @@ class Pedido extends Model {
       'metodoDePago': metodoDePago?.index,
       'metodoDeEnvio': metodoDeEnvio.index,
       'direccion': direccion.id,
+      'establecimiento': establecimiento.id,
       'lineasDePedido': lineasDePedido
           .map(
             (e) => {
               'cantidad': e.cantidad,
-              'productoEstablecimiento': e.productoEstablecimiento.id
+              'producto': e.productoEstablecimiento.producto.id
             },
           )
           .toList(),

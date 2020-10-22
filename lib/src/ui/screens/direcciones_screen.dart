@@ -39,10 +39,9 @@ class _DireccionesScreenState extends State<DireccionesScreen> {
           if (!state.loading) {
             if (state.hasData) {
               try {
-                var direccion = state.data.items
-                    .firstWhere((element) => element.predeterminado);
                 setState(() {
-                  _direccionPredeterminada = direccion;
+                  _direccionPredeterminada =
+                      context.bloc<DireccionBloc>().direccionDefault;
                 });
               } catch (_) {}
             }
@@ -196,15 +195,18 @@ class _DireccionesScreenState extends State<DireccionesScreen> {
   }
 
   changePredeterminado(Direccion value) async {
-    await new DireccionBloc().predeterminadoDireccion(value);
+    context.bloc<DireccionBloc>().predeterminadoDireccion(value);
     setState(() {
       _direccionPredeterminada = value;
     });
+    if (widget.picker) {
+      Navigator.pop(context, true);
+    }
   }
 
   _handleSelect(Direccion direccion) async {
     if (widget.picker) {
-      Navigator.of(context).pop(direccion);
+      changePredeterminado(direccion);
     } else {
       bool result = await Navigator.push(
         context,

@@ -11,6 +11,7 @@ import 'package:mr_yupi/src/ui/screens/categorias_screen.dart';
 import 'package:mr_yupi/src/ui/screens/favoritos_screen.dart';
 import 'package:mr_yupi/src/ui/screens/perfil_screen.dart';
 import 'package:mr_yupi/src/ui/screens/productos_screen.dart';
+import 'package:mr_yupi/src/ui/screens/productos_search_screen.dart';
 import 'package:mr_yupi/src/ui/widgets/cantidad_carrito_widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -89,7 +90,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         leading: CantidadCarritoWidget(
           onTap: _handleCart,
         ),
-        actions: [IconButton(icon: Icon(Icons.search), onPressed: () {})],
+        actions: [
+          IconButton(icon: Icon(Icons.search), onPressed: _onSearch),
+        ],
       ),
       body: _widgetOptions[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -141,6 +144,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   _handleCart() {
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (context) => CarritoScreen()));
+  }
+
+  _onSearch() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ProductosSearchScreen(),
+      ),
+    );
   }
 }
 

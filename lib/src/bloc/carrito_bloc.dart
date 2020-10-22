@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mr_yupi/src/enums/metodo_de_envio.dart';
 import 'package:mr_yupi/src/model/establecimiento.dart';
 import 'package:mr_yupi/src/model/linea_de_pedido.dart';
 import 'package:mr_yupi/src/model/pedido.dart';
@@ -64,5 +65,14 @@ class CarritoBloc extends Cubit<Pedido> {
         .toList();
 
     emit(Pedido(lineasDePedido: result));
+  }
+
+  setMetodoDeEnvio(MetodoDeEnvio metodo) {
+    emit(Pedido(lineasDePedido: state.lineasDePedido, metodoDeEnvio: metodo));
+  }
+
+  clear() async {
+    await _repository.clear();
+    emit(Pedido());
   }
 }
