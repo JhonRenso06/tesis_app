@@ -268,14 +268,24 @@ class _PedidoDetalleScreenState extends State<PedidoDetalleScreen> {
     String str = widget.pedido.estado.name;
     switch (widget.pedido.estado) {
       case EstadoDePedido.ATENDIDO:
+        color = Colors.blueGrey;
+        str += "\n ${Global.dateFormatter(widget.pedido.fechaAtendido)}";
+        break;
+      case EstadoDePedido.EN_CAMINO:
+        color = Colors.yellow;
+        str += "\n ${Global.dateFormatter(widget.pedido.fechaCamino)}";
+        break;
+      case EstadoDePedido.ENTREGADO:
         color = Colors.greenAccent[700];
         str += "\n ${Global.dateFormatter(widget.pedido.fechaEntrega)}";
         break;
       case EstadoDePedido.CANCELADO:
         color = Colors.red;
+        str += "\n ${Global.dateFormatter(widget.pedido.fechaCancelado)}";
         break;
       default:
         color = Colors.blue;
+        str += "\n ${Global.dateFormatter(widget.pedido.fechaEmision)}";
         break;
     }
     return Padding(

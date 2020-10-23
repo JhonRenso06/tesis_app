@@ -170,14 +170,24 @@ class PedidoWidget extends StatelessWidget {
     String str = pedido.estado.name;
     switch (pedido.estado) {
       case EstadoDePedido.ATENDIDO:
+        color = Colors.blueGrey;
+        str += "\n ${Global.dateFormatter(pedido.fechaAtendido)}";
+        break;
+      case EstadoDePedido.EN_CAMINO:
+        color = Colors.yellow;
+        str += "\n ${Global.dateFormatter(pedido.fechaCamino)}";
+        break;
+      case EstadoDePedido.ENTREGADO:
         color = Colors.greenAccent[700];
         str += "\n ${Global.dateFormatter(pedido.fechaEntrega)}";
         break;
       case EstadoDePedido.CANCELADO:
         color = Colors.red;
+        str += "\n ${Global.dateFormatter(pedido.fechaCancelado)}";
         break;
       default:
         color = Colors.blue;
+        str += "\n ${Global.dateFormatter(pedido.fechaEmision)}";
         break;
     }
     return Padding(

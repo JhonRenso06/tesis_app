@@ -78,6 +78,7 @@ class Producto extends Model {
     if (data["categoria"] != null) {
       categoria = Categoria().fromMap(data["categoria"]);
     }
+    caracteristicas = List();
     if (data["caracteristicas"] != null) {
       (data["caracteristicas"] as List).forEach((element) {
         caracteristicas.add(Caracteristica().fromMap(element));

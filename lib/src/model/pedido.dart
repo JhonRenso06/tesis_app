@@ -123,19 +123,20 @@ class Pedido extends Model {
     metodoDeEnvio = MetodoDeEnvioExtension.parse(data["metodoDeEnvio"]);
     estado = EstadoDePedidoExtension.parse(data["estado"]);
     fechaEmision = data["fechaEmision"] != null
-        ? DateTime.parse(data["fechaEmision"])
+        ? DateTime.parse(data["fechaEmision"]).toLocal()
         : null;
     fechaAtendido = data["fechaAtendido"] != null
-        ? DateTime.parse(data["fechaAtendido"])
+        ? DateTime.parse(data["fechaAtendido"]).toLocal()
         : null;
     fechaCamino = data["fechaCamino"] != null
-        ? DateTime.parse(data["fechaCamino"])
+        ? DateTime.parse(data["fechaCamino"]).toLocal()
         : null;
+
     fechaEntrega = data["fechaEntrega"] != null
-        ? DateTime.parse(data["fechaEntrega"])
+        ? DateTime.parse(data["fechaEntrega"]).toLocal()
         : null;
     fechaCancelado = data["fechaCancelado"] != null
-        ? DateTime.parse(data["fechaCancelado"])
+        ? DateTime.parse(data["fechaCancelado"]).toLocal()
         : null;
     if (data["direccion"] != null) {
       direccion = Direccion().fromMap(data["direccion"]);

@@ -79,7 +79,7 @@ flutter:
     - assets/ubigeo.json
     - assets/products.png
     - assets/empty-box.png
-
+    - assets/salute.png
   fonts:
     - family: Quicksand
       fonts:

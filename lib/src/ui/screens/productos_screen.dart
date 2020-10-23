@@ -3,15 +3,20 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mr_yupi/src/bloc/establecimiento_bloc.dart';
 import 'package:mr_yupi/src/bloc/productos_bloc.dart';
+import 'package:mr_yupi/src/bloc/ultimo_pedido_bloc.dart';
+import 'package:mr_yupi/src/global/global.dart';
 import 'package:mr_yupi/src/model/api_response.dart';
 import 'package:mr_yupi/src/model/caracteristica.dart';
 import 'package:mr_yupi/src/model/establecimiento.dart';
+import 'package:mr_yupi/src/model/pedido.dart';
 import 'package:mr_yupi/src/model/precio.dart';
 import 'package:mr_yupi/src/model/producto.dart';
 import 'package:mr_yupi/src/model/producto_establecimiento.dart';
+import 'package:mr_yupi/src/ui/screens/pedido_detalle_screen.dart';
 import 'package:mr_yupi/src/ui/screens/producto_detalle_screen.dart';
 import 'package:mr_yupi/src/ui/widgets/image_card_widget.dart';
 import 'package:mr_yupi/src/ui/widgets/list_shimmer_widget.dart';
+import 'package:mr_yupi/src/ui/widgets/pedido_widget.dart';
 import 'package:mr_yupi/src/ui/widgets/producto_widget.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
@@ -21,249 +26,13 @@ class ProductosScreen extends StatefulWidget {
 }
 
 class _ProductosScreenState extends State<ProductosScreen> {
-  List<ProductoEstablecimiento> productos = [
-    new ProductoEstablecimiento(
-      id: 1,
-      producto: Producto(
-        nombre: "Chivas regal - blended scotch whisky",
-        descripcion: "Occaecat amet labore proident cillum veniam magna anim.",
-        caracteristicas: [
-          new Caracteristica(
-            clave: "Alto de escritorio (cm)",
-            valor: "78",
-          ),
-          new Caracteristica(
-            clave: "Ancho de escritorio (cm)",
-            valor: "110",
-          ),
-        ],
-        fotos: [
-          "https://licoreria247.pe/content-borracho-total/uploads/2019/12/Whisky-Chivas-Regal-12-750ml-Licoreria247.png",
-        ],
-        precios: [
-          Precio(cantidad: 0, monto: 21),
-        ],
-      ),
-      stock: 28,
-    ),
-    new ProductoEstablecimiento(
-      id: 1,
-      producto: Producto(
-        nombre: "Cubre volante deportivo sparco SPC1111GR gris",
-        descripcion: "Occaecat amet labore proident cillum veniam magna anim.",
-        caracteristicas: [
-          new Caracteristica(
-            clave: "Alto de escritorio (cm)",
-            valor: "78",
-          ),
-          new Caracteristica(
-            clave: "Ancho de escritorio (cm)",
-            valor: "110",
-          ),
-        ],
-        fotos: [
-          "https://jumbocolombiafood.vteximg.com.br/arquivos/ids/176126-750-750/7702090032789-20-281-29.jpg",
-        ],
-        precios: [
-          Precio(cantidad: 0, monto: 21),
-        ],
-      ),
-      stock: 28,
-    ),
-    new ProductoEstablecimiento(
-      id: 1,
-      producto: Producto(
-        nombre: "Aspiradora auto 12v sparco SPV1302AZ azul",
-        descripcion: "Occaecat amet labore proident cillum veniam magna anim.",
-        caracteristicas: [
-          new Caracteristica(
-            clave: "Alto de escritorio (cm)",
-            valor: "78",
-          ),
-          new Caracteristica(
-            clave: "Ancho de escritorio (cm)",
-            valor: "110",
-          ),
-        ],
-        fotos: [
-          "https://s7d2.scene7.com/is/image/TottusPE/41462527?\$S7Product\$&wid=458&hei=458&op_sharpen=0",
-        ],
-        precios: [
-          Precio(cantidad: 0, monto: 21),
-        ],
-      ),
-      stock: 28,
-    ),
-    // new ProductoEstablecimiento(
-    //     id: 2,
-    //     nombre: "",
-    //     fotos: [
-    //       ""
-    //     ],
-    //     stock: 10,
-    //     precio: 34),
-    // new ProductoEstablecimiento(
-    //     id: 3,
-    //     nombre: "",
-    //     fotos: [
-    //       '',
-    //     ],
-    //     stock: 0,
-    //     precio: 99,
-    //     descuento: 0.2),
-    // new ProductoEstablecimiento(
-    //     id: 4,
-    //     nombre:
-    //         "Holder Soporte Celular Smartphone Brazo Extendible Auto Universal",
-    //     fotos: [
-    //       "https://http2.mlstatic.com/refresco-hit-naranja-pet-15l-3-unidades-D_NQ_NP_630169-MLV43006172478_082020-F.jpg"
-    //     ],
-    //     stock: 16,
-    //     precio: 24.99,
-    //     descuento: 0.5),
-    // new ProductoEstablecimiento(
-    //     id: 4,
-    //     nombre:
-    //         "Holder Soporte Celular Smartphone Brazo Extendible Auto Universal",
-    //     fotos: [
-    //       "https://pideygana.com/wp-content/uploads/2019/07/7702090023893-20-281-29.jpg"
-    //     ],
-    //     stock: 16,
-    //     precio: 24.99,
-    //     descuento: 0.5),
-    // new ProductoEstablecimiento(
-    //     id: 4,
-    //     nombre:
-    //         "Holder Soporte Celular Smartphone Brazo Extendible Auto Universal",
-    //     fotos: [
-    //       "https://oechsle.vteximg.com.br/arquivos/ids/1348064-1500-1500/image-2a0db5dc261c4a5ba70c737a43937c2b.jpg"
-    //     ],
-    //     stock: 16,
-    //     precio: 24.99,
-    //     descuento: 0.5),
-    // new ProductoEstablecimiento(
-    //     id: 4,
-    //     nombre:
-    //         "Holder Soporte Celular Smartphone Brazo Extendible Auto Universal",
-    //     fotos: [
-    //       "https://assets.pernod-ricard.com/styles/marque_mini_carrosselbreakpoints_theme_pernodricard_desktop_1x/s3/kahlua_especial.png"
-    //     ],
-    //     stock: 16,
-    //     precio: 24.99,
-    //     descuento: 0.5),
-    // new ProductoEstablecimiento(
-    //     id: 4,
-    //     nombre:
-    //         "Holder Soporte Celular Smartphone Brazo Extendible Auto Universal",
-    //     fotos: [
-    //       "https://shop.torres.es/media/catalog/product/cache/2/small_image/332x431/9df78eab33525d08d6e5fb8d27136e95/c/a/calvados_vsop_1.jpg"
-    //     ],
-    //     stock: 16,
-    //     precio: 24.99,
-    //     descuento: 0.5)
-  ];
-  List<ProductoEstablecimiento> ofertas = [
-    new ProductoEstablecimiento(
-      id: 1,
-      producto: Producto(
-        nombre: "Aspiradora auto 12v sparco SPV1302AZ azul",
-        descripcion: "Occaecat amet labore proident cillum veniam magna anim.",
-        caracteristicas: [
-          new Caracteristica(
-            clave: "Alto de escritorio (cm)",
-            valor: "78",
-          ),
-          new Caracteristica(
-            clave: "Ancho de escritorio (cm)",
-            valor: "110",
-          ),
-        ],
-        fotos: [
-          "https://png.pngtree.com/png-vector/20190821/ourlarge/pngtree-sale-discount-offer-banner-promotion-special-offer-price-vector-illustration-png-image_1693312.jpg",
-        ],
-        precios: [
-          Precio(cantidad: 0, monto: 21),
-        ],
-      ),
-      stock: 28,
-    ),
-    new ProductoEstablecimiento(
-      id: 1,
-      producto: Producto(
-        nombre: "Aspiradora auto 12v sparco SPV1302AZ azul",
-        descripcion: "Occaecat amet labore proident cillum veniam magna anim.",
-        caracteristicas: [
-          new Caracteristica(
-            clave: "Alto de escritorio (cm)",
-            valor: "78",
-          ),
-          new Caracteristica(
-            clave: "Ancho de escritorio (cm)",
-            valor: "110",
-          ),
-        ],
-        fotos: [
-          "https://png.pngtree.com/png-vector/20190411/ourlarge/pngtree-job-vacancy-flat-design-concept-png-image_926058.jpg",
-        ],
-        precios: [
-          Precio(cantidad: 0, monto: 21),
-        ],
-      ),
-      stock: 28,
-    ),
-    // ProductoEstablecimiento(
-    //     id: 5,
-    //     nombre: "Combo 1",
-    //     fotos: [
-    //       ""
-    //     ],
-    //     stock: 16,
-    //     precio: 24.99,
-    //     descuento: 0.5),
-    // ProductoEstablecimiento(
-    //     id: 6,
-    //     nombre: "Combo 2",
-    //     fotos: [
-    //       "",
-    //     ],
-    //     stock: 16,
-    //     precio: 24.99,
-    //     descuento: 0.5),
-    // ProductoEstablecimiento(
-    //     id: 7,
-    //     nombre: "Combo 3",
-    //     fotos: [
-    //       "https://png.pngtree.com/element_our/md/20180302/md_5a98f93a2fafc.jpg",
-    //     ],
-    //     stock: 16,
-    //     precio: 24.99,
-    //     descuento: 0.5),
-    // ProductoEstablecimiento(
-    //     id: 8,
-    //     nombre: "Combo 4",
-    //     fotos: [
-    //       "https://www.seekpng.com/png/detail/238-2388746_oferta-semana-de-ofertas-png.png",
-    //     ],
-    //     stock: 16,
-    //     precio: 24.99,
-    //     descuento: 0.5),
-    // ProductoEstablecimiento(
-    //     id: 9,
-    //     nombre: "Combo 5",
-    //     fotos: [
-    //       "https://png.pngtree.com/element_our/png_detail/20181130/flash-sale-banner-template-special-offer-with-thunder-png_253955.jpg"
-    //     ],
-    //     stock: 16,
-    //     precio: 24.99,
-    //     descuento: 0.5)
-  ];
-
   @override
   void initState() {
     Establecimiento establecimiento = context.bloc<EstablecimientoBloc>().state;
     if (!context.bloc<ProductosBloc>().state.hasData) {
       context.bloc<ProductosBloc>().initialLoad(establecimiento);
     }
+    context.bloc<UltimoPedidoBloc>().loadPedido();
     super.initState();
   }
 
@@ -288,35 +57,53 @@ class _ProductosScreenState extends State<ProductosScreen> {
       child: CustomScrollView(
         slivers: <Widget>[
           SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.only(),
-              child: CarouselSlider(
-                options: CarouselOptions(
-                  height: 220,
-                  enableInfiniteScroll: true,
-                  autoPlay: true,
+            child: BlocBuilder<UltimoPedidoBloc, APIResponse<Pedido>>(
+                builder: (context, state) {
+              if (state.hasData) {
+                return Padding(
+                  padding: const EdgeInsets.only(top: 12, left: 8, right: 8),
+                  child: PedidoWidget(
+                    state.data,
+                    onTap: _toDetallePedido,
+                  ),
+                );
+              }
+              return Container(
+                margin: const EdgeInsets.only(
+                  left: 14,
+                  right: 14,
+                  top: 14,
+                  bottom: 6,
                 ),
-                items: ofertas.map(
-                  (oferta) {
-                    return Builder(
-                      builder: (BuildContext context) {
-                        return ImageCardWidget(
-                          elevation: 10,
-                          margin: const EdgeInsets.only(
-                            top: 18,
-                            bottom: 18,
-                            left: 9,
-                            right: 9,
-                          ),
-                          imageUrl: oferta.producto.fotos[0],
-                          onTap: () => _handleProduct(oferta),
-                        );
-                      },
-                    );
-                  },
-                ).toList(),
-              ),
-            ),
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    Image.asset(
+                      'assets/salute.png',
+                      height: 50,
+                      width: 50,
+                    ),
+                    SizedBox(
+                      width: 15,
+                    ),
+                    Expanded(
+                      child: Text(
+                        "¡Bienvenido! Hoy es un buen dia para comprar",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Global.accentColor,
+                          fontSize: 15,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              );
+            }),
           ),
           SliverToBoxAdapter(
             child: Padding(
@@ -419,5 +206,13 @@ class _ProductosScreenState extends State<ProductosScreen> {
 
   _onRemove(int id) async {
     await context.bloc<ProductosBloc>().removeFavorito(id);
+  }
+
+  _toDetallePedido(Pedido pedido) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => PedidoDetalleScreen(pedido),
+      ),
+    );
   }
 }

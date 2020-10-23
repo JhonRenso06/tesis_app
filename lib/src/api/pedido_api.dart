@@ -10,7 +10,7 @@ class PedidoAPI extends API {
     Map<String, dynamic> query = {'page': page, 'limit': limit};
     var res = await get('', query: query, auth: true);
     if (res.hasException) {
-      return res;
+      return APIResponse.fromResponse(res, null);
     }
     Paginate<Pedido> paginate = Paginate.fromMap(res.data);
     (res.data["items"] as List).forEach((element) {
@@ -22,8 +22,16 @@ class PedidoAPI extends API {
   Future<APIResponse<Pedido>> crearPedido(Pedido pedido) async {
     var res = await post('', body: pedido.toMap(), auth: true);
     if (res.hasException) {
-      return res;
+      return APIResponse.fromResponse(res, null);
     }
     return APIResponse.fromResponse(res, pedido);
+  }
+
+  Future<APIResponse<Pedido>> ultimoPedido() async {
+    var res = await get('/ultimo', auth: true);
+    if (res.hasException) {
+      return APIResponse.fromResponse(res, null);
+    }
+    return APIResponse.fromResponse(res, Pedido().fromMap(res.data));
   }
 }

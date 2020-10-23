@@ -9,6 +9,7 @@ import 'package:mr_yupi/src/bloc/favoritos_bloc.dart';
 import 'package:mr_yupi/src/bloc/pedido_bloc.dart';
 import 'package:mr_yupi/src/bloc/perfil_bloc.dart';
 import 'package:mr_yupi/src/bloc/productos_bloc.dart';
+import 'package:mr_yupi/src/bloc/ultimo_pedido_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:mr_yupi/src/global/global.dart';
 import 'package:mr_yupi/src/providers/carrito_provider.dart';
@@ -47,6 +48,9 @@ class App extends StatelessWidget {
           ),
           BlocProvider<CarritoBloc>(
             create: (_) => CarritoBloc(),
+          ),
+          BlocProvider<UltimoPedidoBloc>(
+            create: (_) => UltimoPedidoBloc(),
           )
         ],
         child: MaterialApp(
