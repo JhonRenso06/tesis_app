@@ -34,4 +34,12 @@ class PedidoAPI extends API {
     }
     return APIResponse.fromResponse(res, Pedido().fromMap(res.data));
   }
+
+  Future<APIResponse<Pedido>> cancelarPedido(Pedido pedido) async {
+    var res = await delete('', pedido.id, auth: true);
+    if (res.hasException) {
+      return APIResponse.fromResponse(res, null);
+    }
+    return APIResponse.fromResponse(res, null);
+  }
 }

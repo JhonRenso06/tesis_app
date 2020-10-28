@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mr_yupi/src/bloc/carrito_bloc.dart';
 import 'package:mr_yupi/src/model/producto_establecimiento.dart';
-import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:mr_yupi/src/global/global.dart';
 import 'package:mr_yupi/src/model/linea_de_pedido.dart';
-import 'package:mr_yupi/src/providers/carrito_provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ItemCarritoWidget extends StatefulWidget {

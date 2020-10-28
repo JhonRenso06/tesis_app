@@ -40,7 +40,7 @@ class EstablecimientoBloc extends Cubit<Establecimiento> {
     emit(establecimiento);
   }
 
-  int establecimientosSize() {
+  int get establecimientosSize {
     if (departamentos == null) {
       return 0;
     }

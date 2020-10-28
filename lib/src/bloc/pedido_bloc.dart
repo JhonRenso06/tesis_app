@@ -24,4 +24,8 @@ class PedidoBloc extends Cubit<APIResponse<Paginate<Pedido>>> {
       emit(result);
     }
   }
+
+  cancelar(Pedido pedido) async {
+    await _repository.cancelarPedido(pedido);
+  }
 }

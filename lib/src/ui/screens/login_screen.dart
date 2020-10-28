@@ -1,4 +1,5 @@
 import 'package:email_validator/email_validator.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -51,15 +52,15 @@ class _LoginScreenState extends State<LoginScreen> {
         width: double.maxFinite,
         child: FlatButton(onPressed: _toRegister, child: Text("Registrate")));
 
-    Widget forgetPasswordButton = Container(
-        margin: const EdgeInsets.only(left: 6),
-        width: double.maxFinite,
-        child: FlatButton(
-            onPressed: _toRegister,
-            child: Text(
-              "¿Olvidaste tu contraseña?",
-              textAlign: TextAlign.center,
-            )));
+    // Widget forgetPasswordButton = Container(
+    //     margin: const EdgeInsets.only(left: 6),
+    //     width: double.maxFinite,
+    //     child: FlatButton(
+    //         onPressed: _toRegister,
+    //         child: Text(
+    //           "¿Olvidaste tu contraseña?",
+    //           textAlign: TextAlign.center,
+    //         )));
 
     Widget emailField = TextFormField(
       obscureText: false,
@@ -237,5 +238,5 @@ class _LoginScreenState extends State<LoginScreen> {
     Navigator.pop(context, true);
   }
 
-  void _toForgetPassword() async {}
+  // void _toForgetPassword() async {}
 }

@@ -105,6 +105,9 @@ class Global {
   }
 
   static String dateFormatter(DateTime date) {
+    if (date == null) {
+      return "";
+    }
     return formatter.format(date);
   }
 }

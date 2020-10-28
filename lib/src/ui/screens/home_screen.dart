@@ -1,8 +1,11 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:mr_yupi/src/bloc/carrito_bloc.dart';
 import 'package:mr_yupi/src/bloc/establecimiento_bloc.dart';
 import 'package:mr_yupi/src/bloc/perfil_bloc.dart';
 import 'package:mr_yupi/src/bloc/productos_bloc.dart';
+import 'package:mr_yupi/src/enums/estado_de_pedido.dart';
 import 'package:mr_yupi/src/model/departamento.dart';
 import 'package:mr_yupi/src/model/establecimiento.dart';
 import 'package:mr_yupi/src/model/provincia.dart';
@@ -15,6 +18,74 @@ import 'package:mr_yupi/src/ui/screens/productos_search_screen.dart';
 import 'package:mr_yupi/src/ui/widgets/cantidad_carrito_widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+
+Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) async {
+  showNotification(FlutterLocalNotificationsPlugin(), message);
+}
+
+showNotification(FlutterLocalNotificationsPlugin manager,
+    Map<String, dynamic> message) async {
+  manager.initialize(
+    InitializationSettings(
+      android: AndroidInitializationSettings("@drawable/icon_notification"),
+    ),
+  );
+  var title = message["data"]["title"];
+  var body = message["data"]["body"];
+  var tipo = message["data"]["tipo"];
+  if (tipo == "market") {
+    var platform = NotificationDetails(
+      android: AndroidNotificationDetails(
+        "market-channel",
+        "market",
+        "",
+        color: Colors.red,
+        enableLights: true,
+        largeIcon: DrawableResourceAndroidBitmap(
+          "@drawable/logo",
+        ),
+        styleInformation: MediaStyleInformation(),
+      ),
+    );
+    await manager.show(0, title, body, platform);
+  } else if (tipo == "estado") {
+    var estado =
+        EstadoDePedidoExtension.parse(int.parse(message["data"]["estado"]));
+    var pedido = int.parse(message["data"]["pedido"]);
+    String imagen;
+    switch (estado) {
+      case EstadoDePedido.ATENDIDO:
+        imagen = "@drawable/immigration";
+        break;
+      case EstadoDePedido.EN_CAMINO:
+        imagen = "@drawable/delivery_truck";
+        break;
+      case EstadoDePedido.ENTREGADO:
+        imagen = "@drawable/delivery_box";
+        break;
+      case EstadoDePedido.CANCELADO:
+        imagen = "@drawable/cancel";
+        break;
+      default:
+        imagen = "@drawable/order";
+        break;
+    }
+    var platform = NotificationDetails(
+      android: AndroidNotificationDetails(
+        "me-channel",
+        "me",
+        "",
+        color: Colors.red,
+        enableLights: true,
+        largeIcon: DrawableResourceAndroidBitmap(
+          imagen,
+        ),
+        styleInformation: MediaStyleInformation(),
+      ),
+    );
+    await manager.show(pedido, title, body, platform);
+  }
+}
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -31,13 +102,29 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     FavoritosScreen(),
     PerfilScreen()
   ];
+  FirebaseMessaging _firebaseMessage;
+  FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin;
   @override
   void initState() {
     super.initState();
     context.bloc<PerfilBloc>().getCurrentClient();
     context.bloc<EstablecimientoBloc>().initialLoad();
-
     _selectedIndex = 0;
+    _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    _firebaseMessage = FirebaseMessaging();
+    _firebaseMessage.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        showNotification(_flutterLocalNotificationsPlugin, message);
+      },
+      onBackgroundMessage: myBackgroundMessageHandler,
+      onResume: (message) async {
+        print(message);
+      },
+      onLaunch: (message) async {
+        print("OnLaunch");
+        print(message);
+      },
+    );
   }
 
   @override
@@ -121,6 +208,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   _showEstablecimientos() async {
+    if (context.bloc<EstablecimientoBloc>().establecimientosSize == 1) {
+      return;
+    }
     await Alert(
       title: "Elige un establecimiento",
       context: context,

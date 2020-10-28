@@ -70,11 +70,13 @@ class DireccionBloc extends Cubit<APIResponse<Paginate<Direccion>>> {
 
   Direccion get direccionDefault {
     Direccion direccion;
-    state.data.items.forEach((element) {
-      if (element != null && element.predeterminado) {
-        direccion = element;
-      }
-    });
+    if (state.hasData && state.data.items != null) {
+      state.data.items.forEach((element) {
+        if (element != null && element.predeterminado) {
+          direccion = element;
+        }
+      });
+    }
     return direccion;
   }
 }

@@ -7,10 +7,8 @@ import 'package:mr_yupi/src/bloc/finalizar_pedido_bloc.dart';
 import 'package:mr_yupi/src/bloc/productos_bloc.dart';
 import 'package:mr_yupi/src/global/global.dart';
 import 'package:mr_yupi/src/model/api_response.dart';
-import 'package:mr_yupi/src/model/direccion.dart';
 import 'package:mr_yupi/src/model/establecimiento.dart';
 import 'package:mr_yupi/src/model/pedido.dart';
-import 'package:mr_yupi/src/model/producto.dart';
 
 class FinPedidoScreen extends StatefulWidget {
   @override
@@ -23,10 +21,8 @@ class _FinPedidoScreenState extends State<FinPedidoScreen> {
   @override
   void initState() {
     _bloc = FinalizarPedidoBloc();
-    Direccion direccion = context.bloc<DireccionBloc>().direccionDefault;
     Pedido pedido = context.bloc<CarritoBloc>().state;
     Establecimiento establecimiento = context.bloc<EstablecimientoBloc>().state;
-    pedido.direccion = direccion;
     _bloc.crearPedido(establecimiento, pedido);
     super.initState();
   }
@@ -105,6 +101,7 @@ class _FinPedidoScreenState extends State<FinPedidoScreen> {
                           ),
                           Text(
                             state.message?.message ?? "",
+                            textAlign: TextAlign.center,
                             style: TextStyle(
                               color: Global.accentColor,
                               fontSize: 18,
@@ -148,6 +145,7 @@ class _FinPedidoScreenState extends State<FinPedidoScreen> {
                           ),
                           Text(
                             state.exception?.message ?? "Intente mas tarde",
+                            textAlign: TextAlign.center,
                             style: TextStyle(
                               color: Global.accentColor,
                               fontSize: 18,

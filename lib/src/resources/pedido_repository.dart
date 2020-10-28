@@ -24,4 +24,8 @@ class PedidoRepository {
   Future<APIResponse<Pedido>> ultimoPedido() async {
     return await _pedidoAPI.ultimoPedido();
   }
+
+  Future<APIResponse<Pedido>> cancelarPedido(Pedido pedido) async {
+    return await _pedidoAPI.cancelarPedido(pedido);
+  }
 }

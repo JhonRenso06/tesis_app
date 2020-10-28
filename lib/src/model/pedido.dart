@@ -158,7 +158,7 @@ class Pedido extends Model {
     return {
       'metodoDePago': metodoDePago?.index,
       'metodoDeEnvio': metodoDeEnvio.index,
-      'direccion': direccion.id,
+      'direccion': direccion?.id,
       'establecimiento': establecimiento.id,
       'lineasDePedido': lineasDePedido
           .map(

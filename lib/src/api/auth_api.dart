@@ -8,7 +8,7 @@ import 'package:mr_yupi/src/model/token_data.dart';
 class AuthAPI extends API {
   AuthAPI() : super('');
 
-  Future<APIResponse<Cliente>> login(Cliente cliente) async {
+  Future<APIResponse<Cliente>> login(Cliente cliente, String nToken) async {
     Map<String, dynamic> body = {
       'correo': cliente.correo,
       'password': cliente.password
@@ -20,19 +20,21 @@ class AuthAPI extends API {
     }
     var token = TokenData().fromMap(res.data);
     await _saveToken(token);
+    await post("/market/me/token/$nToken", auth: true);
     return APIResponse.fromResponse(
       res,
       (await getCurrrentClient()).data,
     );
   }
 
-  Future<APIResponse<Cliente>> register(Cliente cliente) async {
+  Future<APIResponse<Cliente>> register(Cliente cliente, String nToken) async {
     var res = await post('/auth/clientes/signup', body: cliente.toMap());
     if (res.hasException) {
       return APIResponse.fromResponse(res, null);
     }
     var token = TokenData().fromMap(res.data);
     await _saveToken(token);
+    await post("/market/me/token/$nToken", auth: true);
     return APIResponse.fromResponse(
       res,
       (await getCurrrentClient()).data,
@@ -46,6 +48,11 @@ class AuthAPI extends API {
     }
     await _saveData(cliente);
     return APIResponse.fromResponse(res, null);
+  }
+
+  Future<void> subscription(String token) async {
+    print(token);
+    await post('/market/me/notification/subscription/$token');
   }
 
   Future<APIResponse<Cliente>> getCurrrentClient() async {
@@ -82,7 +89,8 @@ class AuthAPI extends API {
     }
   }
 
-  Future<APIResponse<Cliente>> signOut() async {
+  Future<APIResponse<Cliente>> signOut(String token) async {
+    await delete("/market/me/token/$token", null, auth: true);
     await storage.deleteAll();
     return APIResponse<Cliente>(
       data: null,

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mr_yupi/src/bloc/carrito_bloc.dart';
+import 'package:mr_yupi/src/bloc/perfil_bloc.dart';
+import 'package:mr_yupi/src/model/api_response.dart';
+import 'package:mr_yupi/src/model/cliente.dart';
 import 'package:mr_yupi/src/model/pedido.dart';
 import 'package:mr_yupi/src/ui/screens/finalizar_pedido_screen.dart';
+import 'package:mr_yupi/src/ui/screens/login_screen.dart';
 import 'package:mr_yupi/src/ui/widgets/item_carrito_widget.dart';
 
 class CarritoScreen extends StatelessWidget {
@@ -148,21 +152,43 @@ class CarritoScreen extends StatelessWidget {
                       ],
                     ),
                     Container(height: 8),
-                    SizedBox(
-                      width: double.maxFinite,
-                      child: RaisedButton(
-                        onPressed: () {
-                          _handleProcesarCompra(context);
-                        },
-                        child: Text(
-                          "Procesar pedido",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.white,
+                    BlocBuilder<PerfilBloc, APIResponse<Cliente>>(
+                      builder: (context, state) {
+                        if (!state.hasData) {
+                          return SizedBox(
+                            width: double.maxFinite,
+                            child: RaisedButton(
+                              onPressed: () {
+                                _handleIniciarSesion(context);
+                              },
+                              child: Text(
+                                "Iniciar sesión",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+                        return SizedBox(
+                          width: double.maxFinite,
+                          child: RaisedButton(
+                            onPressed: () {
+                              _handleProcesarCompra(context);
+                            },
+                            child: Text(
+                              "Procesar pedido",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -180,5 +206,18 @@ class CarritoScreen extends StatelessWidget {
         builder: (context) => FinalizarPedidoScreen(),
       ),
     );
+  }
+
+  _handleIniciarSesion(BuildContext context) async {
+    bool result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LoginScreen(),
+      ),
+    );
+    if (result != null && result) {
+      context.bloc<PerfilBloc>().getCurrentClient();
+      _handleProcesarCompra(context);
+    }
   }
 }

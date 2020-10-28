@@ -10,7 +10,7 @@ class CategoriaAPI extends API {
     Map<String, dynamic> query = {'page': page, 'limit': limit};
     var res = await get('', query: query, auth: true);
     if (res.hasException) {
-      return res;
+      return APIResponse.fromResponse(res, null);
     }
     Paginate<Categoria> paginate = Paginate.fromMap(res.data);
     (res.data["items"] as List).forEach((element) {

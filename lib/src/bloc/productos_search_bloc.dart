@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mr_yupi/src/model/api_response.dart';
-import 'package:mr_yupi/src/model/categoria.dart';
 import 'package:mr_yupi/src/model/establecimiento.dart';
 import 'package:mr_yupi/src/model/producto_establecimiento.dart';
 import 'package:mr_yupi/src/resources/productos_repository.dart';

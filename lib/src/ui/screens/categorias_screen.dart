@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mr_yupi/src/bloc/categoria_bloc.dart';
-import 'package:mr_yupi/src/bloc/productos_categoria_bloc.dart';
 import 'package:mr_yupi/src/model/api_response.dart';
 import 'package:mr_yupi/src/model/categoria.dart';
 import 'package:mr_yupi/src/ui/screens/productos_categoria_screen.dart';
@@ -17,7 +16,9 @@ class CategoriasScreen extends StatefulWidget {
 class _CategoriasScreenState extends State<CategoriasScreen> {
   @override
   void initState() {
-    context.bloc<CategoriaBloc>().initialLoad();
+    if (!context.bloc<CategoriaBloc>().state.hasData) {
+      context.bloc<CategoriaBloc>().initialLoad();
+    }
     super.initState();
   }
 
@@ -36,7 +37,9 @@ class _CategoriasScreenState extends State<CategoriasScreen> {
           return LoadMoreList(
             loading: state.loadMore,
             onMaxScroll: () {
-              context.bloc<CategoriaBloc>().loadMore();
+              if (!state.loadMore) {
+                context.bloc<CategoriaBloc>().loadMore();
+              }
             },
             padding: const EdgeInsets.all(6),
             itemCount: state.data.items.length,

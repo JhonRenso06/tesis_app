@@ -1,20 +1,14 @@
-import 'package:carousel_slider/carousel_slider.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mr_yupi/src/bloc/direccion_bloc.dart';
 import 'package:mr_yupi/src/bloc/perfil_bloc.dart';
 import 'package:mr_yupi/src/global/global.dart';
 import 'package:mr_yupi/src/model/api_response.dart';
 import 'package:mr_yupi/src/model/cliente.dart';
-import 'package:mr_yupi/src/model/direccion.dart';
-import 'package:mr_yupi/src/ui/screens/direccion_screen.dart';
 import 'package:mr_yupi/src/ui/screens/editar_perfil_screen.dart';
 import 'package:mr_yupi/src/ui/screens/login_screen.dart';
 import 'package:mr_yupi/src/ui/screens/pedidos_screen.dart';
 import 'package:mr_yupi/src/ui/screens/direcciones_screen.dart';
-import 'package:mr_yupi/src/ui/widgets/card_shimmer_widget.dart';
-import 'package:mr_yupi/src/ui/widgets/direccion_widget.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
 
 class PerfilScreen extends StatefulWidget {
   @override
@@ -22,11 +16,16 @@ class PerfilScreen extends StatefulWidget {
 }
 
 class _PerfilScreenState extends State<PerfilScreen> {
-  Direccion _predeterminado;
+  FirebaseMessaging _firebaseMessaging;
 
   @override
   void initState() {
     super.initState();
+    _firebaseMessaging = FirebaseMessaging();
+    _firebaseMessaging
+        .getToken()
+        .then((value) => print(value))
+        .catchError((err) => print(err));
   }
 
   @override
@@ -334,36 +333,5 @@ class _PerfilScreenState extends State<PerfilScreen> {
         builder: (context) => DireccionesScreen(),
       ),
     );
-  }
-
-  _deleteDireccion(Direccion direccion) async {
-    bool result = await Alert(
-        context: context,
-        title: "Cofirmación",
-        desc: "¿Está seguro que quiere eliminar esta dirección?",
-        type: AlertType.info,
-        buttons: [
-          DialogButton(
-            child: Text(
-              "Si",
-              style: TextStyle(color: Colors.white),
-            ),
-            onPressed: () => {Navigator.pop(context, true)},
-          ),
-          DialogButton(
-            child: Text(
-              "Cancelar",
-              style: TextStyle(color: Colors.white),
-            ),
-            onPressed: () => {Navigator.pop(context, false)},
-          )
-        ]).show();
-    if (result != null && result == true) {}
-  }
-
-  _changePredeterminado(Direccion direccion) {
-    setState(() {
-      _predeterminado = direccion;
-    });
   }
 }

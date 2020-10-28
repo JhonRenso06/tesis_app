@@ -1,10 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:mr_yupi/src/model/api_exception.dart';
-import 'package:mr_yupi/src/model/api_message.dart';
 import 'package:mr_yupi/src/model/api_response.dart';
 
 abstract class API {
@@ -12,8 +10,7 @@ abstract class API {
   FlutterSecureStorage storage;
 
   API(String baseUrl) {
-    _urlBase =
-        "${FlutterConfig.get('BASE_URL')}${baseUrl != null ? baseUrl : ''}";
+    _urlBase = "http://192.168.0.8:8082/v1${baseUrl != null ? baseUrl : ''}";
     storage = new FlutterSecureStorage();
   }
 
@@ -173,7 +170,7 @@ abstract class API {
       i++;
     });
     var res = await http.delete(
-      "$_urlBase$path/$id$strQuery",
+      "$_urlBase$path${id != null ? "/$id" : ""}$strQuery",
       headers: headers,
     );
     var result = jsonDecode(res.body);

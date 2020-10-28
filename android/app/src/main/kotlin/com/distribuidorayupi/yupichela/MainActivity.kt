@@ -1,9 +1,6 @@
-package com.example.mr_yupi
+package com.distribuidorayupi.yupichela
 
 import io.flutter.embedding.android.FlutterActivity
 
-import android.os.Build
-import android.view.ViewTreeObserver
-import android.view.WindowManager
 class MainActivity: FlutterActivity() {
 }

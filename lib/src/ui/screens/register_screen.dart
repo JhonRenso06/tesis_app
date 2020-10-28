@@ -21,16 +21,14 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   GlobalKey<FormState> _formKey;
   String _nombre, _apellidos, _email, _password, _documento;
-  bool _loading, _obscurePassword, _obscureRepeatPassword;
+  bool _obscurePassword;
   TipoDeDocumento _tipo;
   PerfilBloc _bloc;
 
   @override
   void initState() {
     _formKey = GlobalKey();
-    _loading = false;
     _obscurePassword = true;
-    _obscureRepeatPassword = true;
     _tipo = TipoDeDocumento.DNI;
     _bloc = PerfilBloc();
     super.initState();
@@ -205,10 +203,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
 
     Widget registerButton = Container(
-        margin: const EdgeInsets.only(bottom: 15),
-        width: double.maxFinite,
-        child: RaisedButton(
-            child: Text("Registrarse"), onPressed: _handleRegister));
+      margin: const EdgeInsets.only(bottom: 15),
+      width: double.maxFinite,
+      child: RaisedButton(
+        child: Text("Registrarse"),
+        onPressed: _handleRegister,
+      ),
+    );
     List<Widget> form;
     if (_tipo == TipoDeDocumento.DNI) {
       form = [

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "683753197704",
+    "firebase_url": "https://yupichela-8513d.firebaseio.com",
+    "project_id": "yupichela-8513d",
+    "storage_bucket": "yupichela-8513d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:683753197704:android:614c28f2360e7ba4710f3d",
+        "android_client_info": {
+          "package_name": "com.distribuidorayupi.yupichela"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "683753197704-v896q2li2ff20us9nlt4puefpgnpmmm3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAepU1rqf0wBtdbBF0RaDh4ZWaNR-vUOAg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "683753197704-v896q2li2ff20us9nlt4puefpgnpmmm3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

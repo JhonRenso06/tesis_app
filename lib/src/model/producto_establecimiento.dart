@@ -1,5 +1,4 @@
 import 'package:mr_yupi/src/model/model.dart';
-import 'package:mr_yupi/src/model/precio.dart';
 import 'package:mr_yupi/src/model/producto.dart';
 
 class ProductoEstablecimiento extends Model {

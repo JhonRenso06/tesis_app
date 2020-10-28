@@ -6,7 +6,6 @@ import 'package:mr_yupi/src/global/global.dart';
 import 'package:mr_yupi/src/model/api_response.dart';
 import 'package:mr_yupi/src/model/direccion.dart';
 import 'package:mr_yupi/src/model/pedido.dart';
-import 'package:mr_yupi/src/providers/carrito_provider.dart';
 import 'package:mr_yupi/src/ui/screens/direccion_screen.dart';
 import 'package:mr_yupi/src/ui/screens/fin_pedido_screen.dart';
 import 'package:mr_yupi/src/ui/screens/direcciones_screen.dart';
@@ -18,7 +17,6 @@ class FinalizarPedidoScreen extends StatefulWidget {
 }
 
 class _FinalizarPedidoScreenState extends State<FinalizarPedidoScreen> {
-  Direccion _direccion;
   DireccionBloc _bloc;
   @override
   void initState() {
@@ -28,14 +26,10 @@ class _FinalizarPedidoScreenState extends State<FinalizarPedidoScreen> {
   }
 
   loadDirecciones() {
+    context.bloc<CarritoBloc>().state.direccion = null;
+    context.bloc<CarritoBloc>().state.metodoDeEnvio = null;
     if (_bloc.state == null || !_bloc.state.hasData) {
       _bloc.initialLoad();
-    } else {
-      if (_bloc.state.data.items.length > 0) {
-        setState(() {
-          _direccion = _bloc.direccionDefault;
-        });
-      }
     }
   }
 
@@ -45,124 +39,125 @@ class _FinalizarPedidoScreenState extends State<FinalizarPedidoScreen> {
       appBar: AppBar(
         title: Text("Finalizar pedido"),
       ),
-      body: BlocListener<DireccionBloc, APIResponse<Paginate<Direccion>>>(
-        cubit: _bloc,
-        listener: (context, state) {
-          if (!state.loading && state.hasData) {
-            if (state.data.items.length > 0) {
-              setState(() {
-                _direccion = _bloc.direccionDefault;
-              });
-            }
-          }
-        },
-        child: BlocBuilder<CarritoBloc, Pedido>(builder: (context, state) {
-          return Column(
-            children: [
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Metodo de envio",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
+      body: BlocBuilder<CarritoBloc, Pedido>(builder: (context, state) {
+        return Column(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Metodo de envio",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 12, top: 12),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              child: RaisedButton(
-                                color: (state.metodoDeEnvio == null ||
-                                        state.metodoDeEnvio !=
-                                            MetodoDeEnvio.A_DOMICILIO)
-                                    ? Colors.white
-                                    : null,
-                                onPressed: _handleADomicilio,
-                                child: Text("Envío a domicilio"),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 12,
-                            ),
-                            Expanded(
-                              child: RaisedButton(
-                                color: (state.metodoDeEnvio == null ||
-                                        state.metodoDeEnvio !=
-                                            MetodoDeEnvio.EN_TIENDA)
-                                    ? Colors.white
-                                    : null,
-                                onPressed: _handleEnTienda,
-                                child: Text("Recoger en almacén"),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      if (MetodoDeEnvio.A_DOMICILIO == state.metodoDeEnvio)
-                        _cardDireccion
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.only(
-                  top: 10,
-                  bottom: 12,
-                  left: 24,
-                  right: 24,
-                ),
-                width: double.maxFinite,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 2,
                     ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12, top: 12),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: RaisedButton(
+                              color: (state.metodoDeEnvio == null ||
+                                      state.metodoDeEnvio !=
+                                          MetodoDeEnvio.A_DOMICILIO)
+                                  ? Colors.white
+                                  : null,
+                              onPressed: _handleADomicilio,
+                              child: Text("Envío a domicilio"),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 12,
+                          ),
+                          Expanded(
+                            child: RaisedButton(
+                              color: (state.metodoDeEnvio == null ||
+                                      state.metodoDeEnvio !=
+                                          MetodoDeEnvio.EN_TIENDA)
+                                  ? Colors.white
+                                  : null,
+                              onPressed: _handleEnTienda,
+                              child: Text("Recoger en almacén"),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (MetodoDeEnvio.A_DOMICILIO == state.metodoDeEnvio)
+                      BlocBuilder<DireccionBloc,
+                          APIResponse<Paginate<Direccion>>>(
+                        builder: (context, state) {
+                          return _cardDireccion;
+                        },
+                      )
                   ],
                 ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: Text(
-                                "Total",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            Text(
-                              "S/. ${state.calcularTotal().toStringAsFixed(2)}",
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.only(
+                top: 10,
+                bottom: 12,
+                left: 24,
+                right: 24,
+              ),
+              width: double.maxFinite,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 2,
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Text(
+                              "Total",
                               style: TextStyle(
                                 fontSize: 18,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    Container(height: 8),
-                    SizedBox(
+                          ),
+                          Text(
+                            "S/. ${state.calcularTotal().toStringAsFixed(2)}",
+                            style: TextStyle(
+                              fontSize: 18,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Container(height: 8),
+                  BlocBuilder<DireccionBloc, APIResponse<Paginate<Direccion>>>(
+                      builder: (context, _) {
+                    return SizedBox(
                       width: double.maxFinite,
                       child: RaisedButton(
-                        onPressed: _direccion != null ? _finalizarPedido : null,
+                        onPressed: (_bloc.direccionDefault != null &&
+                                    state.metodoDeEnvio ==
+                                        MetodoDeEnvio.A_DOMICILIO) ||
+                                (state.metodoDeEnvio == MetodoDeEnvio.EN_TIENDA)
+                            ? _finalizarPedido
+                            : null,
                         child: Text(
                           "Finalizar pedido",
                           textAlign: TextAlign.center,
@@ -172,19 +167,19 @@ class _FinalizarPedidoScreenState extends State<FinalizarPedidoScreen> {
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
+                    );
+                  }),
+                ],
               ),
-            ],
-          );
-        }),
-      ),
+            ),
+          ],
+        );
+      }),
     );
   }
 
   Widget get _cardDireccion {
-    _direccion = _bloc.direccionDefault;
+    Direccion _direccion = _bloc.direccionDefault;
     if (_direccion == null) {
       return SizedBox(
         width: double.maxFinite,
@@ -336,6 +331,12 @@ class _FinalizarPedidoScreenState extends State<FinalizarPedidoScreen> {
   }
 
   _finalizarPedido() {
+    var _carrito = context.bloc<CarritoBloc>();
+    if (_carrito.state.metodoDeEnvio == MetodoDeEnvio.A_DOMICILIO) {
+      _carrito.state.direccion = _bloc.direccionDefault;
+    } else {
+      _carrito.state.direccion = null;
+    }
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => FinPedidoScreen(),
@@ -344,7 +345,9 @@ class _FinalizarPedidoScreenState extends State<FinalizarPedidoScreen> {
   }
 
   _handleADomicilio() {
-    context.bloc<CarritoBloc>().setMetodoDeEnvio(MetodoDeEnvio.A_DOMICILIO);
+    context.bloc<CarritoBloc>().setMetodoDeEnvio(
+          MetodoDeEnvio.A_DOMICILIO,
+        );
   }
 
   _handleEnTienda() {
