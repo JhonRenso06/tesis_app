@@ -69,13 +69,15 @@ class _PedidoDetalleScreenState extends State<PedidoDetalleScreen> {
                 ).toList(),
               )
               ..add(
-                Padding(
-                  padding: const EdgeInsets.only(top: 24),
-                  child: OutlineButton(
-                    onPressed: _cancelarPedido,
-                    child: Text("Cancelar pedido"),
-                  ),
-                ),
+                widget.pedido.estado == EstadoDePedido.EN_PROCESO
+                    ? Padding(
+                        padding: const EdgeInsets.only(top: 24),
+                        child: OutlineButton(
+                          onPressed: _cancelarPedido,
+                          child: Text("Cancelar pedido"),
+                        ),
+                      )
+                    : SizedBox.shrink(),
               ),
           ),
         ),
@@ -216,14 +218,7 @@ class _PedidoDetalleScreenState extends State<PedidoDetalleScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              "assets/status.png",
-                              width: 50,
-                              height: 50,
-                            ),
-                            textEstado()
-                          ],
+                          children: textEstado(),
                         ),
                       )
                     ],
@@ -344,43 +339,56 @@ class _PedidoDetalleScreenState extends State<PedidoDetalleScreen> {
     }
   }
 
-  Widget textEstado() {
+  List<Widget> textEstado() {
     Color color;
     String str = widget.pedido.estado.name;
+    String imagen;
     switch (widget.pedido.estado) {
       case EstadoDePedido.ATENDIDO:
         color = Colors.blue;
         str += "\n ${Global.dateFormatter(widget.pedido.fechaAtendido)}";
+        imagen = "assets/immigration.png";
         break;
       case EstadoDePedido.EN_CAMINO:
         color = Colors.yellow;
         str += "\n ${Global.dateFormatter(widget.pedido.fechaCamino)}";
+        imagen = "assets/delivery_truck.png";
         break;
       case EstadoDePedido.ENTREGADO:
         color = Colors.greenAccent[700];
         str += "\n ${Global.dateFormatter(widget.pedido.fechaEntrega)}";
+        imagen = "assets/delivery_box.png";
         break;
       case EstadoDePedido.CANCELADO:
         color = Colors.red;
         str += "\n ${Global.dateFormatter(widget.pedido.fechaCancelado)}";
+        imagen = "assets/cancel.png";
         break;
       default:
         color = Colors.blueGrey;
         str += "\n ${Global.dateFormatter(widget.pedido.fechaEmision)}";
+        imagen = "assets/order.png";
         break;
     }
-    return Padding(
-      padding: const EdgeInsets.only(top: 8),
-      child: Text(
-        str,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          color: color,
-          fontWeight: FontWeight.bold,
-          fontSize: 12,
-        ),
+    return [
+      Image.asset(
+        imagen,
+        width: 50,
+        height: 50,
       ),
-    );
+      Padding(
+        padding: const EdgeInsets.only(top: 8),
+        child: Text(
+          str,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: color,
+            fontWeight: FontWeight.bold,
+            fontSize: 12,
+          ),
+        ),
+      )
+    ];
   }
 
   String metodoDePago() {

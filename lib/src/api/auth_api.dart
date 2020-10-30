@@ -50,6 +50,30 @@ class AuthAPI extends API {
     return APIResponse.fromResponse(res, null);
   }
 
+  Future<APIResponse<Cliente>> changePassword(
+      String currentPassword, String newPassword) async {
+    var res = await put(
+      '/market/me/secure',
+      body: {
+        'currentPassword': currentPassword,
+        'newPassword': newPassword,
+      },
+      auth: true,
+    );
+    if (res.hasException) {
+      return APIResponse.fromResponse(res, null);
+    }
+    return APIResponse.fromResponse(res, null);
+  }
+
+  Future<APIResponse<Cliente>> recoverPassword(String email) async {
+    var res = await post('/auth/clientes/recover', body: {'correo': email});
+    if (res.hasException) {
+      return APIResponse.fromResponse(res, null);
+    }
+    return APIResponse.fromResponse(res, null);
+  }
+
   Future<void> subscription(String token) async {
     print(token);
     await post('/market/me/notification/subscription/$token');

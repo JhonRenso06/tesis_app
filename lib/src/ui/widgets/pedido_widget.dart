@@ -132,14 +132,7 @@ class PedidoWidget extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              "assets/status.png",
-                              width: 50,
-                              height: 50,
-                            ),
-                            textEstado()
-                          ],
+                          children: textEstado(),
                         ),
                       )
                     ],
@@ -165,43 +158,56 @@ class PedidoWidget extends StatelessWidget {
     );
   }
 
-  Widget textEstado() {
+  List<Widget> textEstado() {
     Color color;
     String str = pedido.estado.name;
+    String imagen;
     switch (pedido.estado) {
       case EstadoDePedido.ATENDIDO:
-        color = Colors.blueGrey;
+        color = Colors.blue;
         str += "\n ${Global.dateFormatter(pedido.fechaAtendido)}";
+        imagen = "assets/immigration.png";
         break;
       case EstadoDePedido.EN_CAMINO:
         color = Colors.yellow;
         str += "\n ${Global.dateFormatter(pedido.fechaCamino)}";
+        imagen = "assets/delivery_truck.png";
         break;
       case EstadoDePedido.ENTREGADO:
         color = Colors.greenAccent[700];
         str += "\n ${Global.dateFormatter(pedido.fechaEntrega)}";
+        imagen = "assets/delivery_box.png";
         break;
       case EstadoDePedido.CANCELADO:
         color = Colors.red;
         str += "\n ${Global.dateFormatter(pedido.fechaCancelado)}";
+        imagen = "assets/cancel.png";
         break;
       default:
-        color = Colors.blue;
+        color = Colors.blueGrey;
         str += "\n ${Global.dateFormatter(pedido.fechaEmision)}";
+        imagen = "assets/order.png";
         break;
     }
-    return Padding(
-      padding: const EdgeInsets.only(top: 8),
-      child: Text(
-        str,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          color: color,
-          fontWeight: FontWeight.bold,
-          fontSize: 12,
-        ),
+    return [
+      Image.asset(
+        imagen,
+        width: 50,
+        height: 50,
       ),
-    );
+      Padding(
+        padding: const EdgeInsets.only(top: 8),
+        child: Text(
+          str,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: color,
+            fontWeight: FontWeight.bold,
+            fontSize: 12,
+          ),
+        ),
+      )
+    ];
   }
 
   String metodoDePago() {

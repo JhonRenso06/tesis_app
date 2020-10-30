@@ -672,7 +672,7 @@ class _DireccionScreenState extends State<DireccionScreen> {
   _onError(APIException exception) {
     Alert(
       context: context,
-      title: "Upss..",
+      title: "¡Uy!",
       desc: exception.message,
       type: AlertType.error,
     ).show();

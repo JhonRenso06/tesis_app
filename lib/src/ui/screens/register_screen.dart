@@ -25,6 +25,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
   TipoDeDocumento _tipo;
   PerfilBloc _bloc;
 
+  Map<String, FocusNode> focusMap = {
+    "documento": FocusNode(),
+    "nombre": FocusNode(),
+    "apellidos": FocusNode(),
+    "email": FocusNode(),
+    "password": FocusNode(),
+    "registrar": FocusNode(),
+  };
+
   @override
   void initState() {
     _formKey = GlobalKey();
@@ -32,6 +41,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _tipo = TipoDeDocumento.DNI;
     _bloc = PerfilBloc();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    this.focusMap.forEach((key, value) {
+      value.dispose();
+    });
+    super.dispose();
   }
 
   @override
@@ -70,12 +87,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
     Widget nombreField = Padding(
       padding: const EdgeInsets.only(bottom: 15),
       child: TextFormField(
+        focusNode: focusMap["nombre"],
+        onFieldSubmitted: (_) {
+          if (_tipo == TipoDeDocumento.DNI) {
+            FocusScope.of(context).requestFocus(focusMap["apellidos"]);
+          } else {
+            FocusScope.of(context).requestFocus(focusMap["email"]);
+          }
+        },
         decoration: InputDecoration(
           labelText: _tipo == TipoDeDocumento.DNI ? 'Nombre' : 'Razón social',
         ),
         textInputAction: TextInputAction.next,
         keyboardType: TextInputType.text,
-        onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
         validator: (val) {
           if (val.isEmpty) {
             return "Ingrese su ${_tipo == TipoDeDocumento.DNI ? 'nombre' : 'razón social'} ";
@@ -91,12 +115,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
     Widget apellidosField = Padding(
       padding: const EdgeInsets.only(bottom: 15),
       child: TextFormField(
+        focusNode: focusMap["apellidos"],
+        onFieldSubmitted: (_) =>
+            FocusScope.of(context).requestFocus(focusMap["email"]),
         decoration: InputDecoration(
           labelText: "Apellidos",
         ),
         textInputAction: TextInputAction.next,
         keyboardType: TextInputType.text,
-        onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
         validator: (val) {
           if (val.isEmpty) {
             return "Ingrese sus apellidos";
@@ -112,10 +138,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
     Widget emailField = Padding(
       padding: const EdgeInsets.only(bottom: 15),
       child: TextFormField(
+        focusNode: focusMap["email"],
+        onFieldSubmitted: (_) =>
+            FocusScope.of(context).requestFocus(focusMap["password"]),
         obscureText: false,
         textInputAction: TextInputAction.next,
         keyboardType: TextInputType.emailAddress,
-        onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
         decoration: InputDecoration(
           labelText: "Email",
         ),
@@ -134,13 +162,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
     Widget passwordField = Padding(
         padding: const EdgeInsets.only(bottom: 15),
         child: TextFormField(
+          focusNode: focusMap["password"],
+          onFieldSubmitted: (_) =>
+              FocusScope.of(context).requestFocus(focusMap["registrar"]),
           obscureText: _obscurePassword,
-          textInputAction: TextInputAction.next,
+          textInputAction: TextInputAction.done,
           keyboardType: TextInputType.visiblePassword,
-          onFieldSubmitted: (_) {
-            FocusScope.of(context).nextFocus();
-            FocusScope.of(context).nextFocus();
-          },
           decoration: InputDecoration(
             labelText: "Contraseña",
             suffixIcon: Container(
@@ -176,12 +203,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
       padding: const EdgeInsets.only(bottom: 15),
       child: TextFormField(
         obscureText: false,
+        focusNode: focusMap["documento"],
+        onFieldSubmitted: (_) =>
+            FocusScope.of(context).requestFocus(focusMap["nombre"]),
         maxLength: _tipo == TipoDeDocumento.DNI ? 8 : 11,
         textInputAction: TextInputAction.next,
         keyboardType:
             TextInputType.numberWithOptions(decimal: false, signed: false),
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-        onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
         decoration: InputDecoration(
           labelText: _tipo == TipoDeDocumento.DNI ? "DNI" : "RUC",
           counterText: "",
@@ -206,6 +235,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       margin: const EdgeInsets.only(bottom: 15),
       width: double.maxFinite,
       child: RaisedButton(
+        focusNode: focusMap["registrar"],
         child: Text("Registrarse"),
         onPressed: _handleRegister,
       ),
@@ -271,7 +301,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     print("Register");
                     Alert(
                       context: context,
-                      title: "Upss..",
+                      title: "¡Uy!",
                       desc: state.exception.message,
                       type: AlertType.error,
                     ).show();

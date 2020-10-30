@@ -26,6 +26,19 @@ class PerfilBloc extends Cubit<APIResponse<Cliente>> {
     emit(response);
   }
 
+  changePassword(String currentPassword, String newPassword) async {
+    emit(state.toLoading());
+    var response =
+        await _repository.changePassword(currentPassword, newPassword);
+    emit(response);
+  }
+
+  recoverPassword(String email) async {
+    emit(state.toLoading());
+    var response = await _repository.recoverPassword(email);
+    emit(response);
+  }
+
   signOut() async {
     var response = await _repository.signOut();
     emit(response);

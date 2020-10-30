@@ -10,7 +10,7 @@ abstract class API {
   FlutterSecureStorage storage;
 
   API(String baseUrl) {
-    _urlBase = "http://192.168.0.8:8082/v1${baseUrl != null ? baseUrl : ''}";
+    _urlBase = "https://api.yupichela.com/v1${baseUrl != null ? baseUrl : ''}";
     storage = new FlutterSecureStorage();
   }
 

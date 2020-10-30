@@ -27,7 +27,9 @@ class _ProductosScreenState extends State<ProductosScreen> {
     if (!context.bloc<ProductosBloc>().state.hasData) {
       context.bloc<ProductosBloc>().initialLoad(establecimiento);
     }
-    context.bloc<UltimoPedidoBloc>().loadPedido();
+    if (!context.bloc<UltimoPedidoBloc>().state.hasData) {
+      context.bloc<UltimoPedidoBloc>().loadPedido();
+    }
     super.initState();
   }
 

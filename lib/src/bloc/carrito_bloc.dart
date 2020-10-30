@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mr_yupi/src/enums/metodo_de_envio.dart';
-import 'package:mr_yupi/src/model/direccion.dart';
 import 'package:mr_yupi/src/model/establecimiento.dart';
 import 'package:mr_yupi/src/model/linea_de_pedido.dart';
 import 'package:mr_yupi/src/model/pedido.dart';

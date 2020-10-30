@@ -8,6 +8,7 @@ import 'package:mr_yupi/src/model/cliente.dart';
 import 'package:mr_yupi/src/model/cliente_juridico.dart';
 import 'package:mr_yupi/src/model/cliente_natural.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mr_yupi/src/ui/screens/editar_password_screen.dart';
 import 'package:mr_yupi/src/ui/widgets/loading_widget.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
@@ -24,12 +25,28 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
   TipoDeDocumento _tipo;
   GlobalKey<FormState> _formKey;
   String _nombre, _apellidos, _email, _documento;
+
+  Map<String, FocusNode> focusMap = {
+    "documento": FocusNode(),
+    "nombre": FocusNode(),
+    "apellidos": FocusNode(),
+    "guardar": FocusNode(),
+  };
+
   @override
   void initState() {
     _tipo = widget.cliente.tipoDeDocumento;
     _formKey = GlobalKey();
     print(widget.cliente.toMap());
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    this.focusMap.forEach((key, value) {
+      value.dispose();
+    });
+    super.dispose();
   }
 
   @override
@@ -67,12 +84,21 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
     Widget nombreField = Padding(
       padding: const EdgeInsets.only(bottom: 15),
       child: TextFormField(
+        focusNode: focusMap["nombre"],
+        onFieldSubmitted: (_) {
+          if (_tipo == TipoDeDocumento.DNI) {
+            FocusScope.of(context).requestFocus(focusMap["apellidos"]);
+          } else {
+            FocusScope.of(context).requestFocus(focusMap["guardar"]);
+          }
+        },
         decoration: InputDecoration(
           labelText: _tipo == TipoDeDocumento.DNI ? 'Nombre' : 'Razón social',
         ),
-        textInputAction: TextInputAction.next,
+        textInputAction: _tipo == TipoDeDocumento.DNI
+            ? TextInputAction.next
+            : TextInputAction.done,
         keyboardType: TextInputType.text,
-        onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
         validator: (val) {
           if (val.isEmpty) {
             return "Ingrese su ${_tipo == TipoDeDocumento.DNI ? 'nombre' : 'razón social'} ";
@@ -99,9 +125,11 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
         decoration: InputDecoration(
           labelText: "Apellidos",
         ),
-        textInputAction: TextInputAction.next,
+        textInputAction: TextInputAction.done,
         keyboardType: TextInputType.text,
-        onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
+        focusNode: focusMap["apellidos"],
+        onFieldSubmitted: (_) =>
+            FocusScope.of(context).requestFocus(focusMap["guardar"]),
         validator: (val) {
           if (val.isEmpty) {
             return "Ingrese sus apellidos";
@@ -128,7 +156,9 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
         keyboardType:
             TextInputType.numberWithOptions(decimal: false, signed: false),
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-        onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
+        focusNode: focusMap["documento"],
+        onFieldSubmitted: (_) =>
+            FocusScope.of(context).requestFocus(focusMap["nombre"]),
         decoration: InputDecoration(
           hintText: _tipo == TipoDeDocumento.DNI ? "DNI" : "RUC",
           counterText: "",
@@ -153,10 +183,16 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
     Widget registerButton = SizedBox(
       width: double.maxFinite,
       child: RaisedButton(
+        focusNode: focusMap["guardar"],
         onPressed: _onSave,
         child: Text("Guardar"),
       ),
     );
+    Widget cambiarPasswordButton = Container(
+        margin: const EdgeInsets.only(right: 6, top: 12),
+        width: double.maxFinite,
+        child: FlatButton(
+            onPressed: _toChangePassword, child: Text("Cambiar contraseña")));
 
     List<Widget> form;
     if (_tipo == TipoDeDocumento.DNI) {
@@ -166,7 +202,8 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
         documentoField,
         nombreField,
         apellidosField,
-        registerButton
+        registerButton,
+        cambiarPasswordButton
       ];
     } else {
       form = [
@@ -174,7 +211,8 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
         tipoWidget,
         documentoField,
         nombreField,
-        registerButton
+        registerButton,
+        cambiarPasswordButton
       ];
     }
     return Scaffold(
@@ -211,7 +249,7 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
                   } else if (state.hasException) {
                     Alert(
                       context: context,
-                      title: "Upss..",
+                      title: "¡Uy!",
                       desc: state.exception.message,
                       type: AlertType.error,
                     ).show();
@@ -273,5 +311,10 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
           )
         ]).show();
     Navigator.pop(context, true);
+  }
+
+  _toChangePassword() {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => EditarPasswordScreen()));
   }
 }

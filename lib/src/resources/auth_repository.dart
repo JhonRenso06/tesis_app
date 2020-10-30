@@ -31,4 +31,13 @@ class AuthRepository {
   Future<APIResponse<Cliente>> updateMe(Cliente cliente) async {
     return await _authAPI.updateMe(cliente);
   }
+
+  Future<APIResponse<Cliente>> changePassword(
+      String currentPassword, String newPassword) async {
+    return await _authAPI.changePassword(currentPassword, newPassword);
+  }
+
+  Future<APIResponse<Cliente>> recoverPassword(String email) async {
+    return await _authAPI.recoverPassword(email);
+  }
 }

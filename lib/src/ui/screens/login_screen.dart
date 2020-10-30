@@ -1,10 +1,10 @@
 import 'package:email_validator/email_validator.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mr_yupi/src/bloc/perfil_bloc.dart';
 import 'package:mr_yupi/src/model/api_response.dart';
+import 'package:mr_yupi/src/ui/screens/recuperar_password_screen.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:mr_yupi/src/global/global.dart';
 import 'package:mr_yupi/src/model/api_message.dart';
@@ -24,11 +24,25 @@ class _LoginScreenState extends State<LoginScreen> {
   String _email, _password;
   bool _obscurePassword;
 
+  Map<String, FocusNode> focusMap = {
+    "email": FocusNode(),
+    "password": FocusNode(),
+    "login": FocusNode(),
+  };
+
   @override
   void initState() {
     _formKey = GlobalKey();
     _obscurePassword = true;
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    this.focusMap.forEach((key, value) {
+      value.dispose();
+    });
+    super.dispose();
   }
 
   @override
@@ -45,31 +59,50 @@ class _LoginScreenState extends State<LoginScreen> {
         margin: const EdgeInsets.only(bottom: 8),
         width: double.maxFinite,
         child: RaisedButton(
-            child: Text("Iniciar sesión"), onPressed: _handleLogin));
+            focusNode: focusMap["login"],
+            child: Text("Iniciar sesión"),
+            onPressed: _handleLogin));
 
     Widget registerButton = Container(
         margin: const EdgeInsets.only(right: 6),
         width: double.maxFinite,
         child: FlatButton(onPressed: _toRegister, child: Text("Registrate")));
 
-    // Widget forgetPasswordButton = Container(
-    //     margin: const EdgeInsets.only(left: 6),
-    //     width: double.maxFinite,
-    //     child: FlatButton(
-    //         onPressed: _toRegister,
-    //         child: Text(
-    //           "¿Olvidaste tu contraseña?",
-    //           textAlign: TextAlign.center,
-    //         )));
+    Widget forgetPasswordButton = Padding(
+      padding: const EdgeInsets.only(
+        top: 5,
+        bottom: 5,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FlatButton(
+            padding:
+                const EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 5),
+            onPressed: _toForgetPassword,
+            child: Text(
+              "¿Olvidaste tu contraseña?",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
 
     Widget emailField = TextFormField(
       obscureText: false,
       decoration: InputDecoration(
         labelText: "Email",
       ),
+      focusNode: focusMap["email"],
       keyboardType: TextInputType.emailAddress,
       textInputAction: TextInputAction.next,
-      onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
+      onFieldSubmitted: (_) =>
+          FocusScope.of(context).requestFocus(focusMap["password"]),
       onSaved: (val) {
         _email = val;
       },
@@ -84,15 +117,15 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     Widget passwordField = Padding(
-        padding: const EdgeInsets.only(top: 15, bottom: 15),
+        padding: const EdgeInsets.only(top: 15, bottom: 0),
         child: TextFormField(
           obscureText: _obscurePassword,
-          textInputAction: TextInputAction.next,
+          textInputAction: TextInputAction.done,
           keyboardType: TextInputType.visiblePassword,
           onFieldSubmitted: (_) {
-            FocusScope.of(context).nextFocus();
-            FocusScope.of(context).nextFocus();
+            FocusScope.of(context).requestFocus(focusMap["login"]);
           },
+          focusNode: focusMap["password"],
           decoration: InputDecoration(
             labelText: "Contraseña",
             suffixIcon: Container(
@@ -153,6 +186,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         logoWidget,
                         emailField,
                         passwordField,
+                        forgetPasswordButton,
                         loginButton,
                         Row(
                           children: [
@@ -170,15 +204,16 @@ class _LoginScreenState extends State<LoginScreen> {
                   if (!state.loading) {
                     if (state.hasMessage) {
                       _showSuccess(state.message);
-                    }
-                    if (state.hasException) {
+                    } else if (state.hasException) {
                       print("Login");
                       Alert(
                         context: context,
-                        title: "Upss..",
+                        title: "¡Uy!",
                         desc: state.exception.message,
                         type: AlertType.error,
                       ).show();
+                    } else {
+                      Navigator.pop(context);
                     }
                   }
                 },
@@ -238,5 +273,11 @@ class _LoginScreenState extends State<LoginScreen> {
     Navigator.pop(context, true);
   }
 
-  // void _toForgetPassword() async {}
+  void _toForgetPassword() async {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => RecuperarPasswordScreen(),
+      ),
+    );
+  }
 }
