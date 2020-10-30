@@ -16,16 +16,9 @@ class PerfilScreen extends StatefulWidget {
 }
 
 class _PerfilScreenState extends State<PerfilScreen> {
-  FirebaseMessaging _firebaseMessaging;
-
   @override
   void initState() {
     super.initState();
-    _firebaseMessaging = FirebaseMessaging();
-    _firebaseMessaging
-        .getToken()
-        .then((value) => print(value))
-        .catchError((err) => print(err));
   }
 
   @override

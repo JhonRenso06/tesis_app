@@ -74,14 +74,24 @@ void main() async {
 
 class App extends StatelessWidget {
   final NotificationAppLaunchDetails notificationAppLaunchDetails;
-
   final BehaviorSubject<String> selectNotificationSubject;
+  final _ultimoPedidoBloc = UltimoPedidoBloc();
+  final _perfilBloc = PerfilBloc();
+
   App(
     this.notificationAppLaunchDetails,
     this.selectNotificationSubject,
-  );
+  ) {
+    _perfilBloc.subscription();
+    _firebaseMessage.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        showNotification(message);
+        _ultimoPedidoBloc.loadPedido();
+      },
+      onBackgroundMessage: myBackgroundMessageHandler,
+    );
+  }
   final _firebaseMessage = FirebaseMessaging();
-  static final GlobalKey<NavigatorState> _navigatorKey = GlobalKey();
   static Future<dynamic> myBackgroundMessageHandler(
       Map<String, dynamic> message) async {
     showNotification(
@@ -157,27 +167,15 @@ class App extends StatelessWidget {
     }
   }
 
-  final _ultimoPedidoBloc = UltimoPedidoBloc();
-
   @override
   Widget build(BuildContext context) {
-    _firebaseMessage
-        .getToken()
-        .then((value) => new AuthAPI().subscription(value));
-    _firebaseMessage.configure(
-      onMessage: (Map<String, dynamic> message) async {
-        showNotification(message);
-        _ultimoPedidoBloc.loadPedido();
-      },
-      onBackgroundMessage: myBackgroundMessageHandler,
-    );
     return MultiBlocProvider(
       providers: [
         BlocProvider<ProductosBloc>(
           create: (_) => ProductosBloc(),
         ),
         BlocProvider<PerfilBloc>(
-          create: (_) => PerfilBloc(),
+          create: (_) => _perfilBloc,
         ),
         BlocProvider<DireccionBloc>(
           create: (_) => DireccionBloc(),
@@ -211,7 +209,6 @@ class App extends StatelessWidget {
           flutterLocalNotificationsPlugin,
           this.selectNotificationSubject,
         ),
-        navigatorKey: _navigatorKey,
         theme: ThemeData(
           primaryColor: Global.primaryColor,
           accentColor: Global.accentColor,

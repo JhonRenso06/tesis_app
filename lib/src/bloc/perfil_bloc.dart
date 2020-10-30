@@ -55,4 +55,8 @@ class PerfilBloc extends Cubit<APIResponse<Cliente>> {
     var response = await _repository.register(cliente);
     emit(response);
   }
+
+  subscription() async {
+    await _repository.subscribeTokenMarket();
+  }
 }

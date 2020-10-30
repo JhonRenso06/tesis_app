@@ -20,6 +20,10 @@ class AuthRepository {
     return await _authAPI.login(cliente, await _messaging.getToken());
   }
 
+  subscribeTokenMarket() async {
+    await _authAPI.subscription(await _messaging.getToken());
+  }
+
   Future<APIResponse<Cliente>> signOut() async {
     return await _authAPI.signOut(await _messaging.getToken());
   }

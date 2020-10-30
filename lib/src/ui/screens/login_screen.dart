@@ -23,6 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
   GlobalKey<FormState> _formKey;
   String _email, _password;
   bool _obscurePassword;
+  PerfilBloc _bloc;
 
   Map<String, FocusNode> focusMap = {
     "email": FocusNode(),
@@ -34,6 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     _formKey = GlobalKey();
     _obscurePassword = true;
+    _bloc = PerfilBloc();
     super.initState();
   }
 
@@ -199,28 +201,27 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               BlocListener<PerfilBloc, APIResponse<Cliente>>(
-                cubit: context.bloc<PerfilBloc>(),
+                cubit: _bloc,
                 listener: (context, state) {
                   if (!state.loading) {
                     if (state.hasMessage) {
                       _showSuccess(state.message);
                     } else if (state.hasException) {
-                      print("Login");
                       Alert(
                         context: context,
                         title: "¡Uy!",
                         desc: state.exception.message,
                         type: AlertType.error,
                       ).show();
-                    } else {
-                      Navigator.pop(context);
+                    } else if (state.hasData) {
+                      Navigator.pop(context, true);
                     }
                   }
                 },
                 child: SizedBox.shrink(),
               ),
               BlocBuilder<PerfilBloc, APIResponse<Cliente>>(
-                cubit: context.bloc<PerfilBloc>(),
+                cubit: _bloc,
                 builder: (context, state) {
                   return state.loading ? LoadingWidget() : SizedBox.shrink();
                 },
@@ -233,9 +234,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void _handleLogin() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      context
-          .bloc<PerfilBloc>()
-          .login(Cliente(correo: _email, password: _password));
+      _bloc.login(Cliente(correo: _email, password: _password));
     }
   }
 
@@ -247,7 +246,6 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
     if (result != null && result) {
-      print("Registro existo");
       Navigator.pop(context, true);
     }
   }
@@ -267,7 +265,9 @@ class _LoginScreenState extends State<LoginScreen> {
               "OK",
               style: TextStyle(color: Colors.white),
             ),
-            onPressed: () => {Navigator.pop(context)},
+            onPressed: () {
+              Navigator.pop(context);
+            },
           )
         ]).show();
     Navigator.pop(context, true);
