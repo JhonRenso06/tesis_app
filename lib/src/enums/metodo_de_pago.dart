@@ -1,6 +1,7 @@
 enum MetodoDePago {
   EFECTIVO,
   TARJETA,
+  TRANSFERENCIA,
 }
 
 extension MetodoDePagoExtension on MetodoDePago {
@@ -10,6 +11,8 @@ extension MetodoDePagoExtension on MetodoDePago {
         return "Efectivo";
       case MetodoDePago.TARJETA:
         return "Tarjeta";
+      case MetodoDePago.TRANSFERENCIA:
+        return "Transferencia";
       default:
         return null;
     }

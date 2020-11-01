@@ -1,3 +1,4 @@
+import 'package:mr_yupi/src/enums/documento_comercial.dart';
 import 'package:mr_yupi/src/enums/estado_de_pedido.dart';
 import 'package:mr_yupi/src/enums/metodo_de_envio.dart';
 import 'package:mr_yupi/src/enums/metodo_de_pago.dart';
@@ -25,6 +26,7 @@ class Pedido extends Model {
   DateTime fechaCancelado;
   Direccion direccion;
   Establecimiento establecimiento;
+  DocumentoComercial documentoComercial;
   List<LineaDePedido> lineasDePedido;
 
   Pedido({
@@ -45,6 +47,7 @@ class Pedido extends Model {
     this.direccion,
     this.lineasDePedido,
     this.establecimiento,
+    this.documentoComercial,
   }) {
     if (lineasDePedido == null) {
       lineasDePedido = List();
@@ -150,6 +153,8 @@ class Pedido extends Model {
     if (data["establecimiento"] != null) {
       this.establecimiento = Establecimiento().fromMap(data["establecimiento"]);
     }
+    this.documentoComercial =
+        DocumentoComercialExtension.parse(data["documentoComercial"]);
     return this;
   }
 

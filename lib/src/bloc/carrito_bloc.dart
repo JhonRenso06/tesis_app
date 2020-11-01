@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mr_yupi/src/enums/documento_comercial.dart';
 import 'package:mr_yupi/src/enums/metodo_de_envio.dart';
+import 'package:mr_yupi/src/enums/metodo_de_pago.dart';
 import 'package:mr_yupi/src/model/establecimiento.dart';
 import 'package:mr_yupi/src/model/linea_de_pedido.dart';
 import 'package:mr_yupi/src/model/pedido.dart';
@@ -70,8 +72,31 @@ class CarritoBloc extends Cubit<Pedido> {
   setMetodoDeEnvio(MetodoDeEnvio metodo) {
     emit(Pedido(
       lineasDePedido: state.lineasDePedido,
+      documentoComercial: state.documentoComercial,
+      metodoDePago: state.metodoDePago,
       metodoDeEnvio: metodo,
     ));
+  }
+
+  setDocumento(DocumentoComercial documentoComercial) {
+    emit(
+      Pedido(
+          lineasDePedido: state.lineasDePedido,
+          metodoDeEnvio: state.metodoDeEnvio,
+          metodoDePago: state.metodoDePago,
+          documentoComercial: documentoComercial),
+    );
+  }
+
+  setMetodoDePago(MetodoDePago metodoDePago) {
+    emit(
+      Pedido(
+        lineasDePedido: state.lineasDePedido,
+        metodoDeEnvio: state.metodoDeEnvio,
+        documentoComercial: state.documentoComercial,
+        metodoDePago: metodoDePago,
+      ),
+    );
   }
 
   clear() async {

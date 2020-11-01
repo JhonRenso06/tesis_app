@@ -78,9 +78,6 @@ class AuthAPI extends API {
     if (await storage.read(key: "subscription") == null) {
       await post('/market/me/notification/subscription/$token');
       await storage.write(key: "subscription", value: "true");
-      print("Se guardo");
-    } else {
-      print("Guardado");
     }
   }
 
