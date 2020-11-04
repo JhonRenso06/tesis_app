@@ -1,4 +1,3 @@
-import 'package:mr_yupi/src/model/distrito.dart';
 import 'package:mr_yupi/src/model/model.dart';
 
 class Delivery extends Model {

@@ -4,9 +4,9 @@ import 'package:mr_yupi/src/bloc/delivery_bloc.dart';
 import 'package:mr_yupi/src/bloc/direccion_bloc.dart';
 import 'package:mr_yupi/src/bloc/establecimiento_bloc.dart';
 import 'package:mr_yupi/src/bloc/perfil_bloc.dart';
-import 'package:mr_yupi/src/enums/documento_comercial.dart';
 import 'package:mr_yupi/src/enums/metodo_de_envio.dart';
 import 'package:mr_yupi/src/enums/metodo_de_pago.dart';
+import 'package:mr_yupi/src/enums/tipo_de_comprobante.dart';
 import 'package:mr_yupi/src/global/global.dart';
 import 'package:mr_yupi/src/model/api_response.dart';
 import 'package:mr_yupi/src/model/cliente_juridico.dart';
@@ -27,7 +27,7 @@ class FinalizarPedidoScreen extends StatefulWidget {
 class _FinalizarPedidoScreenState extends State<FinalizarPedidoScreen> {
   DireccionBloc _bloc;
   DeliveryBloc _delivery;
-  CarritoBloc _carrito;
+
   EstablecimientoBloc _establecimiento;
   Map<String, FocusNode> focusMap = {
     "nombre": FocusNode(),
@@ -53,7 +53,6 @@ class _FinalizarPedidoScreenState extends State<FinalizarPedidoScreen> {
   }
 
   loadDirecciones() {
-    _carrito = context.bloc<CarritoBloc>();
     _establecimiento = context.bloc<EstablecimientoBloc>();
     context.bloc<CarritoBloc>().state.direccion = null;
     context.bloc<CarritoBloc>().state.metodoDeEnvio = null;
@@ -221,10 +220,9 @@ class _FinalizarPedidoScreenState extends State<FinalizarPedidoScreen> {
                                   children: [
                                     Expanded(
                                       child: RaisedButton(
-                                        color: (state.documentoComercial ==
-                                                    null ||
-                                                state.documentoComercial !=
-                                                    DocumentoComercial.BOLETA)
+                                        color: (state.tipoDeDocumento == null ||
+                                                state.tipoDeDocumento !=
+                                                    TipoDeComprobante.BOLETA)
                                             ? Colors.white
                                             : null,
                                         onPressed: _handleBoleta,
@@ -236,10 +234,9 @@ class _FinalizarPedidoScreenState extends State<FinalizarPedidoScreen> {
                                     ),
                                     Expanded(
                                       child: RaisedButton(
-                                        color: (state.documentoComercial ==
-                                                    null ||
-                                                state.documentoComercial !=
-                                                    DocumentoComercial.FACTURA)
+                                        color: (state.tipoDeDocumento == null ||
+                                                state.tipoDeDocumento !=
+                                                    TipoDeComprobante.FACTURA)
                                             ? Colors.white
                                             : null,
                                         onPressed: _handleFactura,
@@ -381,7 +378,7 @@ class _FinalizarPedidoScreenState extends State<FinalizarPedidoScreen> {
                                               (state.metodoDeEnvio ==
                                                   MetodoDeEnvio.EN_TIENDA)) &&
                                           state.metodoDePago != null &&
-                                          state.documentoComercial != null
+                                          state.tipoDeDocumento != null
                                       ? _finalizarPedido
                                       : null,
                                   child: Text(
@@ -563,6 +560,7 @@ class _FinalizarPedidoScreenState extends State<FinalizarPedidoScreen> {
     if (!form.currentState.validate()) {
       return;
     }
+    form.currentState.save();
     var _carrito = context.bloc<CarritoBloc>();
     if (_carrito.state.metodoDeEnvio == MetodoDeEnvio.A_DOMICILIO) {
       _carrito.state.direccion = _bloc.direccionDefault;
@@ -587,11 +585,11 @@ class _FinalizarPedidoScreenState extends State<FinalizarPedidoScreen> {
   }
 
   _handleBoleta() {
-    context.bloc<CarritoBloc>().setDocumento(DocumentoComercial.BOLETA);
+    context.bloc<CarritoBloc>().setDocumento(TipoDeComprobante.BOLETA);
   }
 
   _handleFactura() {
-    context.bloc<CarritoBloc>().setDocumento(DocumentoComercial.FACTURA);
+    context.bloc<CarritoBloc>().setDocumento(TipoDeComprobante.FACTURA);
   }
 
   _handleContraentrega() {
@@ -603,9 +601,9 @@ class _FinalizarPedidoScreenState extends State<FinalizarPedidoScreen> {
   }
 
   Widget formDocumento() {
-    var documento = context.bloc<CarritoBloc>().state.documentoComercial;
+    var documento = context.bloc<CarritoBloc>().state.tipoDeDocumento;
     var cliente = context.bloc<PerfilBloc>().state.data;
-    if (documento == DocumentoComercial.BOLETA) {
+    if (documento == TipoDeComprobante.BOLETA) {
       String nombre = "";
       String dni = "";
       if (cliente is ClienteNatural) {
@@ -631,7 +629,9 @@ class _FinalizarPedidoScreenState extends State<FinalizarPedidoScreen> {
             }
             return null;
           },
-          onSaved: (val) {},
+          onSaved: (val) {
+            context.bloc<CarritoBloc>().state.clienteRazonSocial = val;
+          },
         ),
       );
 
@@ -643,16 +643,23 @@ class _FinalizarPedidoScreenState extends State<FinalizarPedidoScreen> {
           initialValue: dni,
           decoration: InputDecoration(
             labelText: 'DNI',
+            counterText: "",
           ),
+          maxLength: 8,
           textInputAction: TextInputAction.done,
           keyboardType: TextInputType.text,
           validator: (val) {
             if (val.isEmpty) {
               return "Ingrese su DNI";
             }
+            if (val.length != 8) {
+              return "Ingrese un DNI válido";
+            }
             return null;
           },
-          onSaved: (val) {},
+          onSaved: (val) {
+            context.bloc<CarritoBloc>().state.clienteDocumento = val;
+          },
         ),
       );
 
@@ -674,7 +681,7 @@ class _FinalizarPedidoScreenState extends State<FinalizarPedidoScreen> {
             ),
           ));
     }
-    if (documento == DocumentoComercial.FACTURA) {
+    if (documento == TipoDeComprobante.FACTURA) {
       String razonSocial = "";
       String ruc = "";
 
@@ -705,7 +712,9 @@ class _FinalizarPedidoScreenState extends State<FinalizarPedidoScreen> {
             }
             return null;
           },
-          onSaved: (val) {},
+          onSaved: (val) {
+            context.bloc<CarritoBloc>().state.clienteRazonSocial = val;
+          },
         ),
       );
 
@@ -717,7 +726,9 @@ class _FinalizarPedidoScreenState extends State<FinalizarPedidoScreen> {
           initialValue: ruc,
           decoration: InputDecoration(
             labelText: 'RUC',
+            counterText: "",
           ),
+          maxLength: 11,
           textInputAction: TextInputAction.next,
           onFieldSubmitted: (_) =>
               FocusScope.of(context).requestFocus(focusMap["dirección"]),
@@ -726,9 +737,14 @@ class _FinalizarPedidoScreenState extends State<FinalizarPedidoScreen> {
             if (val.isEmpty) {
               return "Ingrese su RUC";
             }
+            if (val.length != 11) {
+              return "Ingrese un RUC válido";
+            }
             return null;
           },
-          onSaved: (val) {},
+          onSaved: (val) {
+            context.bloc<CarritoBloc>().state.clienteDocumento = val;
+          },
         ),
       );
 
@@ -749,7 +765,9 @@ class _FinalizarPedidoScreenState extends State<FinalizarPedidoScreen> {
             }
             return null;
           },
-          onSaved: (val) {},
+          onSaved: (val) {
+            context.bloc<CarritoBloc>().state.clienteDireccionFiscal = val;
+          },
         ),
       );
       return Container(

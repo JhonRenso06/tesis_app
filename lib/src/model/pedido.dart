@@ -1,8 +1,8 @@
-import 'package:mr_yupi/src/enums/documento_comercial.dart';
 import 'package:mr_yupi/src/enums/estado_de_pedido.dart';
 import 'package:mr_yupi/src/enums/metodo_de_envio.dart';
 import 'package:mr_yupi/src/enums/metodo_de_pago.dart';
 import 'package:mr_yupi/src/enums/moneda.dart';
+import 'package:mr_yupi/src/enums/tipo_de_comprobante.dart';
 import 'package:mr_yupi/src/model/direccion.dart';
 import 'package:mr_yupi/src/model/establecimiento.dart';
 import 'package:mr_yupi/src/model/linea_de_pedido.dart';
@@ -11,6 +11,10 @@ import 'package:mr_yupi/src/model/producto_establecimiento.dart';
 
 class Pedido extends Model {
   num id;
+  TipoDeComprobante tipoDeDocumento;
+  String clienteRazonSocial;
+  String clienteDireccionFiscal;
+  String clienteDocumento;
   num igv;
   num subtotal;
   num costoDeEnvio;
@@ -25,8 +29,8 @@ class Pedido extends Model {
   DateTime fechaEntrega;
   DateTime fechaCancelado;
   Direccion direccion;
+
   Establecimiento establecimiento;
-  DocumentoComercial documentoComercial;
   List<LineaDePedido> lineasDePedido;
 
   Pedido({
@@ -47,7 +51,10 @@ class Pedido extends Model {
     this.direccion,
     this.lineasDePedido,
     this.establecimiento,
-    this.documentoComercial,
+    this.tipoDeDocumento,
+    this.clienteRazonSocial,
+    this.clienteDireccionFiscal,
+    this.clienteDocumento,
   }) {
     if (lineasDePedido == null) {
       lineasDePedido = List();
@@ -153,8 +160,11 @@ class Pedido extends Model {
     if (data["establecimiento"] != null) {
       this.establecimiento = Establecimiento().fromMap(data["establecimiento"]);
     }
-    this.documentoComercial =
-        DocumentoComercialExtension.parse(data["documentoComercial"]);
+    this.tipoDeDocumento =
+        TipoDeComprobanteExtension.parse(data["tipoDeDocumento"]);
+    this.clienteRazonSocial = data["clienteRazonSocial"];
+    this.clienteDireccionFiscal = data["clienteDireccionFiscal"];
+    this.clienteDocumento = data["clienteDocumento"];
     return this;
   }
 
@@ -163,6 +173,12 @@ class Pedido extends Model {
     return {
       'metodoDePago': metodoDePago?.index,
       'metodoDeEnvio': metodoDeEnvio.index,
+      'tipoDeDocumento': tipoDeDocumento.index,
+      'clienteRazonSocial': clienteRazonSocial,
+      'clienteDireccionFiscal': tipoDeDocumento == TipoDeComprobante.FACTURA
+          ? clienteDireccionFiscal
+          : null,
+      'clienteDocumento': clienteDocumento,
       'direccion': direccion?.id,
       'establecimiento': establecimiento.id,
       'lineasDePedido': lineasDePedido

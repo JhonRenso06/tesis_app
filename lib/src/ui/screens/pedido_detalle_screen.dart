@@ -1,7 +1,9 @@
+import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:mr_yupi/src/bloc/pedido_bloc.dart';
 import 'package:mr_yupi/src/enums/estado_de_pedido.dart';
 import 'package:mr_yupi/src/enums/metodo_de_pago.dart';
+import 'package:mr_yupi/src/enums/tipo_de_comprobante.dart';
 import 'package:mr_yupi/src/global/global.dart';
 import 'package:mr_yupi/src/model/pedido.dart';
 import 'package:mr_yupi/src/ui/widgets/linea_de_pedido_widget.dart';
@@ -35,6 +37,206 @@ class _PedidoDetalleScreenState extends State<PedidoDetalleScreen> {
           child: Column(
             children: <Widget>[
               _resumenDeCompra,
+              if (widget.pedido.metodoDePago == MetodoDePago.TRANSFERENCIA)
+                Card(
+                  color: Colors.white,
+                  elevation: 0,
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(12),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(right: 12),
+                              child: Image.asset(
+                                "assets/deposit.png",
+                                height: 100,
+                                width: 100,
+                              ),
+                            ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Banco: ",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  "BCP",
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Razón social: ",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  "Yupichela S.A.C.",
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Ruc: ",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  "10181071635",
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Cuenta corriente: ",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  "5702625536039",
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                            Builder(builder: (context) {
+                              return FlatButton(
+                                padding: const EdgeInsets.all(0),
+                                onPressed: () {
+                                  FlutterClipboard.copy("5702625536039")
+                                      .then((value) {
+                                    Scaffold.of(context).showSnackBar(SnackBar(
+                                        content: Text(
+                                            "La cuenta corritente se copió al portapapeles")));
+                                  });
+                                },
+                                child: Text("Copiar"),
+                              );
+                            }),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "CCI: ",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  "00 36 0000300260940941",
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                            Builder(builder: (context) {
+                              return FlatButton(
+                                padding: const EdgeInsets.all(0),
+                                onPressed: () {
+                                  FlutterClipboard.copy(
+                                          "00 36 0000300260940941")
+                                      .then((value) {
+                                    Scaffold.of(context).showSnackBar(SnackBar(
+                                        content: Text(
+                                            "El CCI se copió al portapapeles")));
+                                  });
+                                },
+                                child: Text("Copiar"),
+                              );
+                            }),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              Card(
+                color: Colors.white,
+                elevation: 0,
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(12),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 12),
+                            child: Image.asset(
+                              "assets/document.png",
+                              height: 100,
+                              width: 100,
+                            ),
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 12),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    widget.pedido.tipoDeDocumento.name,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    widget.pedido.clienteDocumento ?? "",
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  Text(
+                                    widget.pedido.clienteRazonSocial ?? "",
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  if (widget.pedido.tipoDeDocumento ==
+                                      TipoDeComprobante.FACTURA)
+                                    Text(
+                                      widget.pedido.clienteDireccionFiscal,
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               if (widget.pedido.direccion != null)
                 _direccionDetalle
               else
@@ -392,11 +594,6 @@ class _PedidoDetalleScreenState extends State<PedidoDetalleScreen> {
   }
 
   String metodoDePago() {
-    switch (widget.pedido.metodoDePago) {
-      case MetodoDePago.TARJETA:
-        return "Tarjeta";
-      default:
-        return "Efectivo";
-    }
+    return widget.pedido.metodoDePago.name;
   }
 }

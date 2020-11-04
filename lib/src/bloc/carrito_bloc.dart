@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mr_yupi/src/enums/documento_comercial.dart';
 import 'package:mr_yupi/src/enums/metodo_de_envio.dart';
 import 'package:mr_yupi/src/enums/metodo_de_pago.dart';
+import 'package:mr_yupi/src/enums/tipo_de_comprobante.dart';
 import 'package:mr_yupi/src/model/establecimiento.dart';
 import 'package:mr_yupi/src/model/linea_de_pedido.dart';
 import 'package:mr_yupi/src/model/pedido.dart';
@@ -72,19 +72,26 @@ class CarritoBloc extends Cubit<Pedido> {
   setMetodoDeEnvio(MetodoDeEnvio metodo) {
     emit(Pedido(
       lineasDePedido: state.lineasDePedido,
-      documentoComercial: state.documentoComercial,
+      tipoDeDocumento: state.tipoDeDocumento,
       metodoDePago: state.metodoDePago,
+      clienteRazonSocial: state.clienteRazonSocial,
+      clienteDireccionFiscal: state.clienteDireccionFiscal,
+      clienteDocumento: state.clienteDocumento,
       metodoDeEnvio: metodo,
     ));
   }
 
-  setDocumento(DocumentoComercial documentoComercial) {
+  setDocumento(TipoDeComprobante tipoDeDocumento) {
     emit(
       Pedido(
-          lineasDePedido: state.lineasDePedido,
-          metodoDeEnvio: state.metodoDeEnvio,
-          metodoDePago: state.metodoDePago,
-          documentoComercial: documentoComercial),
+        lineasDePedido: state.lineasDePedido,
+        metodoDeEnvio: state.metodoDeEnvio,
+        clienteRazonSocial: state.clienteRazonSocial,
+        clienteDireccionFiscal: state.clienteDireccionFiscal,
+        clienteDocumento: state.clienteDocumento,
+        metodoDePago: state.metodoDePago,
+        tipoDeDocumento: tipoDeDocumento,
+      ),
     );
   }
 
@@ -93,7 +100,10 @@ class CarritoBloc extends Cubit<Pedido> {
       Pedido(
         lineasDePedido: state.lineasDePedido,
         metodoDeEnvio: state.metodoDeEnvio,
-        documentoComercial: state.documentoComercial,
+        tipoDeDocumento: state.tipoDeDocumento,
+        clienteRazonSocial: state.clienteRazonSocial,
+        clienteDireccionFiscal: state.clienteDireccionFiscal,
+        clienteDocumento: state.clienteDocumento,
         metodoDePago: metodoDePago,
       ),
     );

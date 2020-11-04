@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:mr_yupi/src/enums/estado_de_pedido.dart';
 import 'package:mr_yupi/src/enums/metodo_de_pago.dart';
+import 'package:mr_yupi/src/enums/tipo_de_comprobante.dart';
 import 'package:mr_yupi/src/global/global.dart';
 import 'package:mr_yupi/src/model/pedido.dart';
 
 class PedidoWidget extends StatelessWidget {
   final Pedido pedido;
   final Function(Pedido) onTap;
-
   PedidoWidget(this.pedido, {this.onTap});
 
   @override
@@ -103,6 +103,24 @@ class PedidoWidget extends StatelessWidget {
                                 ),
                                 Text(
                                   metodoDePago(),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 2,
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    "Comprobante",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  pedido.tipoDeDocumento.name,
                                 ),
                               ],
                             ),
@@ -211,11 +229,6 @@ class PedidoWidget extends StatelessWidget {
   }
 
   String metodoDePago() {
-    switch (pedido.metodoDePago) {
-      case MetodoDePago.TARJETA:
-        return "Tarjeta";
-      default:
-        return "Efectivo";
-    }
+    return pedido.metodoDePago.name;
   }
 }
