@@ -27,6 +27,14 @@ class CarritoBloc extends Cubit<Pedido> {
     return state.lineasDePedido.length;
   }
 
+  get productsCount {
+    int total = 0;
+    state.lineasDePedido.forEach((element) {
+      total += element.cantidad;
+    });
+    return total;
+  }
+
   addLineaDePedido(
       ProductoEstablecimiento productoEstablecimiento, int cantidad) async {
     if (state == null) {

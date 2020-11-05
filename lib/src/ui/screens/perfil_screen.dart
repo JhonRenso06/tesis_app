@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mr_yupi/src/bloc/establecimiento_bloc.dart';
 import 'package:mr_yupi/src/bloc/perfil_bloc.dart';
 import 'package:mr_yupi/src/global/global.dart';
 import 'package:mr_yupi/src/model/api_response.dart';
@@ -285,6 +286,64 @@ class _PerfilScreenState extends State<PerfilScreen> {
                               ),
                             ),
                             Text(
+                              "WhatsApp",
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                            ),
+                            SizedBox(
+                              width: 4,
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              color: Global.accentColor,
+                            )
+                          ],
+                        ),
+                        Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () {
+                              String telefono = context
+                                  .bloc<EstablecimientoBloc>()
+                                  .state
+                                  .telefono;
+                              launch("https://wa.me/+51$telefono");
+                            },
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 6, right: 6),
+                child: SizedBox(
+                  height: 124,
+                  child: Card(
+                    elevation: 0,
+                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    child: Stack(
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  right: 21, top: 21, bottom: 21),
+                              child: Image.asset(
+                                "assets/phone.png",
+                                width: 100,
+                                height: 100,
+                              ),
+                            ),
+                            Text(
                               "Contáctanos",
                               textAlign: TextAlign.start,
                               style: TextStyle(
@@ -305,7 +364,11 @@ class _PerfilScreenState extends State<PerfilScreen> {
                           color: Colors.transparent,
                           child: InkWell(
                             onTap: () {
-                              launch("https://wa.me/+51969647526");
+                              String telefono = context
+                                  .bloc<EstablecimientoBloc>()
+                                  .state
+                                  .telefono;
+                              launch("tel://$telefono");
                             },
                           ),
                         )

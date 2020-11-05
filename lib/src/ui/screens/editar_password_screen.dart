@@ -187,6 +187,17 @@ class _EditarPasswordScreenState extends State<EditarPasswordScreen> {
                       title: "¡Uy!",
                       desc: state.exception.message,
                       type: AlertType.error,
+                      buttons: [
+                        DialogButton(
+                          child: Text(
+                            "Cancelar",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        )
+                      ],
                     ).show();
                   }
                 }

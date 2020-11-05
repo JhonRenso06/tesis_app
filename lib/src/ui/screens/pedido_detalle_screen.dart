@@ -6,6 +6,7 @@ import 'package:mr_yupi/src/enums/metodo_de_pago.dart';
 import 'package:mr_yupi/src/enums/tipo_de_comprobante.dart';
 import 'package:mr_yupi/src/global/global.dart';
 import 'package:mr_yupi/src/model/pedido.dart';
+import 'package:mr_yupi/src/ui/widgets/carouselBancos.dart';
 import 'package:mr_yupi/src/ui/widgets/linea_de_pedido_widget.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -47,135 +48,7 @@ class _PedidoDetalleScreenState extends State<PedidoDetalleScreen> {
                       Radius.circular(12),
                     ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(24),
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(right: 12),
-                              child: Image.asset(
-                                "assets/deposit.png",
-                                height: 100,
-                                width: 100,
-                              ),
-                            ),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "Banco: ",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  "BCP",
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "Razón social: ",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  "Yupichela S.A.C.",
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "Ruc: ",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  "10181071635",
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "Cuenta corriente: ",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  "5702625536039",
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                            Builder(builder: (context) {
-                              return FlatButton(
-                                padding: const EdgeInsets.all(0),
-                                onPressed: () {
-                                  FlutterClipboard.copy("5702625536039")
-                                      .then((value) {
-                                    Scaffold.of(context).showSnackBar(SnackBar(
-                                        content: Text(
-                                            "La cuenta corritente se copió al portapapeles")));
-                                  });
-                                },
-                                child: Text("Copiar"),
-                              );
-                            }),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "CCI: ",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  "00 36 0000300260940941",
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                            Builder(builder: (context) {
-                              return FlatButton(
-                                padding: const EdgeInsets.all(0),
-                                onPressed: () {
-                                  FlutterClipboard.copy(
-                                          "00 36 0000300260940941")
-                                      .then((value) {
-                                    Scaffold.of(context).showSnackBar(SnackBar(
-                                        content: Text(
-                                            "El CCI se copió al portapapeles")));
-                                  });
-                                },
-                                child: Text("Copiar"),
-                              );
-                            }),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                  child: CarouselBancos(),
                 ),
               Card(
                 color: Colors.white,
@@ -299,7 +172,7 @@ class _PedidoDetalleScreenState extends State<PedidoDetalleScreen> {
       ),
       child: Container(
         width: double.maxFinite,
-        height: 180,
+        height: 200,
         child: Stack(
           children: [
             Padding(
@@ -411,7 +284,25 @@ class _PedidoDetalleScreenState extends State<PedidoDetalleScreen> {
                                   "S/. ${widget.pedido.total.toStringAsFixed(2)}",
                                 ),
                               ],
-                            )
+                            ),
+                            SizedBox(
+                              height: 2,
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    "Costo de envío",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  "S/. ${widget.pedido.costoDeEnvio?.toStringAsFixed(2)}",
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ),

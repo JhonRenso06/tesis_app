@@ -23,7 +23,7 @@ class PedidoWidget extends StatelessWidget {
       ),
       child: Container(
         width: double.maxFinite,
-        height: 160,
+        height: 180,
         child: Stack(
           children: [
             Padding(
@@ -139,6 +139,24 @@ class PedidoWidget extends StatelessWidget {
                                 ),
                                 Text(
                                   "S/. ${pedido.total.toStringAsFixed(2)}",
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 4,
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    "Costo de envío",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  "S/. ${pedido.costoDeEnvio?.toStringAsFixed(2)}",
                                 ),
                               ],
                             )

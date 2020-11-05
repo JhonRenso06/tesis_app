@@ -1,4 +1,9 @@
+import 'dart:ui';
+
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mr_yupi/src/bloc/carrito_bloc.dart';
 import 'package:mr_yupi/src/bloc/delivery_bloc.dart';
 import 'package:mr_yupi/src/bloc/direccion_bloc.dart';
@@ -18,6 +23,8 @@ import 'package:mr_yupi/src/ui/screens/direccion_screen.dart';
 import 'package:mr_yupi/src/ui/screens/fin_pedido_screen.dart';
 import 'package:mr_yupi/src/ui/screens/direcciones_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mr_yupi/src/ui/widgets/carouselBancos.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class FinalizarPedidoScreen extends StatefulWidget {
   @override
@@ -296,36 +303,47 @@ class _FinalizarPedidoScreenState extends State<FinalizarPedidoScreen> {
                                             ),
                                           ),
                                         ),
-                                        BlocBuilder<DeliveryBloc,
-                                            APIResponse<Delivery>>(
-                                          cubit: _delivery,
-                                          builder: (context, state) {
-                                            if (state.loading) {
-                                              return SizedBox(
-                                                height: 18,
-                                                width: 18,
-                                                child:
-                                                    CircularProgressIndicator(),
-                                              );
-                                            }
-                                            if (!state.hasData ||
-                                                state.data.monto == null ||
-                                                state.data.monto == 0) {
-                                              return Text(
-                                                "No disponible",
+                                        context
+                                                    .bloc<CarritoBloc>()
+                                                    .productsCount >=
+                                                6
+                                            ? Text(
+                                                "Gratis",
                                                 style: TextStyle(
                                                   fontSize: 18,
                                                 ),
-                                              );
-                                            }
-                                            return Text(
-                                              "S/. ${state.data.monto.toStringAsFixed(2)}",
-                                              style: TextStyle(
-                                                fontSize: 18,
+                                              )
+                                            : BlocBuilder<DeliveryBloc,
+                                                APIResponse<Delivery>>(
+                                                cubit: _delivery,
+                                                builder: (context, state) {
+                                                  if (state.loading) {
+                                                    return SizedBox(
+                                                      height: 18,
+                                                      width: 18,
+                                                      child:
+                                                          CircularProgressIndicator(),
+                                                    );
+                                                  }
+                                                  if (!state.hasData ||
+                                                      state.data.monto ==
+                                                          null ||
+                                                      state.data.monto == 0) {
+                                                    return Text(
+                                                      "No disponible",
+                                                      style: TextStyle(
+                                                        fontSize: 18,
+                                                      ),
+                                                    );
+                                                  }
+                                                  return Text(
+                                                    "S/. ${state.data.monto.toStringAsFixed(2)}",
+                                                    style: TextStyle(
+                                                      fontSize: 18,
+                                                    ),
+                                                  );
+                                                },
                                               ),
-                                            );
-                                          },
-                                        ),
                                       ],
                                     ),
                                     SizedBox(
@@ -557,10 +575,36 @@ class _FinalizarPedidoScreenState extends State<FinalizarPedidoScreen> {
   }
 
   _finalizarPedido() {
-    if (!form.currentState.validate()) {
-      return;
+    if (form.currentState.validate()) {
+      form.currentState.save();
+      if (context.bloc<CarritoBloc>().state.metodoDePago ==
+          MetodoDePago.TRANSFERENCIA) {
+        Alert(
+          context: context,
+          title:
+              "Para que tu pedido sea atendido debes de hacer el depósito en una de las siguientes cuentas",
+          desc:
+              "Recuerda enviar el voucher a nuestro WhatsApp, puedes encontrarlo en la sección cuenta",
+          style: AlertStyle(
+            titleStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            descStyle: TextStyle(fontSize: 16),
+          ),
+          buttons: [
+            DialogButton(
+              child: Text(
+                "Finalizar",
+                style: TextStyle(color: Colors.white),
+              ),
+              onPressed: _finalizar,
+            )
+          ],
+          content: CarouselBancos(),
+        ).show();
+      }
     }
-    form.currentState.save();
+  }
+
+  _finalizar() {
     var _carrito = context.bloc<CarritoBloc>();
     if (_carrito.state.metodoDeEnvio == MetodoDeEnvio.A_DOMICILIO) {
       _carrito.state.direccion = _bloc.direccionDefault;

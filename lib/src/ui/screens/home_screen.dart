@@ -251,21 +251,21 @@ class _DialogEstablecimientoState extends State<DialogEstablecimiento> {
     departamentos = context.bloc<EstablecimientoBloc>().departamentos;
     departamentoItems = [
       DropdownMenuItem(
-        child: Text("-- elige un departamento --"),
+        child: Text("-- Elige un departamento --"),
         value: null,
       )
     ];
 
     provinciaItems = [
       DropdownMenuItem(
-        child: Text("-- elige una provincia --"),
+        child: Text("-- Elige una provincia --"),
         value: null,
       )
     ];
 
     establecimientosItems = [
       DropdownMenuItem(
-        child: Text("-- elige un establecimiento --"),
+        child: Text("-- Elige un establecimiento --"),
         value: null,
       )
     ];
