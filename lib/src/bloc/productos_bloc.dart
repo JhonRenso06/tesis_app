@@ -29,21 +29,34 @@ class ProductosBloc
     }
   }
 
-  addFavorito(int id) async {
+  addFavorito(int id, {bool refresh = false}) async {
+    print("asd");
     try {
       ProductoEstablecimiento productoEstablecimiento =
           state.data.items.firstWhere((element) => element.producto.id == id);
-      await _repository.addFavorite(productoEstablecimiento);
-      emit(state.toCompleted());
-    } catch (_) {}
+      if (refresh) {
+        productoEstablecimiento.producto.favorito = true;
+        emit(state.toCompleted());
+      } else {
+        await _repository.addFavorite(productoEstablecimiento);
+      }
+    } catch (_) {
+      print(_);
+    }
   }
 
-  removeFavorito(int id) async {
+  removeFavorito(int id, {bool refresh = false}) async {
     try {
       ProductoEstablecimiento productoEstablecimiento =
           state.data.items.firstWhere((element) => element.producto.id == id);
-      await _repository.removeFavorite(productoEstablecimiento);
-      emit(state.toCompleted());
-    } catch (_) {}
+      if (refresh) {
+        productoEstablecimiento.producto.favorito = false;
+        emit(state.toCompleted());
+      } else {
+        await _repository.removeFavorite(productoEstablecimiento);
+      }
+    } catch (_) {
+      print(_);
+    }
   }
 }

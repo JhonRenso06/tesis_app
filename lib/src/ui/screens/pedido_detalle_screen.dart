@@ -1,4 +1,3 @@
-import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:mr_yupi/src/bloc/pedido_bloc.dart';
 import 'package:mr_yupi/src/enums/estado_de_pedido.dart';
@@ -172,7 +171,7 @@ class _PedidoDetalleScreenState extends State<PedidoDetalleScreen> {
       ),
       child: Container(
         width: double.maxFinite,
-        height: 200,
+        height: 220,
         child: Stack(
           children: [
             Padding(

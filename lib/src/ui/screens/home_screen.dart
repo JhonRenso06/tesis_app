@@ -149,7 +149,11 @@ class _HomeScreenState extends State<HomeScreen>
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(establecimiento.nombre),
+              Text(
+                establecimiento.nombre.trim(),
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+              ),
               Icon(Icons.arrow_drop_down)
             ],
           ),
@@ -251,27 +255,39 @@ class _DialogEstablecimientoState extends State<DialogEstablecimiento> {
     departamentos = context.bloc<EstablecimientoBloc>().departamentos;
     departamentoItems = [
       DropdownMenuItem(
-        child: Text("-- Elige un departamento --"),
+        child: Text(
+          "-- Elige un departamento --",
+          overflow: TextOverflow.ellipsis,
+        ),
         value: null,
       )
     ];
 
     provinciaItems = [
       DropdownMenuItem(
-        child: Text("-- Elige una provincia --"),
+        child: Text(
+          "-- Elige una provincia --",
+          overflow: TextOverflow.ellipsis,
+        ),
         value: null,
       )
     ];
 
     establecimientosItems = [
       DropdownMenuItem(
-        child: Text("-- Elige un establecimiento --"),
+        child: Text(
+          "-- Elige un establecimiento --",
+          overflow: TextOverflow.ellipsis,
+        ),
         value: null,
       )
     ];
     departamentos.forEach((element) {
       departamentoItems.add(DropdownMenuItem(
-        child: Text(element.nombre),
+        child: Text(
+          element.nombre,
+          overflow: TextOverflow.ellipsis,
+        ),
         value: element,
       ));
     });
@@ -285,7 +301,10 @@ class _DialogEstablecimientoState extends State<DialogEstablecimiento> {
                 (element) {
                   provinciaItems.add(
                     DropdownMenuItem(
-                      child: Text(element.nombre),
+                      child: Text(
+                        element.nombre,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                       value: element,
                     ),
                   );
@@ -296,7 +315,10 @@ class _DialogEstablecimientoState extends State<DialogEstablecimiento> {
                 (element) {
                   establecimientosItems.add(
                     DropdownMenuItem(
-                      child: Text(element.nombre),
+                      child: Text(
+                        element.nombre,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                       value: element,
                     ),
                   );
@@ -320,16 +342,18 @@ class _DialogEstablecimientoState extends State<DialogEstablecimiento> {
           SizedBox(
             height: 12,
           ),
-          DropdownButtonFormField(
-            value: _departamentoSelected,
-            items: departamentoItems,
-            onChanged: onChangeDepartamento,
-            validator: (val) {
-              if (val == null) {
-                return "Seleccione un departamento";
-              }
-              return null;
-            },
+          Container(
+            child: DropdownButtonFormField(
+              value: _departamentoSelected,
+              items: departamentoItems,
+              onChanged: onChangeDepartamento,
+              validator: (val) {
+                if (val == null) {
+                  return "Seleccione un departamento";
+                }
+                return null;
+              },
+            ),
           ),
           SizedBox(
             height: 12,
@@ -392,13 +416,19 @@ class _DialogEstablecimientoState extends State<DialogEstablecimiento> {
     establecimientosItems.clear();
     provinciaItems.add(
       DropdownMenuItem(
-        child: Text("-- elige una provincia --"),
+        child: Text(
+          "-- Elige una provincia --",
+          overflow: TextOverflow.ellipsis,
+        ),
         value: null,
       ),
     );
     establecimientosItems.add(
       DropdownMenuItem(
-        child: Text("-- elige un establecimiento --"),
+        child: Text(
+          "-- Elige un establecimiento --",
+          overflow: TextOverflow.ellipsis,
+        ),
         value: null,
       ),
     );
@@ -406,7 +436,10 @@ class _DialogEstablecimientoState extends State<DialogEstablecimiento> {
       value.provincias.forEach((element) {
         provinciaItems.add(
           DropdownMenuItem(
-            child: Text(element.nombre),
+            child: Text(
+              element.nombre,
+              overflow: TextOverflow.ellipsis,
+            ),
             value: element,
           ),
         );
@@ -421,7 +454,10 @@ class _DialogEstablecimientoState extends State<DialogEstablecimiento> {
     establecimientosItems.clear();
     establecimientosItems.add(
       DropdownMenuItem(
-        child: Text("-- elige un establecimiento --"),
+        child: Text(
+          "-- Elige un establecimiento --",
+          overflow: TextOverflow.ellipsis,
+        ),
         value: null,
       ),
     );
@@ -429,7 +465,10 @@ class _DialogEstablecimientoState extends State<DialogEstablecimiento> {
       provincia.establecimientos.forEach((element) {
         establecimientosItems.add(
           DropdownMenuItem(
-            child: Text(element.nombre),
+            child: Text(
+              element.nombre,
+              overflow: TextOverflow.ellipsis,
+            ),
             value: element,
           ),
         );

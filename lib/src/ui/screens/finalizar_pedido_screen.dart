@@ -1,9 +1,6 @@
 import 'dart:ui';
 
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mr_yupi/src/bloc/carrito_bloc.dart';
 import 'package:mr_yupi/src/bloc/delivery_bloc.dart';
 import 'package:mr_yupi/src/bloc/direccion_bloc.dart';
@@ -287,8 +284,10 @@ class _FinalizarPedidoScreenState extends State<FinalizarPedidoScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           BlocBuilder<CarritoBloc, Pedido>(
-                            builder: (context, state) {
-                              if (state.metodoDeEnvio ==
+                            builder: (context, stateCarrito) {
+                              print(stateCarrito.metodoDeEnvio);
+                              var _bloc = context.bloc<CarritoBloc>();
+                              if (stateCarrito.metodoDeEnvio ==
                                   MetodoDeEnvio.A_DOMICILIO) {
                                 return Column(
                                   children: [
@@ -303,47 +302,44 @@ class _FinalizarPedidoScreenState extends State<FinalizarPedidoScreen> {
                                             ),
                                           ),
                                         ),
-                                        context
-                                                    .bloc<CarritoBloc>()
-                                                    .productsCount >=
-                                                6
-                                            ? Text(
+                                        BlocBuilder<DeliveryBloc,
+                                            APIResponse<Delivery>>(
+                                          cubit: _delivery,
+                                          builder: (context, state) {
+                                            if (state.loading) {
+                                              return SizedBox(
+                                                height: 18,
+                                                width: 18,
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              );
+                                            }
+                                            if (!state.hasData ||
+                                                state.data.monto == null ||
+                                                state.data.monto == 0) {
+                                              return Text(
+                                                "No disponible",
+                                                style: TextStyle(
+                                                  fontSize: 18,
+                                                ),
+                                              );
+                                            }
+                                            if (_bloc.productsCount >= 6) {
+                                              return Text(
                                                 "Gratis",
                                                 style: TextStyle(
                                                   fontSize: 18,
                                                 ),
-                                              )
-                                            : BlocBuilder<DeliveryBloc,
-                                                APIResponse<Delivery>>(
-                                                cubit: _delivery,
-                                                builder: (context, state) {
-                                                  if (state.loading) {
-                                                    return SizedBox(
-                                                      height: 18,
-                                                      width: 18,
-                                                      child:
-                                                          CircularProgressIndicator(),
-                                                    );
-                                                  }
-                                                  if (!state.hasData ||
-                                                      state.data.monto ==
-                                                          null ||
-                                                      state.data.monto == 0) {
-                                                    return Text(
-                                                      "No disponible",
-                                                      style: TextStyle(
-                                                        fontSize: 18,
-                                                      ),
-                                                    );
-                                                  }
-                                                  return Text(
-                                                    "S/. ${state.data.monto.toStringAsFixed(2)}",
-                                                    style: TextStyle(
-                                                      fontSize: 18,
-                                                    ),
-                                                  );
-                                                },
+                                              );
+                                            }
+                                            return Text(
+                                              "S/. ${state.data.monto.toStringAsFixed(2)}",
+                                              style: TextStyle(
+                                                fontSize: 18,
                                               ),
+                                            );
+                                          },
+                                        ),
                                       ],
                                     ),
                                     SizedBox(
@@ -386,19 +382,24 @@ class _FinalizarPedidoScreenState extends State<FinalizarPedidoScreen> {
                               return SizedBox(
                                 width: double.maxFinite,
                                 child: RaisedButton(
-                                  onPressed: ((_bloc.direccionDefault != null &&
-                                                  state.metodoDeEnvio ==
-                                                      MetodoDeEnvio
-                                                          .A_DOMICILIO &&
-                                                  stateDelivery.hasData &&
-                                                  stateDelivery.data.monto >
-                                                      0) ||
-                                              (state.metodoDeEnvio ==
-                                                  MetodoDeEnvio.EN_TIENDA)) &&
-                                          state.metodoDePago != null &&
-                                          state.tipoDeDocumento != null
-                                      ? _finalizarPedido
-                                      : null,
+                                  onPressed: () {
+                                    if (stateDelivery.loading) {
+                                      return null;
+                                    }
+                                    return ((_bloc.direccionDefault != null &&
+                                                    state.metodoDeEnvio ==
+                                                        MetodoDeEnvio
+                                                            .A_DOMICILIO &&
+                                                    stateDelivery.hasData &&
+                                                    stateDelivery.data.monto >
+                                                        0) ||
+                                                (state.metodoDeEnvio ==
+                                                    MetodoDeEnvio.EN_TIENDA)) &&
+                                            state.metodoDePago != null &&
+                                            state.tipoDeDocumento != null
+                                        ? _finalizarPedido
+                                        : null;
+                                  }(),
                                   child: Text(
                                     "Finalizar pedido",
                                     textAlign: TextAlign.center,
@@ -581,25 +582,67 @@ class _FinalizarPedidoScreenState extends State<FinalizarPedidoScreen> {
           MetodoDePago.TRANSFERENCIA) {
         Alert(
           context: context,
-          title:
-              "Para que tu pedido sea atendido debes de hacer el depósito en una de las siguientes cuentas",
-          desc:
-              "Recuerda enviar el voucher a nuestro WhatsApp, puedes encontrarlo en la sección cuenta",
+          title: "",
           style: AlertStyle(
-            titleStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            descStyle: TextStyle(fontSize: 16),
+            titleStyle: TextStyle(height: 0),
+            buttonAreaPadding: const EdgeInsets.all(0),
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.9,
+              minHeight: MediaQuery.of(context).size.height * 0.9,
+            ),
           ),
-          buttons: [
-            DialogButton(
-              child: Text(
-                "Finalizar",
-                style: TextStyle(color: Colors.white),
-              ),
-              onPressed: _finalizar,
-            )
-          ],
-          content: CarouselBancos(),
+          buttons: [],
+          content: Container(
+            height: MediaQuery.of(context).size.height * 0.7,
+            child: Stack(
+              alignment: Alignment.bottomCenter,
+              children: [
+                Container(
+                  height: MediaQuery.of(context).size.height + 200,
+                  child: SingleChildScrollView(
+                    child: Container(
+                      child: Column(
+                        children: [
+                          Text(
+                            "Para que tu pedido sea atendido debes de hacer el depósito en una de las siguientes cuentas",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            "Recuerda enviar el voucher a nuestro WhatsApp, puedes encontrarlo en la sección cuenta",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          CarouselBancos(),
+                          SizedBox(
+                            height: 100,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  width: double.maxFinite,
+                  padding: const EdgeInsets.only(top: 8, bottom: 8),
+                  color: Colors.white,
+                  child: RaisedButton(
+                    child: Text(
+                      "Finalizar",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: _finalizar,
+                  ),
+                )
+              ],
+            ),
+          ),
         ).show();
+      } else {
+        _finalizar();
       }
     }
   }

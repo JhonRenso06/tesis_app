@@ -23,7 +23,7 @@ class PedidoWidget extends StatelessWidget {
       ),
       child: Container(
         width: double.maxFinite,
-        height: 180,
+        height: 220,
         child: Stack(
           children: [
             Padding(

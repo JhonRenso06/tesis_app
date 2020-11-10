@@ -208,7 +208,10 @@ class _ProductoDetalleScreen extends State<ProductoDetalleScreen> {
                                             _addCart(context);
                                           }
                                         : null,
-                                label: Text("Agregar al carrito"),
+                                label: Text(
+                                  "Agregar al carrito",
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                                 icon: Icon(Icons.add_shopping_cart),
                               ),
                             ),

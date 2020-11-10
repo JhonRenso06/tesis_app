@@ -213,11 +213,12 @@ class _ProductosSearchScreenState extends State<ProductosSearchScreen> {
 
   _onAdd(int id) async {
     await _bloc.addFavorito(id);
-    context.bloc<ProductosBloc>().addFavorito(id);
+    print("äsdasd");
+    context.bloc<ProductosBloc>().addFavorito(id, refresh: true);
   }
 
   _onRemove(int id) async {
     await _bloc.removeFavorito(id);
-    context.bloc<ProductosBloc>().removeFavorito(id);
+    context.bloc<ProductosBloc>().removeFavorito(id, refresh: true);
   }
 }
