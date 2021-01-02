@@ -194,7 +194,10 @@ class _FinalizarPedidoScreenState extends State<FinalizarPedidoScreen> {
                                             ? Colors.white
                                             : null,
                                         onPressed: _handleTransferencia,
-                                        child: Text("Transferencia bancaria"),
+                                        child: Text(
+                                          "Transferencia bancaria, Plin (Lukita) o Yape",
+                                          textAlign: TextAlign.center,
+                                        ),
                                       ),
                                     ),
                                   ],

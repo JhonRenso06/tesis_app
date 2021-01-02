@@ -38,7 +38,9 @@ class _PedidoScreenState extends State<PedidosScreen> {
             return LoadMoreList(
               loading: state.loadMore,
               onMaxScroll: () {
-                context.bloc<PedidoBloc>().loadMore();
+                if (!state.loadMore) {
+                  context.bloc<PedidoBloc>().loadMore();
+                }
               },
               padding:
                   const EdgeInsets.only(left: 5, right: 5, bottom: 20, top: 7),

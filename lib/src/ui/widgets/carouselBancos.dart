@@ -36,6 +36,18 @@ class _CarouselBancosState extends State<CarouselBancos> {
                 },
               ),
               items: [
+                monederoData(
+                  "assets/yape.png",
+                  "+51 956 679 250",
+                  "Mayra Velasquez Tello",
+                ),
+                monederoData(
+                  "assets/plin.png",
+                  "+51 960 410 414",
+                  "Freddy Yupanqui Calderon",
+                  two: "assets/lukita.jpg",
+                  radius: 0,
+                ),
                 bancoData(
                   "assets/bcp.png",
                   "BCP",
@@ -55,7 +67,7 @@ class _CarouselBancosState extends State<CarouselBancos> {
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [0, 1].map((index) {
+            children: [0, 1, 2, 3].map((index) {
               return Container(
                 width: 8.0,
                 height: 8.0,
@@ -191,6 +203,127 @@ class _CarouselBancosState extends State<CarouselBancos> {
                         ),
                         Text(
                           cci,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget monederoData(String imagen, String numero, String titular,
+      {double radius = 24, String two}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            children: [
+              if (two != null)
+                Row(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 12),
+                        child: Container(
+                          width: 100,
+                          height: 100,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(0),
+                            image: DecorationImage(
+                              image: AssetImage(imagen),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 12),
+                        child: Container(
+                          height: 100,
+                          width: 100,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(24),
+                            image: DecorationImage(
+                              image: AssetImage(two),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              else
+                Padding(
+                  padding: const EdgeInsets.only(right: 12),
+                  child: Container(
+                    height: 100,
+                    width: 100,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(radius),
+                      image: DecorationImage(
+                        image: AssetImage(imagen),
+                      ),
+                    ),
+                  ),
+                ),
+              SizedBox(
+                height: 24,
+              ),
+              Text(
+                titular,
+                overflow: TextOverflow.ellipsis,
+              ),
+              SizedBox(
+                height: 8,
+              ),
+              Container(
+                width: double.maxFinite,
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey, width: 1),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: InkWell(
+                  onTap: () {
+                    FlutterClipboard.copy(numero).then(
+                      (value) {
+                        Fluttertoast.showToast(
+                          msg: "Número copiado",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.TOP,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: Colors.green,
+                          textColor: Colors.white,
+                          fontSize: 16.0,
+                        );
+                      },
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Número",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          numero,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ],

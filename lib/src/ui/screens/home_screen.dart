@@ -73,7 +73,6 @@ class _HomeScreenState extends State<HomeScreen>
   void _configureSelectNotificationSubject() {
     widget.selectNotificationSubject.stream.listen((String payload) async {
       Map<String, dynamic> message = jsonDecode(payload);
-      print("onSelectNotification $message");
       var tipo = message["data"]["tipo"];
       if (tipo == "estado") {
         var estado =
